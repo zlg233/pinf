@@ -147,8 +147,14 @@ export default function HomeScreen() {
   const handleOpenCreateForm = () => {
     setFormMode('create');
     setEditingBabyId(null);
-    setShowBabyList(false);
     setShowBabyForm(true);
+  };
+
+  const handleRequestCreateBaby = () => {
+    setShowBabyList(false);
+    requestAnimationFrame(() => {
+      handleOpenCreateForm();
+    });
   };
 
   const handleAddGrowth = async (payloads: Parameters<typeof addGrowth>[1]) => {
@@ -267,12 +273,10 @@ export default function HomeScreen() {
                   </View>
                 </View>
 
-                {babies.length > 1 && (
-                  <View style={styles.switchIndicator}>
-                    <Text style={styles.switchText}>切换</Text>
-                    <IconSymbol size={organicTheme.iconSizes.xxs} name="chevron.right" color={organicTheme.colors.primary.main} />
-                  </View>
-                )}
+                <View style={styles.switchIndicator}>
+                  <Text style={styles.switchText}>管理</Text>
+                  <IconSymbol size={organicTheme.iconSizes.xxs} name="chevron.right" color={organicTheme.colors.primary.main} />
+                </View>
               </View>
 
               {/* 年龄徽章 */}
@@ -483,13 +487,15 @@ export default function HomeScreen() {
         onSubmit={handleAddAppointment}
       />
       <AppointmentInfoOnceModal />
-      <BabyForm
-        visible={showBabyForm}
-        onClose={() => setShowBabyForm(false)}
-        onSubmit={formMode === 'create' ? handleCreateBaby : handleUpdateBaby}
-        mode={formMode}
-        initialData={editingBaby}
-      />
+      {showBabyForm && (
+        <BabyForm
+          visible={showBabyForm}
+          onClose={() => setShowBabyForm(false)}
+          onSubmit={formMode === 'create' ? handleCreateBaby : handleUpdateBaby}
+          mode={formMode}
+          initialData={editingBaby}
+        />
+      )}
       <Modal
         visible={showBabyList}
         onClose={() => setShowBabyList(false)}
@@ -517,6 +523,14 @@ export default function HomeScreen() {
               )}
             </TouchableOpacity>
           ))}
+          <TouchableOpacity
+            activeOpacity={0.78}
+            style={styles.addBabyListItem}
+            onPress={handleRequestCreateBaby}
+          >
+            <IconSymbol size={organicTheme.iconSizes.sm} name="plus" color={organicTheme.colors.primary.main} />
+            <Text style={styles.addBabyListItemText}>添加宝宝</Text>
+          </TouchableOpacity>
         </View>
       </Modal>
     </OrganicBackground>
@@ -1002,5 +1016,20 @@ const styles = StyleSheet.create({
     fontSize: organicTheme.typography.fontSize.md,
     fontWeight: organicTheme.typography.fontWeight.medium,
     color: organicTheme.colors.text.primary,
+  },
+  addBabyListItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: organicTheme.spacing.sm,
+    padding: organicTheme.spacing.md,
+    borderRadius: organicTheme.shapes.borderRadius.cozy,
+    borderWidth: 1,
+    borderStyle: 'dashed',
+    borderColor: organicTheme.colors.primary.main,
+  },
+  addBabyListItemText: {
+    fontSize: organicTheme.typography.fontSize.md,
+    fontWeight: organicTheme.typography.fontWeight.medium,
+    color: organicTheme.colors.primary.main,
   },
 });

@@ -190,6 +190,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   content: {
+    flex: 1,
     paddingBottom: organicTheme.spacing.md,
   },
 });
