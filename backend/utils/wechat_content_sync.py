@@ -77,13 +77,13 @@ def _pick_cover_url(news_item):
 
 
 def _pick_content(news_item):
-    content = (news_item.get("digest") or "").strip()
-    if content:
-        return content
-    title = (news_item.get("title") or "").strip()
-    if title:
-        return f"{title}（公众号文章摘要待补充）"
-    return "公众号文章"
+    html = (news_item.get("content") or "").strip()
+    if html:
+        return html
+    digest = (news_item.get("digest") or "").strip()
+    if digest:
+        return digest
+    return "暂无内容"
 
 
 def _extract_news_items(batch_payload):

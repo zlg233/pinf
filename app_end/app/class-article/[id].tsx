@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { router, useLocalSearchParams } from 'expo-router';
+import { WebView } from 'react-native-webview';
 
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { OrganicBackground, OrganicCard, OrganicChipButton } from '@/components/ui';
 import { organicTheme } from '@/constants/theme';
 import * as contentApi from '@/services/api/content';
 import type { ContentArticle } from '@/types/content';
-import { buildWebviewRoute } from '@/utils/open-external-url';
 
 const formatDate = (value?: string | null) => {
   if (!value) return '';
@@ -18,12 +18,67 @@ const formatDate = (value?: string | null) => {
   ).padStart(2, '0')}`;
 };
 
+const buildArticleHtml = (content: string) => `
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<style>
+  body {
+    margin: 0;
+    padding: 0;
+    font-size: 15px;
+    color: #4A4A4A;
+    line-height: 1.75;
+    word-wrap: break-word;
+    -webkit-text-size-adjust: 100%;
+  }
+  img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 8px 0;
+    border-radius: 8px;
+  }
+  p { margin: 0 0 12px; }
+  a { color: #5B9A8B; text-decoration: none; }
+  blockquote {
+    margin: 12px 0;
+    padding: 8px 16px;
+    border-left: 3px solid #5B9A8B;
+    background: #FFF9F5;
+    color: #7A7A7A;
+  }
+  table { max-width: 100%; border-collapse: collapse; }
+  td, th { padding: 6px 8px; border: 1px solid #e0e0e0; }
+</style>
+</head>
+<body>
+${content}
+<script>
+(function() {
+  function sendHeight() {
+    var h = document.body.scrollHeight;
+    window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'height', height: h }));
+  }
+  sendHeight();
+  window.addEventListener('load', sendHeight);
+  var imgs = document.getElementsByTagName('img');
+  for (var i = 0; i < imgs.length; i++) {
+    imgs[i].addEventListener('load', sendHeight);
+  }
+})();
+</script>
+</body>
+</html>`;
+
 export default function ArticleDetailScreen() {
   const params = useLocalSearchParams<{ id?: string }>();
   const articleId = Number(params.id);
   const [article, setArticle] = useState<ContentArticle | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [webViewHeight, setWebViewHeight] = useState(100);
 
   const fetchDetail = useCallback(async () => {
     if (!articleId) {
@@ -47,19 +102,6 @@ export default function ArticleDetailScreen() {
   useEffect(() => {
     fetchDetail();
   }, [fetchDetail]);
-
-  const handleOpenSource = useCallback(() => {
-    if (!article?.sourceUrl) {
-      setError('暂无可用链接');
-      return;
-    }
-    try {
-      router.push(buildWebviewRoute(article.sourceUrl, article.title));
-    } catch (openError) {
-      const message = openError instanceof Error ? openError.message : '链接无效';
-      setError(message);
-    }
-  }, [article]);
 
   return (
     <OrganicBackground variant="morning">
@@ -101,17 +143,25 @@ export default function ArticleDetailScreen() {
               {article.publishDate && <Text style={styles.metaText}>{formatDate(article.publishDate)}</Text>}
             </View>
             {article.category && <OrganicChipButton label={article.category} active onPress={() => undefined} />}
-            {article.sourceUrl && (
-              <OrganicCard variant="ghost" shadow={false} style={styles.linkCard}>
-                <Text style={styles.linkLabel}>文章链接</Text>
-                <TouchableOpacity onPress={handleOpenSource}>
-                  <Text style={styles.linkValue} numberOfLines={2}>
-                    {article.sourceUrl}
-                  </Text>
-                </TouchableOpacity>
-              </OrganicCard>
-            )}
-            <Text style={styles.contentText}>{article.content}</Text>
+            <View style={{ height: webViewHeight }}>
+              <WebView
+                originWhitelist={['*']}
+                source={{ html: buildArticleHtml(article.content) }}
+                scrollEnabled={false}
+                style={{ height: webViewHeight }}
+                mixedContentMode="compatibility"
+                domStorageEnabled
+                javaScriptEnabled
+                onMessage={(event) => {
+                  try {
+                    const data = JSON.parse(event.nativeEvent.data);
+                    if (data.type === 'height' && data.height > 0) {
+                      setWebViewHeight(data.height);
+                    }
+                  } catch { /* ignore non-JSON messages */ }
+                }}
+              />
+            </View>
           </View>
         ) : (
           <OrganicCard variant="soft" shadow={false} style={styles.errorCard}>
@@ -207,22 +257,5 @@ const styles = StyleSheet.create({
   metaText: {
     fontSize: organicTheme.typography.fontSize.xs,
     color: organicTheme.colors.text.secondary,
-  },
-  linkCard: {
-    gap: organicTheme.spacing.xs,
-  },
-  linkLabel: {
-    fontSize: organicTheme.typography.fontSize.xs,
-    color: organicTheme.colors.text.secondary,
-  },
-  linkValue: {
-    fontSize: organicTheme.typography.fontSize.sm,
-    color: organicTheme.colors.primary.main,
-    textDecorationLine: 'underline',
-  },
-  contentText: {
-    fontSize: organicTheme.typography.fontSize.sm,
-    color: organicTheme.colors.text.primary,
-    lineHeight: 22,
   },
 });

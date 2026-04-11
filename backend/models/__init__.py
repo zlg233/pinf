@@ -7,6 +7,7 @@ from .user import User
 from .baby import Baby
 from .growth import GrowthRecord
 from .content import Article
+from .video import Video
 from .appointment import Appointment
 from .chat import ChatMessage
 from .verification_code import VerificationCode

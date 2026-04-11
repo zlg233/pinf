@@ -5,6 +5,7 @@ from flask import Blueprint, jsonify, request
 from sqlalchemy import or_
 
 from models.content import Article
+from models.video import Video
 from utils.auth import token_required
 from utils.wechat_official import (
     WechatOfficialError,
@@ -218,3 +219,46 @@ def sync_wechat_articles_to_db(current_user):
         "message": "公众号文章同步完成",
         "data": result,
     })
+
+
+@content_bp.route("/content/videos", methods=["GET"])
+@token_required
+def get_videos(current_user):
+    page = _normalize_page(request.args.get("page"), 1)
+    per_page = _normalize_per_page(request.args.get("per_page"), 10)
+    search = (request.args.get("search") or "").strip()
+    logger.info(
+        "课堂视频列表请求: user_id=%s, page=%s, per_page=%s, search=%s",
+        getattr(current_user, "id", "unknown"),
+        page,
+        per_page,
+        search or "-",
+    )
+
+    cache_key = f"videos:{page}:{per_page}:{search}"
+    cached = _cache_get(cache_key)
+    if cached:
+        logger.info("课堂视频列表命中缓存: key=%s", cache_key)
+        return jsonify(cached)
+
+    query = Video.query
+    if search:
+        query = query.filter(
+            or_(Video.title.ilike(f"%{search}%"), Video.description.ilike(f"%{search}%"))
+        )
+    query = query.order_by(Video.created_at.desc())
+
+    result = _paginate(query, page, per_page)
+    payload = {"status": "success", "data": result["items"], "pagination": result["pagination"]}
+    _cache_set(cache_key, payload)
+    logger.info("课堂视频列表返回: total=%s, page=%s", result["pagination"]["total"], page)
+    return jsonify(payload)
+
+
+@content_bp.route("/content/videos/<int:video_id>", methods=["GET"])
+@token_required
+def get_video_detail(current_user, video_id):
+    video = Video.query.get(video_id)
+    if not video:
+        return jsonify({"status": "error", "message": "视频不存在"}), 404
+    return jsonify({"status": "success", "data": video.to_dict()})

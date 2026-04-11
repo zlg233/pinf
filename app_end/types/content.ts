@@ -18,3 +18,12 @@ export interface ContentArticle {
   publishDate?: string | null;
   tags: string[];
 }
+
+export interface ContentVideo {
+  id: number;
+  title: string;
+  description?: string | null;
+  downUrl?: string | null;
+  name?: string | null;
+  createdAt?: string | null;
+}

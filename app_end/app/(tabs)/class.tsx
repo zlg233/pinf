@@ -13,12 +13,11 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Input, OrganicBackground, OrganicButton, OrganicCard } from '@/components/ui';
+import { Input, OrganicBackground, OrganicButton, OrganicCard, OrganicChipButton } from '@/components/ui';
 import { organicTheme } from '@/constants/theme';
 import { STORAGE_KEYS } from '@/services/api/client';
 import * as contentApi from '@/services/api/content';
-import type { ContentArticle, ContentPagination } from '@/types/content';
-import { buildWebviewRoute } from '@/utils/open-external-url';
+import type { ContentArticle, ContentPagination, ContentVideo } from '@/types/content';
 
 
 const ARTICLE_PAGE_SIZE = 8;
@@ -46,18 +45,26 @@ const buildArticleMeta = (article: ContentArticle) => {
   return date ? `${author} · ${date}` : author;
 };
 
+type ContentItem =
+  | { kind: 'article'; data: ContentArticle }
+  | { kind: 'video'; data: ContentVideo };
+
 export default function ClassScreen() {
   const [searchText, setSearchText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeCategory] = useState('');
+  const [activeTab, setActiveTab] = useState<'article' | 'video'>('article');
   const [articles, setArticles] = useState<ContentArticle[]>([]);
   const [articlePagination, setArticlePagination] = useState<ContentPagination | null>(null);
+  const [videos, setVideos] = useState<ContentVideo[]>([]);
+  const [videoPagination, setVideoPagination] = useState<ContentPagination | null>(null);
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mixedItems, setMixedItems] = useState<ContentItem[]>([]);
+  const [searching, setSearching] = useState(false);
 
-  const cacheKey = useMemo(() => buildCacheKey(searchQuery, activeCategory), [searchQuery, activeCategory]);
+  const cacheKey = useMemo(() => buildCacheKey(searchQuery, activeTab), [searchQuery, activeTab]);
 
   const loadCache = useCallback(async () => {
     try {
@@ -101,7 +108,6 @@ export default function ClassScreen() {
           page: 1,
           per_page: ARTICLE_PAGE_SIZE,
           search: searchQuery || undefined,
-          category: activeCategory || undefined,
         });
 
         setArticles(articleRes.data);
@@ -120,7 +126,34 @@ export default function ClassScreen() {
         setLoading(false);
       }
     },
-    [activeCategory, cacheKey, loadCache, saveCache, searchQuery]
+    [cacheKey, loadCache, saveCache, searchQuery]
+  );
+
+  const fetchVideos = useCallback(
+    async (options?: { force?: boolean; showLoading?: boolean }) => {
+      const { showLoading = true } = options || {};
+
+      if (showLoading) {
+        setLoading(true);
+      }
+      setError(null);
+
+      try {
+        const videoRes = await contentApi.listVideos({
+          page: 1,
+          per_page: ARTICLE_PAGE_SIZE,
+          search: searchQuery || undefined,
+        });
+        setVideos(videoRes.data);
+        setVideoPagination(videoRes.pagination);
+      } catch (fetchError) {
+        const message = fetchError instanceof Error ? fetchError.message : '获取视频失败';
+        setError(message);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [searchQuery]
   );
 
   const handleRefresh = useCallback(async () => {
@@ -130,64 +163,113 @@ export default function ClassScreen() {
   }, [fetchContent]);
 
   const handleSearchSubmit = useCallback(() => {
-    setSearchQuery(searchText.trim());
+    const query = searchText.trim();
+    setSearchQuery(query);
+    if (query) {
+      setSearching(true);
+      setLoading(true);
+      setError(null);
+      Promise.all([
+        contentApi.listArticles({ page: 1, per_page: ARTICLE_PAGE_SIZE, search: query }),
+        contentApi.listVideos({ page: 1, per_page: ARTICLE_PAGE_SIZE, search: query }),
+      ])
+        .then(([articleRes, videoRes]) => {
+          const items: ContentItem[] = [
+            ...articleRes.data.map((a) => ({ kind: 'article' as const, data: a })),
+            ...videoRes.data.map((v) => ({ kind: 'video' as const, data: v })),
+          ];
+          setMixedItems(items);
+          setArticles(articleRes.data);
+          setArticlePagination(articleRes.pagination);
+          setVideos(videoRes.data);
+          setVideoPagination(videoRes.pagination);
+        })
+        .catch((fetchError) => {
+          const message = fetchError instanceof Error ? fetchError.message : '搜索失败';
+          setError(message);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else {
+      setSearching(false);
+      setMixedItems([]);
+      if (activeTab === 'article') {
+        fetchContent({ force: true });
+      } else {
+        fetchVideos({ force: true });
+      }
+    }
   }, [searchText]);
 
-  const handleOpenSourceUrl = useCallback((url?: string | null, title?: string) => {
-    if (!url?.trim()) return false;
-    try {
-      router.push(buildWebviewRoute(url, title));
-      return true;
-    } catch (openError) {
-      const message = openError instanceof Error ? openError.message : '链接无效';
-      setError(message);
-      return false;
-    }
-  }, []);
-
-  const handleArticlePress = useCallback(
-    (article: ContentArticle) => {
-      const opened = handleOpenSourceUrl(article.sourceUrl, article.title);
-      if (!opened) {
-        router.push(`/class-article/${article.id}`);
+  const handleTabChange = useCallback(
+    (tab: 'article' | 'video') => {
+      setActiveTab(tab);
+      setSearching(false);
+      setMixedItems([]);
+      setSearchText('');
+      setSearchQuery('');
+      if (tab === 'article' && articles.length === 0) {
+        fetchContent({ force: true });
+      } else if (tab === 'video' && videos.length === 0) {
+        fetchVideos({ force: true });
       }
     },
-    [handleOpenSourceUrl]
+    [articles.length, fetchContent, fetchVideos, videos.length]
+  );
+
+  const handleItemPress = useCallback(
+    (item: ContentItem) => {
+      if (item.kind === 'article') {
+        router.push(`/class-article/${item.data.id}`);
+      } else {
+        router.push(`/class-video/${item.data.id}`);
+      }
+    },
+    []
   );
 
   const handleLoadMore = useCallback(async () => {
-    if (!articlePagination?.hasNext || loadingMore) return;
-    const nextPage = (articlePagination.page || 1) + 1;
+    const pagination = activeTab === 'article' ? articlePagination : videoPagination;
+    if (!pagination?.hasNext || loadingMore) return;
+    const nextPage = (pagination.page || 1) + 1;
     setLoadingMore(true);
     try {
-      const articleRes = await contentApi.listArticles({
-        page: nextPage,
-        per_page: ARTICLE_PAGE_SIZE,
-        search: searchQuery || undefined,
-        category: activeCategory || undefined,
-      });
-      const merged = [...articles, ...articleRes.data];
-      setArticles(merged);
-      setArticlePagination(articleRes.pagination);
-      await saveCache({
-        key: cacheKey,
-        cachedAt: Date.now(),
-        articles: merged,
-        articlePagination: articleRes.pagination,
-      });
+      if (activeTab === 'article') {
+        const articleRes = await contentApi.listArticles({
+          page: nextPage,
+          per_page: ARTICLE_PAGE_SIZE,
+          search: searchQuery || undefined,
+        });
+        const merged = [...articles, ...articleRes.data];
+        setArticles(merged);
+        setArticlePagination(articleRes.pagination);
+        await saveCache({
+          key: cacheKey,
+          cachedAt: Date.now(),
+          articles: merged,
+          articlePagination: articleRes.pagination,
+        });
+      } else {
+        const videoRes = await contentApi.listVideos({
+          page: nextPage,
+          per_page: ARTICLE_PAGE_SIZE,
+          search: searchQuery || undefined,
+        });
+        setVideos([...videos, ...videoRes.data]);
+        setVideoPagination(videoRes.pagination);
+      }
     } catch (fetchError) {
       const message = fetchError instanceof Error ? fetchError.message : '加载更多失败';
       setError(message);
     } finally {
       setLoadingMore(false);
     }
-  }, [activeCategory, articlePagination, articles, cacheKey, loadingMore, saveCache, searchQuery]);
+  }, [activeTab, articlePagination, articles, cacheKey, loadingMore, saveCache, searchQuery, videoPagination, videos]);
 
   useEffect(() => {
     fetchContent({ force: false });
   }, [fetchContent]);
-
-  const articleEmpty = !loading && articles.length === 0;
 
   return (
     <OrganicBackground variant="morning">
@@ -226,6 +308,19 @@ export default function ClassScreen() {
           )}
         />
 
+        <View style={styles.categoryRow}>
+          <OrganicChipButton
+            label="文章"
+            active={activeTab === 'article'}
+            onPress={() => handleTabChange('article')}
+          />
+          <OrganicChipButton
+            label="视频"
+            active={activeTab === 'video'}
+            onPress={() => handleTabChange('video')}
+          />
+        </View>
+
         {error && (
           <OrganicCard variant="soft" shadow={false} style={styles.errorBanner}>
             <Text style={styles.errorText}>{error}</Text>
@@ -236,45 +331,68 @@ export default function ClassScreen() {
         )}
 
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>精选文章</Text>
-          {articlePagination?.total ? <Text style={styles.sectionMeta}>共 {articlePagination.total} 条</Text> : null}
+          <Text style={styles.sectionTitle}>{activeTab === 'article' ? '精选文章' : '精选视频'}</Text>
+          <Text style={styles.sectionMeta}>共 {activeTab === 'article' ? (articlePagination?.total ?? 0) : (videoPagination?.total ?? 0)} 条</Text>
         </View>
 
-        {loading && articles.length === 0 ? (
-          <View style={styles.loadingRow}>
-            <ActivityIndicator size="small" color={organicTheme.colors.primary.main} />
-            <Text style={styles.loadingText}>加载文章中...</Text>
-          </View>
-        ) : articleEmpty ? (
-          <OrganicCard variant="ghost" shadow={false} style={styles.emptyCard}>
-            <Text style={styles.emptyText}>暂无文章内容</Text>
-          </OrganicCard>
-        ) : (
-          <View style={styles.articleList}>
-            {articles.map((article) => (
-              <OrganicCard key={article.id} shadow={false} style={styles.articleCard}>
-                <TouchableOpacity activeOpacity={0.8} onPress={() => handleArticlePress(article)} style={styles.articlePressable}>
-                  {article.coverUrl ? (
-                    <Image source={{ uri: article.coverUrl }} style={styles.articleThumb} resizeMode="cover" />
-                  ) : (
-                    <View style={styles.articleThumb} />
-                  )}
-                  <View style={styles.articleBody}>
-                    <Text style={styles.articleTitle} numberOfLines={2}>
-                      {article.title}
-                    </Text>
-                    <Text style={styles.articleMeta} numberOfLines={1}>
-                      {buildArticleMeta(article)}
-                    </Text>
-                  </View>
-                  <IconSymbol name="chevron.right" size={organicTheme.iconSizes.xs} color={organicTheme.colors.text.tertiary} />
-                </TouchableOpacity>
-              </OrganicCard>
-            ))}
-          </View>
-        )}
+        {(() => {
+          const items: ContentItem[] = searching
+            ? mixedItems
+            : activeTab === 'article'
+              ? articles.map((a) => ({ kind: 'article' as const, data: a }))
+              : videos.map((v) => ({ kind: 'video' as const, data: v }));
+          const isEmpty = !loading && items.length === 0;
 
-        {articlePagination?.hasNext && (
+          if (loading && items.length === 0) {
+            return (
+              <View style={styles.loadingRow}>
+                <ActivityIndicator size="small" color={organicTheme.colors.primary.main} />
+                <Text style={styles.loadingText}>加载中...</Text>
+              </View>
+            );
+          }
+          if (isEmpty) {
+            return (
+              <OrganicCard variant="ghost" shadow={false} style={styles.emptyCard}>
+                <Text style={styles.emptyText}>暂无内容</Text>
+              </OrganicCard>
+            );
+          }
+          return (
+            <View style={styles.articleList}>
+              {items.map((item) => (
+                <OrganicCard key={`${item.kind}-${item.data.id}`} shadow={false} style={styles.articleCard}>
+                  <TouchableOpacity activeOpacity={0.8} onPress={() => handleItemPress(item)} style={styles.articlePressable}>
+                    {item.kind === 'article' && item.data.coverUrl ? (
+                      <Image source={{ uri: item.data.coverUrl }} style={styles.articleThumb} resizeMode="cover" />
+                    ) : (
+                      <View style={[styles.articleThumb, styles.thumbCenter]}>
+                        <IconSymbol
+                          name={item.kind === 'video' ? 'play.circle' : 'doc.text'}
+                          size={organicTheme.iconSizes.sm}
+                          color={organicTheme.colors.primary.main}
+                        />
+                      </View>
+                    )}
+                    <View style={styles.articleBody}>
+                      <Text style={styles.articleTitle} numberOfLines={2}>
+                        {item.data.title}
+                      </Text>
+                      <Text style={styles.articleMeta} numberOfLines={1}>
+                        {item.kind === 'article'
+                          ? buildArticleMeta(item.data)
+                          : item.data.description || '视频'}
+                      </Text>
+                    </View>
+                    <IconSymbol name="chevron.right" size={organicTheme.iconSizes.xs} color={organicTheme.colors.text.tertiary} />
+                  </TouchableOpacity>
+                </OrganicCard>
+              ))}
+            </View>
+          );
+        })()}
+
+        {!searching && (activeTab === 'article' ? articlePagination?.hasNext : videoPagination?.hasNext) && (
           <View style={styles.loadMore}>
             <OrganicButton
               title={loadingMore ? '加载中...' : '加载更多'}
@@ -397,6 +515,10 @@ const styles = StyleSheet.create({
     borderRadius: organicTheme.shapes.borderRadius.cozy,
     backgroundColor: organicTheme.colors.primary.pale,
     marginRight: organicTheme.spacing.md,
+  },
+  thumbCenter: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   articleBody: {
     flex: 1,
