@@ -18,11 +18,15 @@ const formatDate = (value?: string | null) => {
   ).padStart(2, '0')}`;
 };
 
-const buildArticleHtml = (content: string) => `
+const buildArticleHtml = (content: string) => {
+  // 修复微信 HTML 中 &amp; 实体，确保图片 URL 正确
+  const fixedContent = content.replace(/&amp;/g, '&');
+  return `
 <!DOCTYPE html>
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="referrer" content="no-referrer">
 <style>
   body {
     margin: 0;
@@ -54,7 +58,7 @@ const buildArticleHtml = (content: string) => `
 </style>
 </head>
 <body>
-${content}
+${fixedContent}
 <script>
 (function() {
   function sendHeight() {
@@ -71,7 +75,7 @@ ${content}
 </script>
 </body>
 </html>`;
-
+};
 export default function ArticleDetailScreen() {
   const params = useLocalSearchParams<{ id?: string }>();
   const articleId = Number(params.id);
