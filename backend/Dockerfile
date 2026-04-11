@@ -32,7 +32,7 @@ RUN set -eux; \
     libpq-dev \
     curl \
     && rm -rf /var/lib/apt/lists/* \
-    && pip install --no-cache-dir uv
+    && pip install --no-cache-dir -i https://mirrors.tuna.tsinghua.edu.cn/pypi/web/simple uv
 
 # 复制依赖文件并安装（利用缓存层）
 COPY pyproject.toml uv.lock ./
