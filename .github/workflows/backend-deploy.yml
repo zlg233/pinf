@@ -15,7 +15,7 @@ permissions:
 
 jobs:
   deploy-backend:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-local
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
