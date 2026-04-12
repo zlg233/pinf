@@ -19,12 +19,15 @@ jobs:
     steps:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
+        timeout-minutes: 30
         with:
           host: ${{ secrets.DEPLOY_HOST }}
           username: ${{ secrets.DEPLOY_USER }}
           password: ${{ secrets.DEPLOY_PASSWORD }}
+          command_timeout: 30m
           script: |
+            set -euo pipefail
             cd ${{ vars.BACKEND_PATH }}
-            git remote set-url origin https://git.unself.top/Handy_Wote/pinf.git
+            git remote set-url origin https://git.unself.cn/Handy_Wote/pinf.git
             git pull origin main
             docker compose up -d --build
