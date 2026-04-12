@@ -25,5 +25,6 @@ jobs:
           password: ${{ secrets.DEPLOY_PASSWORD }}
           script: |
             cd ${{ vars.BACKEND_PATH }}
+            git remote set-url origin https://git.unself.top/Handy_Wote/pinf.git
             git pull origin main
             docker compose up -d --build
