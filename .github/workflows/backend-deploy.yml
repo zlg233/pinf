@@ -28,6 +28,6 @@ jobs:
           script: |
             set -euo pipefail
             cd ${{ vars.BACKEND_PATH }}
-            git remote set-url origin https://git.unself.cn/Handy_Wote/pinf.git
+            git remote set-url origin http://git.unself.cn/Handy_Wote/pinf.git
             git pull origin main
             docker compose up -d --build
