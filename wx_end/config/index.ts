@@ -12,6 +12,9 @@ const config = {
   },
   sourceRoot: 'src',
   outputRoot: 'dist',
+  alias: {
+    '@': path.resolve(__dirname, '..', 'src'),
+  },
   plugins: [
     '@tarojs/plugin-framework-react',
   ],
