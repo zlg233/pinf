@@ -71,9 +71,9 @@ export default function LoginPage() {
     setIsSendingCode(true);
     try {
       const res = await sendPhoneCode(phone);
-      const debug = res?.data?.debug;
-      if (debug) {
-        setDebugCode(debug);
+      const code = res?.data?.code;
+      if (code) {
+        setDebugCode(code);
       }
       startCountdown();
       notify('验证码已发送');
