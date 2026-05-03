@@ -1,8 +1,25 @@
 import { Component, PropsWithChildren } from 'react';
+import Taro from '@tarojs/taro';
+import { useAuthStore } from './store';
 import './app.scss';
 
 class App extends Component<PropsWithChildren> {
-  componentDidMount() {}
+  componentDidMount() {
+    this.checkAuth();
+  }
+
+  async checkAuth() {
+    const { initialize } = useAuthStore.getState();
+    await initialize();
+
+    const { isAuthenticated, needSetPassword } = useAuthStore.getState();
+
+    if (!isAuthenticated) {
+      Taro.reLaunch({ url: '/pages/login/index' });
+    } else if (needSetPassword) {
+      Taro.reLaunch({ url: '/pages/set-password/index' });
+    }
+  }
 
   componentDidShow() {}
 
