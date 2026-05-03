@@ -1,0 +1,195 @@
+// ========================================
+// Login Page Styles
+// Warm organic aesthetic matching design tokens
+// ========================================
+
+.login {
+  // ---- Scroll Content ----
+  &__scroll-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 24px 48px;
+    min-height: 100vh;
+  }
+
+  // ---- Logo Area ----
+  &__logo-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 32px;
+    margin-top: 40px;
+  }
+
+  &__logo-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #FFF0EC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+
+  &__logo-text {
+    font-size: 36px;
+    font-weight: 700;
+    color: #FFB5A7;
+    line-height: 1;
+  }
+
+  &__app-name {
+    font-size: 30px;
+    font-weight: 700;
+    color: #FFB5A7;
+    margin-bottom: 8px;
+  }
+
+  &__slogan {
+    font-size: 13px;
+    color: #7A7A7A;
+  }
+
+  // ---- Card Content ----
+  &__card-content {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  }
+
+  &__card-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #4A4A4A;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  // ---- Mode Switch ----
+  &__mode-switch {
+    display: flex;
+    flex-direction: row;
+    background: #FFF0EC;
+    border-radius: 16px;
+    padding: 4px;
+    margin-bottom: 20px;
+  }
+
+  &__mode-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+    border-radius: 14px;
+    transition: background 0.2s ease, box-shadow 0.2s ease;
+
+    &--active {
+      background: #FFFFFF;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    &--hover {
+      opacity: 0.85;
+    }
+  }
+
+  &__mode-text {
+    font-size: 14px;
+    font-weight: 500;
+    color: #7A7A7A;
+
+    &--active {
+      color: #4A4A4A;
+      font-weight: 600;
+    }
+  }
+
+  // ---- Form Fields ----
+  &__field {
+    margin-bottom: 16px;
+  }
+
+  // ---- Code Row (Input + Send Button) ----
+  &__code-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__code-input-wrap {
+    flex: 1;
+  }
+
+  &__send-code-btn {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 16px;
+    height: 44px;
+    background: #FFF0EC;
+    border-radius: 16px;
+    border: 1px solid rgba(74, 74, 74, 0.12);
+    white-space: nowrap;
+    transition: opacity 0.2s ease;
+
+    &--disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    &--hover {
+      opacity: 0.8;
+    }
+  }
+
+  &__send-code-text {
+    font-size: 13px;
+    font-weight: 500;
+    color: #FFB5A7;
+  }
+
+  // ---- Debug Code ----
+  &__debug-code {
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding: 8px 12px;
+    background: #FFF0EC;
+    border-radius: 8px;
+  }
+
+  &__debug-code-text {
+    font-size: 12px;
+    color: #7A7A7A;
+  }
+
+  // ---- Error Text ----
+  &__error {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+
+  &__error-text {
+    font-size: 13px;
+    color: #C54A4A;
+  }
+
+  // ---- Submit Button ----
+  &__submit-btn {
+    margin-top: 24px;
+  }
+
+  // ---- Hint (Terms) ----
+  &__hint {
+    display: block;
+    font-size: 11px;
+    color: #7A7A7A;
+    text-align: center;
+    margin-top: 16px;
+    margin-bottom: 8px;
+  }
+}

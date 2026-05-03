@@ -1,0 +1,64 @@
+{
+  "name": "wx_end",
+  "version": "1.0.0",
+  "private": true,
+  "description": "早护通微信小程序",
+  "templateInfo": {
+    "name": "default",
+    "typescript": true,
+    "css": "sass"
+  },
+  "scripts": {
+    "build:weapp": "taro build --type weapp",
+    "build:swan": "taro build --type swan",
+    "build:alipay": "taro build --type alipay",
+    "build:tt": "taro build --type tt",
+    "build:h5": "taro build --type h5",
+    "build:rn": "taro build --type rn",
+    "build:qq": "taro build --type qq",
+    "dev:weapp": "npm run build:weapp -- --watch",
+    "dev:swan": "npm run build:swan -- --watch",
+    "dev:alipay": "npm run build:alipay -- --watch",
+    "dev:tt": "npm run build:tt -- --watch",
+    "dev:h5": "npm run build:h5 -- --watch",
+    "dev:rn": "npm run build:rn -- --watch",
+    "dev:qq": "npm run build:qq -- --watch"
+  },
+  "browserslist": [
+    "last 3 versions",
+    "Android >= 4.1",
+    "ios >= 8"
+  ],
+  "dependencies": {
+    "@tarojs/components": "3.6.38",
+    "@tarojs/helper": "3.6.38",
+    "@tarojs/plugin-platform-alipay": "3.6.38",
+    "@tarojs/plugin-platform-h5": "3.6.38",
+    "@tarojs/plugin-platform-swan": "3.6.38",
+    "@tarojs/plugin-platform-tt": "3.6.38",
+    "@tarojs/plugin-platform-weapp": "3.6.38",
+    "@tarojs/react": "3.6.38",
+    "@tarojs/runtime": "3.6.38",
+    "@tarojs/shared": "3.6.38",
+    "@tarojs/taro": "3.6.38",
+    "echarts": "^5.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "zustand": "^4.5.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.0",
+    "@babel/runtime": "^7.23.0",
+    "@tarojs/cli": "3.6.38",
+    "@tarojs/mini-runner": "3.6.38",
+    "@tarojs/plugin-framework-react": "^3.6.38",
+    "@tarojs/webpack5-runner": "3.6.38",
+    "@types/react": "^18.2.0",
+    "babel-preset-taro": "3.6.38",
+    "eslint": "^8.50.0",
+    "eslint-config-taro": "3.6.38",
+    "sass": "^1.69.0",
+    "typescript": "^5.2.0",
+    "webpack": "5.88.0"
+  }
+}

@@ -1,0 +1,122 @@
+@import './variables.scss';
+@import './mixins.scss';
+
+// ========================================
+// OrganicCard
+// 温暖有机风格的卡片组件
+// ========================================
+
+.organic-card {
+  position: relative;
+  background: $organic-bg-paper;
+  border-radius: $radius-soft;
+  overflow: hidden;
+  border-width: 1px;
+  border-style: solid;
+  border-color: $organic-border-default;
+  transition: transform 0.2s ease;
+
+  // Shadow variant
+  &--shadow {
+    @include shadow-soft;
+  }
+
+  // Ghost variant
+  &--ghost {
+    border-color: $organic-border-subtle;
+  }
+
+  // Soft variant
+  &--soft {
+    border-color: $organic-border-light;
+  }
+
+  // Glass variant
+  &--glass {
+    background: $glass-bg;
+    border-color: $glass-border;
+  }
+
+  // Pressed state (via hoverClass)
+  &--pressed {
+    border-color: $organic-border-strong;
+  }
+
+  // Active press animation
+  &:active {
+    transform: scale(0.98) translateY(2px);
+  }
+
+  // Overlays
+  &__overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+
+    &--gradient {
+      background: linear-gradient(135deg, $organic-primary-pale, $organic-bg-paper);
+      opacity: 0.5;
+    }
+
+    &--glass {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    &--soft {
+      background: $organic-primary-pale;
+      opacity: 0.3;
+    }
+
+    &--ghost {
+      background: transparent;
+    }
+  }
+
+  // Content
+  &__content {
+    padding: $spacing-lg;
+    position: relative;
+
+    &--fill {
+      padding: 0;
+    }
+  }
+}
+
+// ========================================
+// OrganicCardHeader
+// 简洁的卡片标题组件
+// ========================================
+
+.organic-card-header {
+  // TODO: use @include flex-row-between once added to mixins.scss
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: $spacing-md;
+
+  &__text {
+    flex: 1;
+  }
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $organic-text-primary;
+    margin-bottom: $spacing-xs;
+  }
+
+  &__subtitle {
+    font-size: $font-size-sm;
+    color: $organic-text-secondary;
+  }
+
+  &__action {
+    margin-left: $spacing-md;
+    flex-shrink: 0;
+  }
+}

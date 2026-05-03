@@ -1,0 +1,114 @@
+// === Warm Organic Design Tokens ===
+// Auto-generated from organic-tokens.ts and tokens.ts
+// Maps TypeScript token constants to SCSS variables
+
+// ===== Organic Colors =====
+
+// Primary - Coral
+$organic-primary-main: #FFB5A7 !default;
+$organic-primary-soft: #FFD4CC !default;
+$organic-primary-pale: #FFF0EC !default;
+
+// Accent colors
+$organic-accent-peach: #FFCB9C !default;
+$organic-accent-mint: #C8E6C9 !default;
+$organic-accent-lavender: #E1D5E7 !default;
+$organic-accent-sky: #B8E0E8 !default;
+
+// Text colors
+$organic-text-primary: #4A4A4A !default;
+$organic-text-secondary: #7A7A7A !default;
+$organic-text-tertiary: #AAAAAA !default;
+
+// Background colors
+$organic-bg-cream: #FFF9F5 !default;
+$organic-bg-paper: #FFFEFC !default;
+
+// Border colors (rgba values)
+$organic-border-subtle: rgba(74, 74, 74, 0.06) !default;
+$organic-border-light: rgba(74, 74, 74, 0.12) !default;
+$organic-border-default: rgba(74, 74, 74, 0.18) !default;
+$organic-border-strong: rgba(74, 74, 74, 0.25) !default;
+$organic-border-accent: rgba(255, 181, 167, 0.45) !default;
+$organic-border-danger: rgba(197, 74, 74, 0.45) !default;
+
+// Glass variant colors
+$glass-bg: rgba(255, 255, 255, 0.7) !default;
+$glass-border: rgba(255, 255, 255, 0.8) !default;
+
+// Functional colors (soft variant)
+$organic-success: #A5D6A7 !default;
+$organic-warning: #FFE0B2 !default;
+$organic-error: #FFCCCB !default;
+$organic-info: #BBDEFB !default;
+
+// ===== Organic Shapes (Border Radius) =====
+
+$radius-cozy: 16px !default;
+$radius-soft: 24px !default;
+$radius-pill: 999px !default;
+
+// ===== Organic Typography =====
+
+// Font sizes
+$font-size-xs: 11px !default;
+$font-size-sm: 13px !default;
+$font-size-base: 15px !default;
+$font-size-md: 17px !default;
+$font-size-lg: 20px !default;
+$font-size-xl: 24px !default;
+$font-size-2xl: 30px !default;
+$font-size-3xl: 36px !default;
+
+// Font weights
+$font-weight-regular: 400 !default;
+$font-weight-medium: 500 !default;
+$font-weight-semibold: 600 !default;
+$font-weight-bold: 700 !default;
+
+// ===== Organic Spacing (4px base) =====
+
+$spacing-xs: 4px !default;
+$spacing-sm: 8px !default;
+$spacing-md: 12px !default;
+$spacing-lg: 16px !default;
+$spacing-xl: 20px !default;
+$spacing-2xl: 24px !default;
+$spacing-3xl: 32px !default;
+$spacing-4xl: 40px !default;
+$spacing-5xl: 48px !default;
+
+// ===== Legacy Theme Tokens (from tokens.ts, backward compat for migration) =====
+
+// Colors
+$color-primary: #6B9AC4 !default;
+$color-primary-light: #EBF4FA !default;
+$color-accent: #FF9B73 !default;
+$color-surface: #FFFFFF !default;
+$color-text-main: #2D3436 !default;
+$color-text-sub: #8B9BB4 !default;
+$color-muted-bg: #F0F0F0 !default;
+$color-muted-text: #999999 !default;
+$color-divider: #ddd !default;
+$color-tag-bg: #eee !default;
+$color-border: #2D3436 !default;
+$color-icon-mute: #ccc !default;
+
+// Border Radius (legacy)
+$border-radius-small: 10px !default;
+$border-radius-medium: 14px !default;
+$border-radius-large: 20px !default;
+$border-radius-full: 9999px !default;
+
+// Spacing (legacy, 8px base)
+$spacing-old-xs: 8px !default;
+$spacing-old-sm: 12px !default;
+$spacing-old-md: 16px !default;
+$spacing-old-lg: 20px !default;
+$spacing-old-xl: 24px !default;
+
+// Font sizes (legacy)
+$font-size-old-xs: 12px !default;
+$font-size-old-sm: 14px !default;
+$font-size-old-md: 16px !default;
+$font-size-old-lg: 20px !default;

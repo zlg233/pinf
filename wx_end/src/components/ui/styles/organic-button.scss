@@ -1,0 +1,201 @@
+@import './variables.scss';
+@import './mixins.scss';
+
+// ========================================
+// OrganicButton
+// 温暖有机风格的按钮组件
+// ========================================
+
+.organic-btn {
+  @include flex-row-center;
+  border-radius: $radius-pill;
+  border-width: 1px;
+  border-style: solid;
+  border-color: $organic-border-default;
+  overflow: hidden;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  position: relative;
+
+  // ---- Sizes ----
+  &--small {
+    padding: $spacing-sm $spacing-lg;
+    min-height: 36px;
+  }
+
+  &--medium {
+    padding: $spacing-md $spacing-xl;
+    min-height: 48px;
+  }
+
+  &--large {
+    padding: $spacing-lg $spacing-2xl;
+    min-height: 56px;
+  }
+
+  // ---- Press state ----
+  &:active {
+    transform: scale(0.96);
+  }
+
+  // WeChat hoverClass press feedback
+  &--pressed {
+    border-color: $organic-border-strong;
+  }
+
+  // ---- Variants ----
+
+  // Primary: 珊瑚粉渐变
+  &--primary {
+    background: linear-gradient(135deg, $organic-primary-main, $organic-primary-soft);
+
+    &:active {
+      border-color: $organic-border-strong;
+    }
+  }
+
+  // Secondary: 蜜桃渐变
+  &--secondary {
+    background: linear-gradient(135deg, $organic-accent-peach, $organic-primary-pale);
+
+    &:active {
+      border-color: $organic-border-strong;
+    }
+  }
+
+  // Ghost: 透明背景 + 描边
+  &--ghost {
+    background: transparent;
+    border-color: $organic-border-accent;
+
+    &:active {
+      border-color: $organic-border-strong;
+    }
+  }
+
+  // Soft: 浅色背景 + 浅描边
+  &--soft {
+    background: $organic-primary-pale;
+    border-color: $organic-border-light;
+
+    &:active {
+      border-color: $organic-border-default;
+    }
+  }
+
+  // ---- Disabled state ----
+  &--disabled {
+    background: $organic-primary-pale !important;
+    border-color: $organic-border-subtle !important;
+    opacity: 0.7;
+    pointer-events: none;
+    transform: none !important;
+  }
+
+  // ---- Content ----
+  &__content {
+    @include flex-row-center;
+    z-index: 1;
+  }
+
+  // ---- Text ----
+  &__text {
+    font-weight: $font-weight-semibold;
+    letter-spacing: 0.3px;
+    color: $organic-text-primary;
+
+    &--small {
+      font-size: $font-size-sm;
+    }
+
+    &--medium {
+      font-size: $font-size-base;
+    }
+
+    &--large {
+      font-size: $font-size-md;
+    }
+
+    // Light text for gradient variant backgrounds
+    &--light {
+      color: #FFFFFF;
+    }
+
+    &--disabled {
+      color: $organic-text-secondary;
+    }
+  }
+
+  // ---- Icon ----
+  &__icon {
+    display: flex;
+    align-items: center;
+    z-index: 1;
+
+    &--left {
+      margin-right: $spacing-sm;
+    }
+
+    &--right {
+      margin-left: $spacing-sm;
+    }
+  }
+
+  // ---- Loading spinner ----
+  &__spinner {
+    width: 20px;
+    height: 20px;
+    border: 2.5px solid $organic-text-secondary;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: btn-spin 1s linear infinite;
+
+    // Light spinner for gradient variant backgrounds
+    &--light {
+      border-color: rgba(255, 255, 255, 0.4);
+      border-top-color: transparent;
+    }
+  }
+}
+
+// ========================================
+// OrganicChipButton
+// 胶囊标签按钮
+// ========================================
+
+.organic-chip-btn {
+  @include flex-center;
+  display: inline-flex;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-pill;
+  background: $organic-bg-paper;
+  border: 1px solid $organic-border-default;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  // WeChat hoverClass press feedback
+  &--pressed {
+    opacity: 0.8;
+  }
+
+  &--active {
+    background: $organic-primary-main;
+    border-color: $organic-border-strong;
+
+    &:active {
+      opacity: 0.9;
+    }
+  }
+
+  &__text {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $organic-text-secondary;
+
+    &--active {
+      color: #FFFFFF;
+    }
+  }
+}

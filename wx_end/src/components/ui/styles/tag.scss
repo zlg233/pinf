@@ -1,0 +1,57 @@
+@import './variables.scss';
+@import './mixins.scss';
+
+// ===== Tag Component Styles =====
+// Migrated from RN StyleSheet.create to SCSS
+
+.tag {
+  display: flex;
+  align-items: center;
+  align-self: flex-start;
+  border-radius: $border-radius-medium;
+
+  // ===== Variants =====
+
+  &--default {
+    background-color: $color-tag-bg;
+    color: $color-text-main;
+  }
+
+  &--primary {
+    background-color: $color-primary-light;
+    color: $color-primary;
+  }
+
+  &--accent {
+    background-color: #FFEAA7;
+    color: #D35400;
+  }
+
+  &--muted {
+    background-color: $color-muted-bg;
+    color: $color-muted-text;
+  }
+
+  // ===== Sizes =====
+  // Use shorthand: vertical horizontal
+
+  &--small {
+    padding: 4px 12px;
+  }
+
+  &--medium {
+    padding: $spacing-old-xs $spacing-old-md;
+  }
+
+  // ===== Text =====
+
+  &__text {
+    font-size: $font-size-old-xs;
+    font-weight: $font-weight-medium;
+
+    &--default { color: $color-text-main; }
+    &--primary { color: $color-primary; }
+    &--accent { color: #D35400; }
+    &--muted { color: $color-muted-text; }
+  }
+}

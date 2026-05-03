@@ -1,0 +1,26 @@
+@import './variables.scss';
+@import './mixins.scss';
+
+// ===== Card Component Styles =====
+// Migrated from RN StyleSheet.create to SCSS
+
+.card {
+  background-color: $color-surface;
+  border-radius: $border-radius-large;
+  overflow: hidden;
+  box-sizing: border-box;
+
+  // ===== Variants =====
+
+  &--default {
+    @include shadow-card;
+  }
+
+  &--elevated {
+    @include shadow-card-elevated;
+  }
+
+  &--outlined {
+    border: 1px solid $color-divider;
+  }
+}

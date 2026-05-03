@@ -1,0 +1,161 @@
+@import './variables.scss';
+@import './mixins.scss';
+
+// ===== Modal Component Styles =====
+// Migrated from RN Animated + StyleSheet to pure CSS transitions
+// Position: fixed overlay with .modal--visible / .modal--hidden class toggle
+
+.modal {
+  // ===== Overlay (Backdrop) =====
+  // Fixed full-screen, semi-transparent black
+
+  &__overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    transition: opacity 200ms ease;
+  }
+
+  // ===== Position Variants =====
+
+  &__overlay--bottom {
+    justify-content: flex-end;
+  }
+
+  &__overlay--top {
+    justify-content: flex-start;
+  }
+
+  &__overlay--hidden {
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  &__overlay--visible {
+    opacity: 1;
+  }
+
+  // ===== Backdrop (tap to close) =====
+  // Absolutely fills the overlay, behind the content
+
+  &__backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  // ===== Content Container =====
+  // White card with rounded top corners, animated translateY
+
+  &__content {
+    background-color: $organic-bg-paper;
+    border-top-left-radius: $radius-soft;
+    border-top-right-radius: $radius-soft;
+    border-width: 1px;
+    border-color: $organic-border-default;
+    border-style: solid;
+    padding-top: $spacing-xl;
+    padding-left: $spacing-lg;
+    padding-right: $spacing-lg;
+    position: relative;
+    transition: transform 300ms ease, opacity 200ms ease;
+    overflow: hidden;
+
+    // Minimum width for content
+    min-width: 100%;
+    box-sizing: border-box;
+  }
+
+  &__content--top {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-bottom-left-radius: $radius-soft;
+    border-bottom-right-radius: $radius-soft;
+  }
+
+  // ===== Show/Hide animation states =====
+
+  &__content--hidden {
+    opacity: 0;
+  }
+
+  &__content--visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  &__content--hidden-bottom {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  &__content--hidden-top {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+
+  // ===== Header =====
+
+  &__header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-lg;
+  }
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $organic-text-primary;
+  }
+
+  // ===== Close Button =====
+  // Circular button with "X" text
+
+  &__close-button {
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    background-color: $organic-primary-pale;
+    border: 1px solid $organic-border-light;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__close-icon {
+    font-size: $font-size-sm;
+    color: $organic-text-secondary;
+    line-height: 1;
+  }
+
+  // ===== Children Content Area =====
+
+  &__body {
+    padding-bottom: $spacing-md;
+  }
+
+  &__body--fill {
+    flex: 1;
+  }
+}
+
+// ===== Hover/Press Feedback Classes =====
+// Used by hoverClass on pressable elements (picker triggers, gender buttons)
+
+.picker-trigger-hover {
+  opacity: 0.7;
+}
+
+.gender-btn-hover {
+  opacity: 0.7;
+}

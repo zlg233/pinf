@@ -1,0 +1,97 @@
+// ========================================
+// Set Password Page Styles
+// Warm organic aesthetic matching design tokens
+// ========================================
+
+.set-password {
+  // ---- Scroll Content ----
+  &__scroll-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 24px 48px;
+    min-height: 100vh;
+  }
+
+  // ---- Logo Area ----
+  &__logo-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 32px;
+    margin-top: 40px;
+  }
+
+  &__logo-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #FFF0EC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+
+  &__logo-text {
+    font-size: 36px;
+    font-weight: 700;
+    color: #FFB5A7;
+    line-height: 1;
+  }
+
+  &__app-name {
+    font-size: 30px;
+    font-weight: 700;
+    color: #FFB5A7;
+    margin-bottom: 8px;
+  }
+
+  &__slogan {
+    font-size: 13px;
+    color: #7A7A7A;
+    text-align: center;
+    padding: 0 20px;
+  }
+
+  // ---- Card Content ----
+  &__card-content {
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+  }
+
+  &__card-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #4A4A4A;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  // ---- Form Fields ----
+  &__field {
+    margin-bottom: 16px;
+  }
+
+  // ---- Error Text ----
+  &__error {
+    margin-top: 8px;
+    margin-bottom: 8px;
+  }
+
+  &__error-text {
+    font-size: 13px;
+    color: #C54A4A;
+  }
+
+  // ---- Submit Button ----
+  &__submit-btn {
+    margin-top: 24px;
+  }
+
+  // ---- Exit Button ----
+  &__exit-btn {
+    margin-top: 12px;
+  }
+}

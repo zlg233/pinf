@@ -1,0 +1,112 @@
+@import './variables.scss';
+@import './mixins.scss';
+
+// ===== Input Component Styles =====
+// Migrated from RN StyleSheet.create to SCSS
+
+.input {
+  // ===== Container =====
+  // Wraps the full component (label + input + helper/error)
+
+  &__container {
+    margin-bottom: $spacing-md;
+  }
+
+  // ===== Label =====
+
+  &__label {
+    font-size: $font-size-xs;
+    color: $organic-text-secondary;
+    margin-bottom: $spacing-xs;
+    font-weight: $font-weight-medium;
+  }
+
+  &__required {
+    color: #C54A4A;
+  }
+
+  // ===== Input Wrapper =====
+  // Visually wraps the input field with border, bg, icons
+
+  &__wrapper {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: $organic-bg-paper;
+    border-radius: $radius-cozy;
+    border: 1px solid $organic-border-default;
+
+    &--focused {
+      border-color: $organic-border-strong;
+    }
+
+    &--error {
+      border-color: $organic-border-danger;
+    }
+
+    &--disabled {
+      background-color: $organic-bg-cream;
+      opacity: 0.5;
+    }
+  }
+
+  // ===== Input Field (Taro Input element) =====
+
+  &__field {
+    flex: 1;
+    padding: $spacing-md;
+    font-size: $font-size-sm;
+    color: $organic-text-primary;
+    background: transparent;
+    border: none;
+    outline: none;
+    height: auto;
+    min-height: 44px;
+
+    &--with-left-icon {
+      padding-left: 0;
+    }
+  }
+
+  // ===== Placeholder =====
+  // Applied via placeholderClass prop on Taro Input
+
+  &__placeholder {
+    color: $organic-text-tertiary;
+    font-size: $font-size-sm;
+  }
+
+  // ===== Icons =====
+
+  &__left-icon {
+    padding-left: $spacing-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__right-icon {
+    padding-right: $spacing-md;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__icon-text {
+    font-size: $font-size-sm;
+  }
+
+  // ===== Feedback Text =====
+
+  &__error-text {
+    font-size: $font-size-xs;
+    color: #C54A4A;
+    margin-top: $spacing-xs;
+  }
+
+  &__helper-text {
+    font-size: $font-size-xs;
+    color: $organic-text-secondary;
+    margin-top: $spacing-xs;
+  }
+}

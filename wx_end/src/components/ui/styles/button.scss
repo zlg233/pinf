@@ -1,0 +1,119 @@
+@import './variables.scss';
+@import './mixins.scss';
+
+// ===== Button Component Styles =====
+// Migrated from RN StyleSheet.create to SCSS
+// hoverClass: "button-hover" provides press feedback
+
+.btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border-radius: $border-radius-medium;
+  border: none;
+  box-sizing: border-box;
+
+  // ===== Variants =====
+
+  &--primary {
+    background-color: $color-primary;
+    color: $color-surface;
+    @include shadow-small;
+  }
+
+  &--secondary {
+    background-color: $color-accent;
+    color: $color-surface;
+    @include shadow-small;
+  }
+
+  &--outline {
+    background-color: transparent;
+    color: $color-primary;
+    border: 1.5px solid $color-primary;
+  }
+
+  &--text {
+    background-color: transparent;
+    color: $color-primary;
+  }
+
+  // ===== Sizes =====
+  // px values auto-converted to rpx by Taro pxtransform
+
+  &--small {
+    padding: $spacing-old-xs $spacing-old-md;
+    min-height: 36px;
+  }
+
+  &--medium {
+    padding: $spacing-old-sm $spacing-old-lg;
+    min-height: 48px;
+  }
+
+  &--large {
+    padding: $spacing-old-md $spacing-old-xl;
+    min-height: 56px;
+  }
+
+  // ===== Disabled State =====
+  // Higher specificity to override variant background
+
+  &.btn--disabled {
+    background-color: $color-muted-bg;
+    color: $color-muted-text;
+    opacity: 0.6;
+  }
+
+  // ===== Elements =====
+
+  &__content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__icon {
+    margin-right: $spacing-old-xs;
+  }
+
+  &__text {
+    font-weight: 600;
+    white-space: nowrap;
+    font-size: $font-size-old-md;
+
+    &--small {
+      font-size: $font-size-old-sm;
+    }
+
+    &--medium {
+      font-size: $font-size-old-md;
+    }
+
+    &--large {
+      font-size: $font-size-old-lg;
+    }
+  }
+
+  // ===== Loading Spinner =====
+  // Uses currentColor to match variant text color
+
+  &__loading {
+    width: 20px;
+    height: 20px;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    box-sizing: border-box;
+    @include spin-animation;
+  }
+}
+
+// ===== Press Feedback (hoverClass) =====
+// Applied via hoverClass="button-hover" on View
+
+.button-hover {
+  opacity: 0.7;
+}

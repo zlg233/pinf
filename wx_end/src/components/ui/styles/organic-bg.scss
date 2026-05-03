@@ -1,0 +1,130 @@
+@import './variables.scss';
+@import './mixins.scss';
+
+// ========================================
+// OrganicBackground
+// 温暖有机风格的背景装饰组件
+// ========================================
+
+.organic-bg {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 100vh;
+  background: $organic-bg-cream;
+  overflow: hidden;
+
+  // 主渐变背景 (absolute fill overlay)
+  &__gradient {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.6;
+    pointer-events: none;
+    z-index: 0;
+
+    // Morning variant
+    &--morning {
+      background: linear-gradient(135deg, #FFE5EC, #FFF0E5, #E8F4F8);
+    }
+
+    // Sunset variant
+    &--sunset {
+      background: linear-gradient(135deg, #FFB5A7, #FFCB9C, #FFD4CC);
+    }
+
+    // Mint variant
+    &--mint {
+      background: linear-gradient(135deg, #E8F5E9, #C8E6C9, #A5D6A7);
+    }
+
+    // Sky variant
+    &--sky {
+      background: linear-gradient(135deg, #E3F2FD, #B8E0E8, #90CAF9);
+    }
+  }
+
+  // 装饰性有机形状 (blob)
+  &__blob {
+    position: absolute;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 0;
+
+    &--large {
+      width: 200px;
+      height: 200px;
+      background: $organic-primary-pale;
+      opacity: 0.4;
+      filter: blur(40px);
+    }
+
+    &--small {
+      width: 100px;
+      height: 100px;
+      background: $organic-accent-peach;
+      opacity: 0.3;
+      filter: blur(20px);
+    }
+
+    // Positions
+    &--top-left.organic-bg__blob--large {
+      top: -80px;
+      left: -60px;
+    }
+
+    &--top-left.organic-bg__blob--small {
+      top: 120px;
+      left: -30px;
+    }
+
+    &--bottom-right.organic-bg__blob--large {
+      bottom: -100px;
+      right: -80px;
+    }
+
+    &--bottom-right.organic-bg__blob--small {
+      bottom: 150px;
+      right: -40px;
+    }
+  }
+
+  // 内容层
+  &__content {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    min-height: 100vh;
+  }
+}
+
+// ========================================
+// OrganicCardDecoration
+// 卡片式有机背景装饰
+// ========================================
+
+.organic-card-decoration {
+  position: relative;
+
+  &__glow {
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    right: -4px;
+    bottom: -4px;
+    border-radius: $radius-soft;
+    background: $organic-primary-pale;
+    opacity: 0.3;
+    filter: blur(8px);
+    z-index: -1;
+  }
+
+  &__content {
+    background: $organic-bg-paper;
+    border-radius: $radius-soft;
+    overflow: hidden;
+  }
+}
