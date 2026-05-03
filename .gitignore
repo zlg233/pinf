@@ -149,3 +149,10 @@ data/
 
 # Worktrees
 .worktrees/
+
+# WeChat Mini Program private config
+project.private.config.json
+wx_end/project.private.config.json
+
+# Business documents
+*.pdf
