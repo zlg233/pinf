@@ -1,0 +1,86 @@
+@import '../ui/styles/variables.scss';
+@import '../ui/styles/mixins.scss';
+
+.content-strip {
+  margin-top: $spacing-2xl;
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: $organic-text-primary;
+    margin-bottom: $spacing-md;
+  }
+
+  &__scroll {
+    display: flex;
+    flex-direction: row;
+    white-space: nowrap;
+    padding-bottom: $spacing-xs;
+  }
+
+  &__card {
+    display: inline-flex;
+    flex-direction: column;
+    width: 160px;
+    background: $organic-bg-paper;
+    border-radius: $radius-cozy;
+    padding: $spacing-md;
+    margin-right: $spacing-md;
+    border: 1px solid $organic-border-light;
+    @include shadow-soft;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+
+    &:active {
+      transform: scale(0.97);
+      opacity: 0.85;
+    }
+  }
+
+  &__thumb {
+    height: 90px;
+    border-radius: $border-radius-medium;
+    background: $color-primary-light;
+    margin-bottom: $spacing-sm;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  &__thumb-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__thumb-placeholder {
+    font-size: $font-size-2xl;
+    color: $color-primary;
+    opacity: 0.5;
+  }
+
+  &__tag {
+    align-self: flex-start;
+    background: $color-primary-light;
+    color: $color-primary;
+    border-radius: $border-radius-small;
+    padding: 2px 8px;
+    font-size: $font-size-xs;
+    margin-bottom: 6px;
+    font-weight: $font-weight-medium;
+    display: inline-block;
+  }
+
+  &__card-title {
+    font-size: $font-size-sm;
+    color: $organic-text-primary;
+    line-height: 1.4;
+    font-weight: $font-weight-semibold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+}

@@ -1,7 +1,179 @@
-.profile {
+@import '../../components/ui/styles/variables.scss';
+@import '../../components/ui/styles/mixins.scss';
+
+.page-profile {
+  min-height: 100vh;
+  padding: $spacing-xl;
+  box-sizing: border-box;
+
+  // 两个卡片之间的间距
+  > .organic-card + .organic-card {
+    margin-top: $spacing-lg;
+  }
+}
+
+// ===== 用户信息区域 =====
+
+.profile-top {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $spacing-lg;
+}
+
+.avatar-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: $organic-primary-main;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.avatar-text {
+  font-size: 26px;
+  color: #FFFFFF;
+  font-weight: $font-weight-semibold;
+  line-height: 1;
+}
+
+.profile-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.nickname-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.nickname {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $organic-text-primary;
+  line-height: 22px;
+}
+
+.edit-icon {
+  font-size: $font-size-sm;
+  color: $organic-text-tertiary;
+  line-height: 1;
+}
+
+.phone {
+  font-size: $font-size-sm;
+  color: $organic-text-secondary;
+  line-height: 20px;
+}
+
+// ===== 菜单列表 =====
+
+.menu-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+  padding: 0 4px;
+
+  + .menu-item {
+    border-top: 1px solid $organic-border-subtle;
+  }
+}
+
+.menu-left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $spacing-md;
+}
+
+.menu-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: $organic-primary-pale;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.menu-text {
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: $organic-text-primary;
+  line-height: 22px;
+
+  &--danger {
+    color: #E57373;
+  }
+}
+
+.menu-arrow {
+  font-size: $font-size-md;
+  color: $organic-text-tertiary;
+  line-height: 1;
+}
+
+// ===== 编辑昵称弹窗 =====
+
+.edit-modal-content {
+  padding-bottom: $spacing-sm;
+}
+
+.edit-modal-input {
+  margin-bottom: $spacing-lg;
+}
+
+// ===== 关于我们弹窗 =====
+
+.about-modal-content {
+  padding: $spacing-xl 0;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.about-logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: $organic-primary-pale;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  height: 100vh;
+  margin-bottom: $spacing-lg;
+  font-size: 28px;
+}
+
+.about-name {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $organic-text-primary;
+  margin-bottom: $spacing-sm;
+  line-height: 28px;
+}
+
+.about-version {
+  font-size: $font-size-sm;
+  color: $organic-text-secondary;
+  margin-bottom: $spacing-lg;
+  line-height: 20px;
+}
+
+.about-desc {
+  font-size: $font-size-xs;
+  color: $organic-text-tertiary;
+  text-align: center;
+  line-height: 1.6;
+  padding: 0 $spacing-xl;
 }

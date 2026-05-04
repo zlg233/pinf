@@ -1,0 +1,90 @@
+@import '../ui/styles/variables.scss';
+@import '../ui/styles/mixins.scss';
+
+.appointment-card {
+  display: flex;
+  flex-direction: row;
+  background: $color-surface;
+  border-radius: $radius-cozy;
+  padding: $spacing-lg;
+  align-items: center;
+  gap: $spacing-md;
+  @include shadow-soft;
+  border: 1px solid $organic-border-light;
+
+  &__date-pill {
+    width: 60px;
+    height: 70px;
+    border-radius: $border-radius-medium;
+    background: $color-primary-light;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-xs;
+    flex-shrink: 0;
+  }
+
+  &__date-day {
+    font-size: 18px;
+    font-weight: $font-weight-bold;
+    color: $color-primary;
+  }
+
+  &__date-month {
+    font-size: $font-size-xs;
+    color: $color-text-sub;
+  }
+
+  &__content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  &__header-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &__title {
+    font-size: $font-size-md;
+    font-weight: $font-weight-bold;
+    color: $organic-text-primary;
+    @include text-ellipsis;
+    flex: 1;
+    margin-right: $spacing-sm;
+  }
+
+  &__subtitle {
+    font-size: $font-size-sm;
+    color: $color-text-sub;
+  }
+
+  &__meta-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  &__meta {
+    font-size: $font-size-xs;
+    color: $color-text-sub;
+  }
+
+  &__action {
+    align-self: flex-start;
+    margin-top: $spacing-xs;
+  }
+
+  &__action-text {
+    color: $color-primary;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+  }
+}

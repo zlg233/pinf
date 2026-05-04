@@ -1,0 +1,61 @@
+@import '../ui/styles/variables.scss';
+
+.info-once-modal {
+  &__content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $organic-text-primary;
+  }
+
+  &__subtitle {
+    margin-top: $spacing-xs;
+    font-size: $font-size-sm;
+    color: $organic-text-secondary;
+    line-height: 20px;
+  }
+
+  &__list {
+    margin-top: $spacing-md;
+    margin-bottom: $spacing-md;
+    max-height: 360px;
+  }
+
+  &__list-content {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+
+  &__row {
+    padding: $spacing-md;
+    border-radius: $radius-cozy;
+    background-color: $organic-bg-cream;
+    border-width: 1px;
+    border-style: solid;
+    border-color: $organic-border-light;
+  }
+
+  &__row-title {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $organic-text-primary;
+  }
+
+  &__row-meta {
+    margin-top: 4px;
+    font-size: $font-size-xs;
+    color: $organic-text-secondary;
+    line-height: 18px;
+  }
+
+  &__action {
+    display: flex;
+    justify-content: center;
+    padding-top: $spacing-sm;
+  }
+}

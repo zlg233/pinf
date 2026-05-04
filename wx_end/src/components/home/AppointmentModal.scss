@@ -1,0 +1,62 @@
+@import '../ui/styles/variables.scss';
+
+.appointment-modal {
+  &__scroll {
+    padding-bottom: $spacing-lg;
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+
+  &__datetime-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+
+  &__field-label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: $organic-text-primary;
+  }
+
+  &__picker-trigger {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-width: 1.5px;
+    border-style: solid;
+    border-color: $organic-border-default;
+    border-radius: $radius-cozy;
+    padding: $spacing-md $spacing-lg;
+    min-height: 48px;
+    background-color: $organic-bg-paper;
+    box-sizing: border-box;
+  }
+
+  &__picker-text {
+    font-size: $font-size-base;
+    color: $organic-text-primary;
+  }
+
+  &__picker-arrow {
+    font-size: 10px;
+    color: $organic-text-tertiary;
+    margin-left: $spacing-sm;
+  }
+
+  &__error {
+    color: #D64545;
+    font-size: $font-size-xs;
+  }
+}

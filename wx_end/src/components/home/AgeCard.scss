@@ -1,0 +1,80 @@
+@import '../ui/styles/variables.scss';
+@import '../ui/styles/mixins.scss';
+
+.age-card {
+  position: relative;
+  overflow: hidden;
+  border-radius: $radius-soft;
+  background: linear-gradient(135deg, $color-primary, #86B3D1);
+  padding: $spacing-xl;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    top: -60px;
+    right: -20px;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.14);
+    bottom: -40px;
+    left: 30px;
+    pointer-events: none;
+  }
+
+  &__label {
+    color: #FFFFFF;
+    font-size: $font-size-sm;
+    opacity: 0.9;
+    position: relative;
+  }
+
+  &__title {
+    margin-top: 6px;
+    color: #FFFFFF;
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    position: relative;
+  }
+
+  &__desc {
+    margin-top: 6px;
+    color: #FFFFFF;
+    font-size: $font-size-sm;
+    opacity: 0.9;
+    position: relative;
+  }
+
+  &__badge-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    margin-top: $spacing-md;
+    position: relative;
+  }
+
+  &__action {
+    margin-top: $spacing-md;
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    position: relative;
+  }
+
+  &__action-text {
+    color: #FFFFFF;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+  }
+}

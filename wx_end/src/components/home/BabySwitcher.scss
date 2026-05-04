@@ -1,0 +1,109 @@
+@import '../ui/styles/variables.scss';
+@import '../ui/styles/mixins.scss';
+
+.baby-switcher {
+  &__scroll {
+    display: flex;
+    flex-direction: row;
+    white-space: nowrap;
+    padding: $spacing-sm 0;
+  }
+
+  &__item {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $radius-pill;
+    background: $organic-bg-paper;
+    border: 1.5px solid $organic-border-light;
+    margin-right: $spacing-md;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+
+    &--active {
+      background: $organic-primary-main;
+      border-color: $organic-primary-main;
+
+      .baby-switcher__name {
+        color: #FFFFFF;
+      }
+
+      .baby-switcher__age {
+        color: rgba(255, 255, 255, 0.85);
+      }
+
+      .baby-switcher__avatar {
+        background: rgba(255, 255, 255, 0.25);
+      }
+
+      .baby-switcher__avatar-icon {
+        color: #FFFFFF;
+      }
+    }
+  }
+
+  &__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: $organic-primary-pale;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: $spacing-sm;
+    flex-shrink: 0;
+  }
+
+  &__avatar-icon {
+    font-size: $font-size-base;
+    color: $organic-primary-main;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  &__name {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $organic-text-primary;
+    line-height: 1.3;
+  }
+
+  &__age {
+    font-size: $font-size-xs;
+    color: $organic-text-secondary;
+    line-height: 1.3;
+  }
+
+  &__add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-sm $spacing-lg;
+    border-radius: $radius-pill;
+    background: $organic-primary-pale;
+    border: 1.5px dashed $organic-primary-soft;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+
+    &:active {
+      background: $organic-primary-soft;
+    }
+  }
+
+  &__add-icon {
+    font-size: $font-size-base;
+    color: $organic-primary-main;
+    margin-right: $spacing-xs;
+  }
+
+  &__add-text {
+    font-size: $font-size-sm;
+    color: $organic-primary-main;
+    font-weight: $font-weight-medium;
+  }
+}

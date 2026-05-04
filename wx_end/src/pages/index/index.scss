@@ -1,7 +1,448 @@
+@import '../../components/ui/styles/variables.scss';
+@import '../../components/ui/styles/mixins.scss';
+
+// ===== Greeting Section =====
 .index {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
+  &__scroll {
+    height: 100vh;
+    padding: 0 $spacing-lg;
+    padding-bottom: 120px;
+    box-sizing: border-box;
+  }
+
+  &__greeting {
+    position: relative;
+    min-height: 80px;
+    margin-bottom: $spacing-xl;
+    padding-top: 12px;
+  }
+
+  &__greeting-text {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: $organic-text-primary;
+    margin-bottom: $spacing-xs;
+    line-height: 1.2;
+    letter-spacing: -0.4px;
+  }
+
+  &__greeting-subtext {
+    font-size: $font-size-sm;
+    color: $organic-text-secondary;
+    line-height: 1.5;
+    letter-spacing: 0.2px;
+  }
+
+  // ===== Loading & Error States =====
+  &__loading-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-xl 0;
+    gap: $spacing-sm;
+  }
+
+  &__loading-text {
+    font-size: $font-size-sm;
+    color: $organic-text-secondary;
+  }
+
+  &__error-text {
+    font-size: $font-size-sm;
+    color: #D64545;
+    margin-bottom: $spacing-sm;
+  }
+
+  &__retry-text {
+    font-size: $font-size-sm;
+    color: $organic-primary-main;
+    font-weight: $font-weight-semibold;
+  }
+
+  // ===== Baby Card =====
+  &__baby-card {
+    cursor: pointer;
+  }
+
+  &__baby-info {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  &__baby-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: $organic-primary-main;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-right: $spacing-md;
+  }
+
+  &__baby-avatar-text {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: #FFFFFF;
+  }
+
+  &__baby-details {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__baby-name {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $organic-text-primary;
+    margin-bottom: 2px;
+  }
+
+  &__baby-age {
+    font-size: $font-size-sm;
+    color: $organic-text-secondary;
+    margin-bottom: 2px;
+  }
+
+  &__baby-meta {
+    font-size: $font-size-xs;
+    color: $organic-text-tertiary;
+  }
+
+  &__switch-indicator {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: $spacing-xs;
+    padding: $spacing-sm 0;
+    flex-shrink: 0;
+  }
+
+  &__switch-text {
+    font-size: $font-size-sm;
+    color: $organic-primary-main;
+  }
+
+  &__switch-arrow {
+    font-size: $font-size-sm;
+    color: $organic-primary-main;
+  }
+
+  &__badges-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+    margin-top: $spacing-md;
+  }
+
+  &__badge {
+    padding: $spacing-xs $spacing-md;
+    border-radius: $radius-pill;
+    background: $organic-primary-pale;
+  }
+
+  &__badge-text {
+    font-size: $font-size-xs;
+    color: $organic-text-primary;
+    font-weight: $font-weight-semibold;
+  }
+
+  // ===== Add Baby Card =====
+  &__add-baby-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  &__add-baby-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: $organic-primary-pale;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-right: $spacing-md;
+  }
+
+  &__add-baby-icon-text {
+    font-size: $font-size-xl;
+    color: $organic-primary-main;
+    font-weight: $font-weight-bold;
+  }
+
+  &__add-baby-text {
+    flex: 1;
+  }
+
+  &__add-baby-title {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $organic-text-primary;
+    margin-bottom: 2px;
+  }
+
+  &__add-baby-subtitle {
+    font-size: $font-size-sm;
+    color: $organic-text-secondary;
+  }
+
+  // ===== Section Headers =====
+  &__section-header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: $spacing-md;
+  }
+
+  &__section-title {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-semibold;
+    color: $organic-text-primary;
+    line-height: 1.2;
+    letter-spacing: -0.3px;
+  }
+
+  // ===== Appointment Card =====
+  &__appointment-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  &__appointment-date {
+    width: 56px;
+    height: 56px;
+    border-radius: $radius-cozy;
+    background: $organic-primary-pale;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-right: $spacing-md;
+  }
+
+  &__appointment-day {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: $organic-primary-main;
+    line-height: 1.2;
+  }
+
+  &__appointment-month {
+    font-size: $font-size-xs;
+    color: $organic-primary-main;
+    line-height: 1.2;
+  }
+
+  &__appointment-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__appointment-clinic {
+    font-size: $font-size-md;
+    font-weight: $font-weight-medium;
+    color: $organic-text-primary;
+    margin-bottom: 2px;
+    line-height: 1.4;
+    @include text-ellipsis;
+  }
+
+  &__appointment-department {
+    font-size: $font-size-sm;
+    color: $organic-text-secondary;
+    line-height: 1.3;
+    @include text-ellipsis;
+  }
+
+  &__status-badge {
+    padding: $spacing-xs $spacing-md;
+    border-radius: $radius-pill;
+    flex-shrink: 0;
+    margin-left: $spacing-sm;
+
+    &--pending {
+      background: $organic-warning;
+    }
+
+    &--completed {
+      background: $organic-success;
+    }
+
+    &--expired {
+      background: #E0E0E0;
+    }
+  }
+
+  &__status-text {
+    font-size: $font-size-xs;
+    color: $organic-text-primary;
+    font-weight: $font-weight-medium;
+  }
+
+  // ===== Growth Preview =====
+  &__growth-preview {
+    padding: 0;
+  }
+
+  &__growth-preview-title {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: $organic-text-secondary;
+    margin-bottom: $spacing-md;
+    padding: 0 $spacing-lg;
+    padding-top: $spacing-lg;
+  }
+
+  &__growth-metrics {
+    display: flex;
+    flex-direction: row;
+    padding: 0 $spacing-lg;
+    padding-bottom: $spacing-md;
+    gap: $spacing-lg;
+  }
+
+  &__growth-metric {
+    flex: 1;
+  }
+
+  &__growth-metric-label {
+    font-size: $font-size-xs;
+    color: $organic-text-secondary;
+    margin-bottom: $spacing-xs;
+  }
+
+  &__growth-metric-value {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: $organic-primary-main;
+    line-height: 1.3;
+    letter-spacing: -0.3px;
+  }
+
+  &__growth-metric-unit {
+    font-size: $font-size-sm;
+    color: $organic-text-secondary;
+    font-weight: $font-weight-regular;
+  }
+
+  // ===== Empty States =====
+  &__empty-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $spacing-3xl 0;
+  }
+
+  &__empty-text {
+    font-size: $font-size-md;
+    font-weight: $font-weight-medium;
+    color: $organic-text-primary;
+    margin-bottom: $spacing-xs;
+  }
+
+  &__empty-subtext {
+    font-size: $font-size-sm;
+    color: $organic-text-secondary;
+    text-align: center;
+  }
+
+  // ===== Classroom =====
+  &__classroom-item {
+    width: 100%;
+    padding: $spacing-md;
+    border-radius: $radius-cozy;
+    background: $organic-bg-cream;
+    border: 1px solid $organic-border-light;
+    cursor: pointer;
+    box-sizing: border-box;
+  }
+
+  &__classroom-tag {
+    display: inline-block;
+    padding: 2px $spacing-sm;
+    border-radius: $radius-pill;
+    background: $organic-primary-pale;
+    margin-bottom: $spacing-xs;
+  }
+
+  &__classroom-tag-text {
+    font-size: $font-size-xs;
+    color: $organic-text-primary;
+    font-weight: $font-weight-medium;
+  }
+
+  &__classroom-title {
+    font-size: $font-size-sm;
+    color: $organic-text-primary;
+    line-height: 1.4;
+  }
+
+  // ===== Bottom Spacer =====
+  &__bottom-spacer {
+    height: $spacing-5xl;
+  }
+
+  // ===== Baby List Modal =====
+  &__baby-list-content {
+    padding: $spacing-md 0;
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+
+  &__baby-list-item {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: $spacing-md;
+    border-radius: $radius-cozy;
+    background: $organic-bg-paper;
+    border: 1px solid $organic-border-light;
+
+    &--active {
+      background: $organic-primary-pale;
+      border-color: $organic-border-strong;
+    }
+  }
+
+  &__baby-list-name {
+    font-size: $font-size-md;
+    font-weight: $font-weight-medium;
+    color: $organic-text-primary;
+  }
+
+  &__baby-list-check {
+    font-size: $font-size-md;
+    color: $organic-primary-main;
+    font-weight: $font-weight-bold;
+  }
+
+  &__baby-list-add {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: $spacing-sm;
+    padding: $spacing-md;
+    border-radius: $radius-cozy;
+    border: 1px dashed $organic-primary-main;
+    cursor: pointer;
+  }
+
+  &__baby-list-add-text {
+    font-size: $font-size-md;
+    font-weight: $font-weight-medium;
+    color: $organic-primary-main;
+  }
 }

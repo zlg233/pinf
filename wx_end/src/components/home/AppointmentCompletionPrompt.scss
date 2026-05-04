@@ -1,0 +1,64 @@
+@import '../ui/styles/variables.scss';
+
+.appointment-prompt {
+  &__card {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__title {
+    font-size: $font-size-md;
+    font-weight: $font-weight-semibold;
+    color: $organic-text-primary;
+  }
+
+  &__message {
+    margin-top: $spacing-sm;
+    font-size: $font-size-sm;
+    line-height: 22px;
+    color: $organic-text-secondary;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: $spacing-sm;
+    margin-top: $spacing-lg;
+  }
+
+  &__button {
+    min-width: 96px;
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-cozy;
+    padding: 0 $spacing-md;
+    border-width: 1px;
+    border-style: solid;
+    box-sizing: border-box;
+  }
+
+  &__button--secondary {
+    background-color: $organic-bg-paper;
+    border-color: $organic-border-light;
+  }
+
+  &__button--primary {
+    background-color: $organic-primary-pale;
+    border-color: $organic-border-accent;
+  }
+
+  &__button-text--secondary {
+    color: $organic-text-secondary;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+  }
+
+  &__button-text--primary {
+    color: $organic-text-primary;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+  }
+}
