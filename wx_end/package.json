@@ -42,6 +42,7 @@
     "@tarojs/shared": "3.6.38",
     "@tarojs/taro": "3.6.38",
     "echarts": "^5.5.0",
+    "echarts-for-weixin": "^1.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "zustand": "^4.5.0"
