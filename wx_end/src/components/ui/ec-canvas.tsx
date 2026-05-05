@@ -92,6 +92,7 @@ export const EcCanvas: React.FC<EcCanvasProps> = ({
 
     return () => {
       disposedRef.current = true;
+      initCalledRef.current = false;
     };
     // 仅在挂载/卸载时执行一次
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -130,6 +131,7 @@ export const EcCanvas: React.FC<EcCanvasProps> = ({
   useEffect(() => {
     return () => {
       disposedRef.current = true;
+      initCalledRef.current = false;
       if (chartRef.current) {
         chartRef.current.off('click');
         disposeChart(chartRef.current);

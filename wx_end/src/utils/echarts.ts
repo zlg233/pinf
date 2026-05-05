@@ -6,7 +6,7 @@
  */
 
 import Taro from '@tarojs/taro';
-import * as echarts from 'echarts';
+import * as echarts from 'echarts-for-weixin';
 import type { EChartsOption } from 'echarts';
 
 export type { EChartsOption };
