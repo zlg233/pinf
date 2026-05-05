@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
 import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
@@ -21,6 +21,18 @@ const GrowthRecordModal: React.FC<GrowthRecordModalProps> = ({ visible, onClose,
   const [loading, setLoading] = useState(false);
   const [recordedAt, setRecordedAt] = useState<Date>(() => new Date());
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // 当弹窗打开时重置表单
+  useEffect(() => {
+    if (visible) {
+      setWeight('');
+      setHeight('');
+      setHead('');
+      setNote('');
+      setRecordedAt(new Date());
+      setErrors({});
+    }
+  }, [visible]);
 
   const formatDateTime = (date: Date) => {
     const yyyy = date.getFullYear();
