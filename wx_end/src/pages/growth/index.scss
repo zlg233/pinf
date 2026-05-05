@@ -1,0 +1,196 @@
+/**
+ * 成长曲线页面样式
+ */
+
+@use '../../components/ui/styles/variables' as *;
+
+// ── Container ──
+.page-growth {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: $organic-bg-cream;
+}
+
+// ── Header ──
+.page-growth__header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 44px $spacing-lg $spacing-md;
+  background-color: $organic-bg-paper;
+  border-bottom: 1px solid $organic-border-subtle;
+  flex-shrink: 0;
+}
+
+.page-growth__back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: $organic-primary-pale;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-growth__back-btn--pressed {
+  opacity: 0.6;
+}
+
+.page-growth__back-icon {
+  font-size: $font-size-lg;
+  color: $organic-text-primary;
+  line-height: 1;
+}
+
+.page-growth__title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $organic-text-primary;
+}
+
+.page-growth__refresh-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-growth__refresh-btn--pressed {
+  opacity: 0.6;
+}
+
+.page-growth__refresh-icon {
+  font-size: $font-size-lg;
+  color: $organic-text-secondary;
+  line-height: 1;
+}
+
+// ── Scroll View ──
+.page-growth__scroll {
+  flex: 1;
+}
+
+// ── Center (Empty State) ──
+.page-growth__center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-5xl $spacing-lg;
+  gap: $spacing-md;
+}
+
+.page-growth__center-icon {
+  font-size: $font-size-3xl;
+}
+
+.page-growth__center-text {
+  font-size: $font-size-md;
+  color: $organic-text-secondary;
+}
+
+// ── Baby Card ──
+.page-growth__baby-card {
+  background-color: $organic-bg-paper;
+  padding: $spacing-lg;
+  border-radius: $radius-soft;
+  margin: $spacing-lg $spacing-lg 0;
+}
+
+.page-growth__baby-name {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $organic-text-primary;
+  margin-bottom: $spacing-xs;
+}
+
+.page-growth__baby-meta {
+  font-size: $font-size-sm;
+  color: $organic-text-secondary;
+}
+
+// ── View Switch ──
+.page-growth__view-switch {
+  display: flex;
+  flex-direction: row;
+  background-color: #F0F0F0;
+  border-radius: $radius-soft;
+  padding: $spacing-xs;
+  margin: $spacing-md $spacing-lg 0;
+  gap: $spacing-xs;
+}
+
+.page-growth__view-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  padding: $spacing-sm 0;
+  border-radius: $radius-cozy;
+}
+
+.page-growth__view-tab--active {
+  background-color: $organic-bg-paper;
+}
+
+.page-growth__view-tab--pressed {
+  opacity: 0.8;
+}
+
+.page-growth__view-tab-icon {
+  font-size: $font-size-sm;
+  line-height: 1;
+}
+
+.page-growth__view-tab-icon--active {
+  // 活跃状态图标无额外样式，保持一致
+}
+
+.page-growth__view-tab-text {
+  font-size: $font-size-sm;
+  color: $organic-text-secondary;
+}
+
+.page-growth__view-tab-text--active {
+  color: $organic-primary-main;
+  font-weight: $font-weight-semibold;
+}
+
+// ── Content Area ──
+.page-growth__content {
+  padding: 0 $spacing-lg;
+}
+
+// ── Add Record Button ──
+.page-growth__add-btn {
+  background-color: $organic-primary-main;
+  padding: $spacing-md 0;
+  border-radius: $radius-pill;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: $spacing-md $spacing-lg;
+  // shadow
+  box-shadow: 0 2px 8px rgba($organic-primary-main, 0.3);
+}
+
+.page-growth__add-btn--pressed {
+  opacity: 0.85;
+}
+
+.page-growth__add-btn-text {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: #FFFFFF;
+}
+
+// ── Bottom Spacer ──
+.page-growth__bottom-spacer {
+  height: 40px;
+}

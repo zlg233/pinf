@@ -1,0 +1,230 @@
+/**
+ * GrowthRecordList 样式
+ */
+
+@use '../../components/ui/styles/variables' as *;
+
+// ── Container ──
+.grl {
+  background-color: $organic-bg-paper;
+  border-radius: $radius-soft;
+  padding: $spacing-lg;
+  // shadows are handled by parent (the page view)
+}
+
+// ── Header ──
+.grl__header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-lg;
+}
+
+.grl__title {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $organic-text-primary;
+}
+
+.grl__refresh-btn {
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $radius-pill;
+}
+
+.grl__refresh-btn--pressed {
+  opacity: 0.6;
+}
+
+.grl__refresh-text {
+  font-size: $font-size-sm;
+  color: $organic-primary-main;
+}
+
+.grl__refresh-text--disabled {
+  color: $organic-text-tertiary;
+}
+
+// ── Center (Loading / Empty) ──
+.grl__center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-3xl 0;
+  gap: $spacing-sm;
+}
+
+.grl__spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid $organic-border-light;
+  border-top-color: $organic-primary-main;
+  border-radius: 50%;
+  animation: grl-spin 0.8s linear infinite;
+}
+
+@keyframes grl-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.grl__loading-text {
+  font-size: $font-size-sm;
+  color: $organic-text-secondary;
+  margin-top: $spacing-sm;
+}
+
+.grl__empty-icon {
+  font-size: $font-size-2xl;
+  margin-bottom: $spacing-sm;
+}
+
+.grl__empty-text {
+  font-size: $font-size-base;
+  color: $organic-text-secondary;
+}
+
+.grl__empty-hint {
+  font-size: $font-size-sm;
+  color: $organic-text-tertiary;
+  text-align: center;
+}
+
+// ── Scroll ──
+.grl__scroll {
+  max-height: 400px;
+}
+
+// ── Metric Section ──
+.grl__section {
+  margin-bottom: $spacing-md;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.grl__section-header {
+  padding: $spacing-xs 0;
+  margin-bottom: $spacing-xs;
+}
+
+.grl__section-title {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: $organic-text-primary;
+}
+
+// ── Record Card ──
+.grl__card {
+  background-color: $organic-bg-cream;
+  border-radius: $radius-cozy;
+  padding: $spacing-md;
+  margin-bottom: $spacing-sm;
+}
+
+.grl__card-main {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.grl__card-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.grl__card-value-row {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: $spacing-sm;
+}
+
+.grl__card-value {
+  font-size: $font-size-md;
+  font-weight: $font-weight-bold;
+  color: $organic-primary-main;
+}
+
+.grl__card-unit {
+  font-size: $font-size-sm;
+  color: $organic-text-secondary;
+  font-weight: $font-weight-regular;
+}
+
+.grl__card-date {
+  font-size: $font-size-xs;
+  color: $organic-text-secondary;
+}
+
+.grl__card-note {
+  font-size: $font-size-sm;
+  color: $organic-text-secondary;
+  font-style: italic;
+}
+
+// ── Actions ──
+.grl__card-actions {
+  display: flex;
+  flex-direction: row;
+  gap: $spacing-xs;
+  flex-shrink: 0;
+  margin-left: $spacing-sm;
+}
+
+.grl__action-btn {
+  padding: 6px $spacing-sm;
+  border-radius: $radius-pill;
+  background-color: $organic-primary-pale;
+}
+
+.grl__action-btn--delete {
+  background-color: #FFF0EC; // soft red tone from organic palette
+}
+
+.grl__action-btn--pressed {
+  opacity: 0.6;
+}
+
+.grl__action-btn-text {
+  font-size: $font-size-xs;
+  color: $organic-primary-main;
+  font-weight: $font-weight-semibold;
+}
+
+.grl__action-btn-text--delete {
+  color: #D32F2F;
+}
+
+// ── Edit Form (inside Modal) ──
+.grl__edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-lg;
+  padding-bottom: $spacing-lg;
+}
+
+.grl__edit-date-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 $spacing-xs;
+}
+
+.grl__edit-label {
+  font-size: $font-size-sm;
+  color: $organic-text-secondary;
+}
+
+.grl__edit-actions {
+  display: flex;
+  flex-direction: row;
+  gap: $spacing-sm;
+  margin-top: $spacing-sm;
+}
