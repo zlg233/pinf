@@ -93,13 +93,7 @@
   color: $organic-text-secondary;
 }
 
-// ── Baby Card ──
-.page-growth__baby-card {
-  background-color: $organic-bg-paper;
-  padding: $spacing-lg;
-  border-radius: $radius-soft;
-  margin: $spacing-lg $spacing-lg 0;
-}
+// ── Baby Card (shell handled by OrganicCard, inner text styles below) ──
 
 .page-growth__baby-name {
   font-size: $font-size-md;
@@ -117,7 +111,7 @@
 .page-growth__view-switch {
   display: flex;
   flex-direction: row;
-  background-color: #F0F0F0;
+  background-color: $color-muted-bg;
   border-radius: $radius-soft;
   padding: $spacing-xs;
   margin: $spacing-md $spacing-lg 0;

@@ -116,14 +116,7 @@
   color: $organic-text-primary;
 }
 
-// ── Record Card ──
-.grl__card {
-  background-color: $organic-bg-cream;
-  border-radius: $radius-cozy;
-  padding: $spacing-md;
-  margin-bottom: $spacing-sm;
-}
-
+// ── Record Card (inner content, card shell handled by OrganicCard) ──
 .grl__card-main {
   display: flex;
   flex-direction: row;
@@ -184,7 +177,7 @@
 }
 
 .grl__action-btn--delete {
-  background-color: #FFF0EC; // soft red tone from organic palette
+  background-color: $organic-primary-pale;
 }
 
 .grl__action-btn--pressed {

@@ -14,6 +14,8 @@ import Taro from '@tarojs/taro';
 import { GrowthChartView } from '@/components/growth/GrowthChartView';
 import { GrowthRecordList } from '@/components/growth/GrowthRecordList';
 import GrowthRecordModal from '@/components/home/GrowthRecordModal';
+import { OrganicBackground } from '@/components/ui/OrganicBackground';
+import { OrganicCard } from '@/components/ui/OrganicCard';
 
 import { useBabyStore } from '@/store/babyStore';
 import { useGrowthStore } from '@/store/growthStore';
@@ -113,7 +115,8 @@ export default function GrowthPage() {
 
   // ── 渲染 ──
   return (
-    <View className="page-growth">
+    <OrganicBackground variant="morning">
+      <View className="page-growth">
       {/* ════ 头部 ════ */}
       <View className="page-growth__header">
         <View
@@ -151,7 +154,10 @@ export default function GrowthPage() {
         ) : (
           <>
             {/* ════ 宝宝信息卡片 ════ */}
-            <View className="page-growth__baby-card">
+            <OrganicCard
+              variant="default"
+              style={{ margin: '16px 16px 0' }}
+            >
               <Text className="page-growth__baby-name">
                 {currentBaby.name}
               </Text>
@@ -159,7 +165,7 @@ export default function GrowthPage() {
                 {currentBaby.gender === '男' ? '男宝宝' : '女宝宝'}
                 {isPremature ? ' \u2022 早产儿' : ''}
               </Text>
-            </View>
+            </OrganicCard>
 
             {/* ════ 视图切换 ════ */}
             <View className="page-growth__view-switch">
@@ -243,5 +249,6 @@ export default function GrowthPage() {
         onSubmit={handleSubmit}
       />
     </View>
+    </OrganicBackground>
   );
 }

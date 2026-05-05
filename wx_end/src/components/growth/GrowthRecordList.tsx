@@ -12,6 +12,7 @@ import { View, Text, ScrollView } from '@tarojs/components';
 import { Modal } from '@/components/ui/Modal';
 import { Input } from '@/components/ui/Input';
 import { InlineDateTimePickerField } from '@/components/ui/InlineDateTimePickerField';
+import { OrganicCard } from '@/components/ui/OrganicCard';
 import { OrganicButton } from '@/components/ui/OrganicButton';
 import { notify, confirm } from '@/utils/feedback';
 import type { GrowthRecord, GrowthMetric } from '@/types/growth';
@@ -189,7 +190,11 @@ export const GrowthRecordList: React.FC<GrowthRecordListProps> = ({
                 </View>
 
                 {metricRecords.map((record) => (
-                  <View key={record.id} className="grl__card">
+                  <OrganicCard
+                    key={record.id}
+                    variant="default"
+                    style={{ marginBottom: 8 }}
+                  >
                     <View className="grl__card-main">
                       <View className="grl__card-info">
                         <View className="grl__card-value-row">
@@ -228,7 +233,7 @@ export const GrowthRecordList: React.FC<GrowthRecordListProps> = ({
                         </View>
                       </View>
                     </View>
-                  </View>
+                  </OrganicCard>
                 ))}
               </View>
             );
