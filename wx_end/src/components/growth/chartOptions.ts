@@ -112,6 +112,7 @@ export function buildChartOption(
 
   // 用户数据线
   if (userPoints.length > 0) {
+    const lastPoint = userPoints[userPoints.length - 1];
     series.push({
       name: LEGEND_NAMES.user,
       type: 'line',
@@ -128,12 +129,12 @@ export function buildChartOption(
         borderColor: '#fff',
         borderWidth: 1,
       },
-      // 标记最近的数据点
+      // 标记最近的数据点（使用显式坐标而非 type: 'max'）
       markPoint: {
         data: [
           {
-            type: 'max',
-            name: 'latest',
+            coord: [lastPoint.x, lastPoint.value],
+            name: '最新',
             symbol: 'pin',
             symbolSize: 35,
             label: { show: false },
@@ -169,7 +170,6 @@ export function buildChartOption(
     },
     legend: {
       data: Object.values(LEGEND_NAMES),
-      selected: legendSelected,
       bottom: 0,
       icon: 'roundRect',
       itemWidth: 14,

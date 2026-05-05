@@ -42,6 +42,9 @@ export const EcCanvas: React.FC<EcCanvasProps> = ({
   const chartRef = useRef<echarts.ECharts | null>(null);
   const disposedRef = useRef(false);
   const initCalledRef = useRef(false);
+  const touchStartRef = useRef({ x: 0, y: 0 });
+  const onClickRef = useRef(onClick);
+  onClickRef.current = onClick;
   const systemInfo = Taro.getSystemInfoSync();
   const canvasWidth = width || systemInfo.windowWidth;
 
@@ -75,10 +78,10 @@ export const EcCanvas: React.FC<EcCanvasProps> = ({
               chart.setOption(option, { notMerge: true });
             }
 
-            // 点击事件
-            if (onClick) {
-              chart.on('click', onClick);
-            }
+            // 点击事件（通过 ref 保证始终使用最新 onClick）
+            chart.on('click', (params) => {
+              onClickRef.current?.(params);
+            });
 
             onInit?.(chart);
           } catch (e) {
@@ -101,6 +104,14 @@ export const EcCanvas: React.FC<EcCanvasProps> = ({
       chartRef.current.setOption(option, { notMerge: true });
     }
   }, [option]);
+
+  // ─────────────────────── 尺寸变化时 resize ───────────────────────
+
+  useEffect(() => {
+    if (chartRef.current) {
+      chartRef.current.resize({ width: canvasWidth });
+    }
+  }, [canvasWidth]);
 
   // ─────────────────────── 窗口尺寸变化 ───────────────────────
 
@@ -143,6 +154,7 @@ export const EcCanvas: React.FC<EcCanvasProps> = ({
       const chart = chartRef.current;
       if (!chart || !e.touches || e.touches.length === 0) return;
       const touch = e.touches[0];
+      touchStartRef.current = { x: touch.x, y: touch.y };
       const handler = chart.getZr().handler;
       handler.dispatch('mousedown', { zrX: touch.x, zrY: touch.y });
       handler.dispatch('mousemove', { zrX: touch.x, zrY: touch.y });
@@ -168,9 +180,17 @@ export const EcCanvas: React.FC<EcCanvasProps> = ({
       const chart = chartRef.current;
       if (!chart) return;
       const touch = e.changedTouches ? e.changedTouches[0] : {};
+      const start = touchStartRef.current;
+      const dx = (touch.x || 0) - start.x;
+      const dy = (touch.y || 0) - start.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
       const handler = chart.getZr().handler;
       handler.dispatch('mouseup', { zrX: touch.x, zrY: touch.y });
-      handler.dispatch('click', { zrX: touch.x, zrY: touch.y });
+      // 仅在轻触（非拖动）时派发 click 事件
+      if (distance < 10) {
+        handler.dispatch('click', { zrX: touch.x, zrY: touch.y });
+      }
       handler.processGesture?.(warpTouchEvent(e), 'end');
     },
     [warpTouchEvent],

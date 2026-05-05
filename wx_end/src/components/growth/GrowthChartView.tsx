@@ -9,11 +9,12 @@
  * - 记录面板、帮助指南、全屏视图
  */
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useMemo, useCallback, useRef } from 'react';
 import { View, Text, ScrollView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { EcCanvas } from '@/components/ui/ec-canvas';
 import { Modal } from '@/components/ui/Modal';
+import { OrganicCard } from '@/components/ui/OrganicCard';
 import { buildGrowthCurveModel } from '@/domain/growthCurve/engine';
 import { buildChartOption, SERIES_COLORS, METRIC_META } from './chartOptions';
 import type { GrowthMetric } from '@/types/growth';
@@ -98,6 +99,7 @@ export const GrowthChartView: React.FC<GrowthChartViewProps> = ({
   const [fullscreenVisible, setFullscreenVisible] = useState(false);
   const [fullscreenZoom, setFullscreenZoom] = useState(1);
   const [chartKey, setChartKey] = useState(0);
+  const chartInstanceRef = useRef<any>(null);
   const systemInfo = Taro.getSystemInfoSync();
   const windowWidth = systemInfo.windowWidth;
   const windowHeight = systemInfo.windowHeight;
@@ -133,9 +135,9 @@ export const GrowthChartView: React.FC<GrowthChartViewProps> = ({
     return buildChartOption(model, legendSelected, metric);
   }, [model, legendSelected, metric]);
 
-  // ── 是否早产 & 显示矫正月龄切换 ──
+  // ── 是否早产 & 显示矫正月龄切换（无回调时不显示按钮） ──
   const showAgeTypeSwitch =
-    model?.meta.isPremature && model?.meta.standard === 'WHO';
+    model?.meta.isPremature && model?.meta.standard === 'WHO' && !!onAgeTypeChange;
 
   // ── 是否 FENTON 标准 → 显示诊断卡片 ──
   const isFenton = model?.meta.standard === 'FENTON';
@@ -174,6 +176,22 @@ export const GrowthChartView: React.FC<GrowthChartViewProps> = ({
 
   // ── 事件处理 ──
 
+  const handleChartInit = useCallback((chart: any) => {
+    chartInstanceRef.current = chart;
+
+    // ECharts 图例变化时同步 React 状态
+    chart.on('legendselectchanged', (params: any) => {
+      const selected = params.selected as Record<string, boolean> | undefined;
+      if (!selected) return;
+      const newSelected: Record<string, boolean> = {};
+      for (const key of LEGEND_KEYS) {
+        const label = LEGEND_LABELS[key];
+        newSelected[key] = label in selected ? selected[label] : true;
+      }
+      setLegendSelected(newSelected);
+    });
+  }, []);
+
   const handleMetricChange = useCallback(
     (m: GrowthMetric) => {
       onMetricChange(m);
@@ -192,7 +210,17 @@ export const GrowthChartView: React.FC<GrowthChartViewProps> = ({
   }, [ageType, onAgeTypeChange]);
 
   const handleLegendToggle = useCallback((key: string) => {
-    setLegendSelected((prev) => ({ ...prev, [key]: !prev[key] }));
+    // 通过 ECharts dispatchAction 切换图例，保持 ECharts 为唯一状态源
+    const chart = chartInstanceRef.current;
+    if (chart) {
+      chart.dispatchAction({
+        type: 'legendToggleSelect',
+        name: LEGEND_LABELS[key],
+      });
+    } else {
+      // 回退：直接更新 React 状态（图表尚未初始化时）
+      setLegendSelected((prev) => ({ ...prev, [key]: !prev[key] }));
+    }
   }, []);
 
   const handleChartClick = useCallback((params: any) => {
@@ -355,7 +383,7 @@ export const GrowthChartView: React.FC<GrowthChartViewProps> = ({
 
       {/* ════ 评估卡片 ════ */}
       {model?.assessment && (
-        <View className="growth-chart__assessment">
+        <OrganicCard variant="gradient" style={{ margin: '0 16px 12px' }}>
           <Text className="growth-chart__assessment-title">
             {metricMeta.label}评估
           </Text>
@@ -381,12 +409,12 @@ export const GrowthChartView: React.FC<GrowthChartViewProps> = ({
               {model.assessment.trend}
             </Text>
           </View>
-        </View>
+        </OrganicCard>
       )}
 
       {/* ════ 诊断卡片（Fenton） ════ */}
       {isFenton && model?.assessment.diagnostic && (
-        <View className="growth-chart__diagnostic">
+        <OrganicCard variant="ghost" style={{ margin: '0 16px 12px' }}>
           <Text className="growth-chart__diagnostic-title">
             Fenton 诊断信息
           </Text>
@@ -408,7 +436,7 @@ export const GrowthChartView: React.FC<GrowthChartViewProps> = ({
               </Text>
             )}
           </View>
-        </View>
+        </OrganicCard>
       )}
 
       {/* ════ 图表区域 ════ */}
@@ -429,6 +457,7 @@ export const GrowthChartView: React.FC<GrowthChartViewProps> = ({
             height={280}
             canvasId="growth-chart-ec"
             onClick={handleChartClick}
+            onInit={handleChartInit}
           />
         )}
       </View>
@@ -458,7 +487,7 @@ export const GrowthChartView: React.FC<GrowthChartViewProps> = ({
       )}
 
       {/* ════ 记录列表 ════ */}
-      <View className="growth-chart__records">
+      <OrganicCard variant="soft" style={{ margin: '0 16px' }}>
         <Text className="growth-chart__records-title">
           图表内记录 ({recordPanelItems.length})
         </Text>
@@ -479,7 +508,7 @@ export const GrowthChartView: React.FC<GrowthChartViewProps> = ({
             </View>
           ))
         )}
-      </View>
+      </OrganicCard>
 
       {/* ════ 帮助指南 Modal ════ */}
       <Modal
@@ -559,13 +588,16 @@ export const GrowthChartView: React.FC<GrowthChartViewProps> = ({
           </View>
           <View className="growth-chart__fullscreen-chart">
             {chartOption ? (
-              <EcCanvas
-                option={chartOption}
-                width={windowWidth - 32}
-                height={windowHeight - 120}
-                canvasId="growth-chart-fullscreen"
-                onClick={handleChartClick}
-              />
+              <ScrollView scrollX style={{ width: '100%' }}>
+                <EcCanvas
+                  option={chartOption}
+                  width={(windowWidth - 32) * fullscreenZoom}
+                  height={windowHeight - 120}
+                  canvasId="growth-chart-fullscreen"
+                  onClick={handleChartClick}
+                  onInit={handleChartInit}
+                />
+              </ScrollView>
             ) : (
               <Text className="growth-chart__empty-text">暂无数据</Text>
             )}
