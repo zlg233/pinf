@@ -2,10 +2,14 @@ export default defineAppConfig({
   pages: [
     'pages/index/index',
     'pages/classroom/index',
+    'pages/qa/index',
     'pages/profile/index',
     'pages/login/index',
     'pages/set-password/index',
     'pages/growth/index',
+    'pages/appointments/index',
+    'pages/article-detail/index',
+    'pages/video-detail/index',
   ],
   window: {
     backgroundTextStyle: 'light',

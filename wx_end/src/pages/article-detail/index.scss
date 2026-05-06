@@ -1,0 +1,196 @@
+/**
+ * 文章详情页样式
+ *
+ * 基于 Organic 设计 Token，使用 BEM 命名规范。
+ * 覆盖：封面图、标题、元信息、正文 RichText、加载/错误/空状态。
+ */
+
+@use '../../components/ui/styles/variables' as *;
+
+// ── Container ──
+.page-article-detail {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: $organic-bg-cream;
+}
+
+// ── Header ──
+.page-article-detail__header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 44px $spacing-lg $spacing-md;
+  background-color: $organic-bg-paper;
+  border-bottom: 1px solid $organic-border-subtle;
+  flex-shrink: 0;
+}
+
+.page-article-detail__back-btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $radius-pill;
+  background-color: $organic-bg-paper;
+  border: 1px solid $organic-border-light;
+  cursor: pointer;
+}
+
+.page-article-detail__back-btn--pressed {
+  opacity: 0.6;
+}
+
+.page-article-detail__back-icon {
+  font-size: $font-size-lg;
+  color: $organic-text-secondary;
+  line-height: 1;
+}
+
+.page-article-detail__back-text {
+  font-size: $font-size-sm;
+  color: $organic-text-secondary;
+  font-weight: $font-weight-medium;
+}
+
+// ── Scroll View ──
+.page-article-detail__scroll {
+  flex: 1;
+}
+
+// ── Loading State ──
+.page-article-detail__loading {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  padding: $spacing-5xl $spacing-lg;
+}
+
+.page-article-detail__spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid $organic-border-light;
+  border-top-color: $organic-primary-main;
+  border-radius: 50%;
+  animation: article-detail-spin 0.8s linear infinite;
+}
+
+@keyframes article-detail-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.page-article-detail__loading-text {
+  font-size: $font-size-sm;
+  color: $organic-text-secondary;
+}
+
+// ── Error State ──
+.page-article-detail__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-3xl $spacing-lg;
+}
+
+.page-article-detail__error-text {
+  font-size: $font-size-sm;
+  color: $organic-text-primary;
+  text-align: center;
+}
+
+.page-article-detail__retry-btn {
+  padding: $spacing-sm $spacing-xl;
+  border-radius: $radius-pill;
+  background-color: $organic-primary-main;
+  cursor: pointer;
+}
+
+.page-article-detail__retry-btn--pressed {
+  opacity: 0.8;
+}
+
+.page-article-detail__retry-text {
+  font-size: $font-size-sm;
+  color: #ffffff;
+  font-weight: $font-weight-semibold;
+}
+
+// ── Article Content ──
+.page-article-detail__article {
+  padding: $spacing-lg;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+// ── Cover Image ──
+.page-article-detail__cover {
+  width: 100%;
+  height: 200px;
+  border-radius: $radius-soft;
+  overflow: hidden;
+}
+
+.page-article-detail__cover-placeholder {
+  width: 100%;
+  height: 200px;
+  border-radius: $radius-soft;
+  background-color: $organic-primary-pale;
+  border: 1px solid $organic-border-light;
+}
+
+// ── Title ──
+.page-article-detail__title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: $organic-text-primary;
+  line-height: 1.4;
+}
+
+// ── Meta Row (Author + Date) ──
+.page-article-detail__meta {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.page-article-detail__meta-text {
+  font-size: $font-size-xs;
+  color: $organic-text-secondary;
+}
+
+// ── Category Tag ──
+.page-article-detail__category {
+  align-self: flex-start;
+  padding: $spacing-xs $spacing-md;
+  border-radius: $radius-pill;
+  background-color: $organic-primary-soft;
+}
+
+.page-article-detail__category-text {
+  font-size: $font-size-xs;
+  color: $organic-text-primary;
+  font-weight: $font-weight-medium;
+}
+
+// ── Article Body (RichText) ──
+// RichText 内部由原生组件渲染，外部 CSS 无法穿透 shadow DOM。
+// WeChat 原生 rich-text 组件自动处理图片自适应，无需额外样式。
+.page-article-detail__body {
+  font-size: $font-size-base;
+  color: $organic-text-primary;
+  line-height: 1.75;
+  word-wrap: break-word;
+  overflow: hidden;
+}
+
+// ── Bottom Spacer ──
+.page-article-detail__bottom-spacer {
+  height: 40px;
+}

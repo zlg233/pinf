@@ -23,6 +23,7 @@ export interface ContentVideo {
   id: number;
   title: string;
   description?: string | null;
+  coverUrl?: string | null;
   downUrl?: string | null;
   name?: string | null;
   createdAt?: string | null;

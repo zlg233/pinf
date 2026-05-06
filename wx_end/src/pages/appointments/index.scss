@@ -1,0 +1,241 @@
+/**
+ * 预约管理页面样式
+ */
+
+@use '../../components/ui/styles/variables' as *;
+
+// ── Container ──
+.page-appointments {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+// ── Header ──
+.page-appointments__header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 44px $spacing-lg $spacing-md;
+  background-color: $organic-bg-paper;
+  border-bottom: 1px solid $organic-border-subtle;
+  flex-shrink: 0;
+}
+
+.page-appointments__back-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: $organic-primary-pale;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.page-appointments__back-btn--pressed {
+  opacity: 0.6;
+}
+
+.page-appointments__back-icon {
+  font-size: $font-size-lg;
+  color: $organic-text-primary;
+  line-height: 1;
+}
+
+.page-appointments__title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $organic-text-primary;
+}
+
+.page-appointments__placeholder {
+  width: 40px;
+  height: 40px;
+}
+
+// ── Scroll View ──
+.page-appointments__scroll {
+  flex: 1;
+  padding: 0 $spacing-lg;
+}
+
+// ── Summary Card ──
+.page-appointments__summary-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: $spacing-sm;
+}
+
+.page-appointments__summary-item {
+  flex: 1;
+  padding: $spacing-md $spacing-sm;
+  border-radius: $radius-cozy;
+  background-color: $organic-primary-pale;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.page-appointments__summary-label {
+  font-size: $font-size-xs;
+  color: $organic-text-secondary;
+}
+
+.page-appointments__summary-value {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: $organic-primary-main;
+}
+
+.page-appointments__summary-hint {
+  margin-top: $spacing-md;
+  font-size: $font-size-sm;
+  color: $organic-text-secondary;
+}
+
+// ── Add Button ──
+.page-appointments__add-btn {
+  background-color: $organic-primary-main;
+  padding: $spacing-md 0;
+  border-radius: $radius-pill;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba($organic-primary-main, 0.3);
+  margin-top: $spacing-md;
+}
+
+.page-appointments__add-btn--pressed {
+  opacity: 0.85;
+}
+
+.page-appointments__add-btn-text {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: #FFFFFF;
+}
+
+// ── Loading State ──
+.page-appointments__loading-spinner {
+  font-size: $font-size-2xl;
+  color: $organic-text-secondary;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.page-appointments__loading-text {
+  font-size: $font-size-md;
+  color: $organic-text-secondary;
+  margin-top: $spacing-sm;
+}
+
+// ── Error State ──
+.page-appointments__error-box {
+  padding: $spacing-md 0;
+}
+
+.page-appointments__error-text {
+  color: #C54A4A;
+  font-size: $font-size-sm;
+  text-align: center;
+}
+
+// ── Section ──
+.page-appointments__section {
+  margin-top: $spacing-md;
+}
+
+.page-appointments__section-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: $spacing-sm;
+}
+
+.page-appointments__section-title {
+  font-size: $font-size-md;
+  font-weight: $font-weight-semibold;
+  color: $organic-text-primary;
+}
+
+.page-appointments__section-count {
+  font-size: $font-size-xs;
+  color: $organic-text-tertiary;
+}
+
+.page-appointments__card-list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+// ── Card Meta ──
+.page-appointments__card-meta {
+  padding: 0 $spacing-sm;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.page-appointments__meta-text {
+  font-size: $font-size-xs;
+  color: $organic-text-secondary;
+}
+
+.page-appointments__note-text {
+  font-size: $font-size-xs;
+  color: $organic-text-primary;
+  line-height: 18px;
+}
+
+// ── Action Row ──
+.page-appointments__action-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+}
+
+// ── Empty State ──
+.page-appointments__empty-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $spacing-5xl 0;
+}
+
+.page-appointments__empty-icon {
+  font-size: $font-size-3xl;
+}
+
+.page-appointments__empty-text {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: $organic-text-primary;
+  margin-top: $spacing-md;
+}
+
+.page-appointments__empty-subtext {
+  font-size: $font-size-sm;
+  color: $organic-text-secondary;
+  text-align: center;
+  margin-top: $spacing-xs;
+}
+
+// ── Bottom Spacer ──
+.page-appointments__bottom-spacer {
+  height: 40px;
+}

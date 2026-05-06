@@ -1,0 +1,469 @@
+/**
+ * AI 问答页面样式
+ *
+ * BEM 命名: .page-qa__*
+ * 消息气泡差异化:
+ *   - 用户: 渐变背景 + 右圆角差异化
+ *   - AI:   白色背景 + 左圆角差异化 + 阴影
+ */
+
+@use '../../components/ui/styles/variables' as *;
+
+// 页面级常量
+$color-error-strong: $color-error-strong;
+
+// ── Container ──
+
+.page-qa {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: $organic-bg-cream;
+}
+
+// ═══════════════════════════════════════════════════
+// Header
+// ═══════════════════════════════════════════════════
+
+.page-qa__header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 44px $spacing-lg $spacing-md;
+  background-color: $organic-bg-paper;
+  border-bottom: 1px solid $organic-border-subtle;
+  flex-shrink: 0;
+  gap: $spacing-sm;
+}
+
+.page-qa__back-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: $organic-primary-pale;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.page-qa__back-btn--pressed {
+  opacity: 0.6;
+}
+
+.page-qa__back-icon {
+  font-size: $font-size-lg;
+  color: $organic-text-primary;
+  line-height: 1;
+}
+
+.page-qa__header-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.page-qa__title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $organic-text-primary;
+  display: block;
+}
+
+.page-qa__subtitle {
+  margin-top: 2px;
+  font-size: $font-size-xs;
+  color: $organic-text-secondary;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.page-qa__clear-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xs $spacing-sm;
+  border: 1px solid $organic-border-default;
+  border-radius: $radius-pill;
+  background-color: $organic-bg-paper;
+  flex-shrink: 0;
+}
+
+.page-qa__clear-btn--disabled {
+  opacity: 0.45;
+}
+
+.page-qa__clear-btn--pressed {
+  opacity: 0.7;
+}
+
+.page-qa__clear-btn-text {
+  font-size: $font-size-xs;
+  color: $organic-text-secondary;
+  font-weight: $font-weight-medium;
+}
+
+// ═══════════════════════════════════════════════════
+// Chat Card
+// ═══════════════════════════════════════════════════
+
+.page-qa__chat-card {
+  flex: 1;
+  margin: 0 $spacing-lg $spacing-md;
+  background-color: $organic-bg-paper;
+  border-radius: $radius-cozy;
+  border: 1px solid $organic-border-default;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(74, 74, 74, 0.06);
+}
+
+// ═══════════════════════════════════════════════════
+// Center State (loading / empty)
+// ═══════════════════════════════════════════════════
+
+.page-qa__center-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  min-height: 280px;
+  padding: 0 $spacing-xl;
+}
+
+.page-qa__loading-icon-wrap {
+  width: 80px;
+  height: 80px;
+  border-radius: 40px;
+  background-color: rgba($organic-primary-main, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $spacing-md;
+}
+
+.page-qa__empty-icon-wrap {
+  width: 100px;
+  height: 100px;
+  border-radius: 50px;
+  background-color: rgba($organic-primary-main, 0.07);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: $spacing-lg;
+  box-shadow: 0 1px 4px rgba(74, 74, 74, 0.04);
+}
+
+.page-qa__empty-icon {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.page-qa__state-text {
+  font-size: $font-size-sm;
+  color: $organic-text-secondary;
+  font-weight: $font-weight-medium;
+}
+
+.page-qa__state-subtext {
+  font-size: $font-size-xs;
+  color: $organic-text-tertiary;
+  margin-top: $spacing-xs;
+}
+
+.page-qa__empty-title {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: $organic-text-primary;
+  margin-bottom: $spacing-sm;
+  text-align: center;
+}
+
+.page-qa__empty-subtext {
+  font-size: $font-size-sm;
+  color: $organic-text-secondary;
+  text-align: center;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+// ═══════════════════════════════════════════════════
+// Chat Scroll
+// ═══════════════════════════════════════════════════
+
+.page-qa__chat-scroll {
+  height: 100%;
+}
+
+.page-qa__chat-content {
+  padding: $spacing-md;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-md;
+}
+
+// ═══════════════════════════════════════════════════
+// Message Row
+// ═══════════════════════════════════════════════════
+
+.page-qa__message-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: $spacing-sm;
+}
+
+.page-qa__message-row--user {
+  flex-direction: row-reverse;
+}
+
+// ═══════════════════════════════════════════════════
+// Avatar
+// ═══════════════════════════════════════════════════
+
+.page-qa__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(74, 74, 74, 0.08);
+}
+
+.page-qa__avatar--ai {
+  background-color: $organic-primary-main;
+}
+
+.page-qa__avatar--user {
+  background-color: $organic-accent-peach;
+}
+
+.page-qa__avatar-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+// ═══════════════════════════════════════════════════
+// Message Main
+// ═══════════════════════════════════════════════════
+
+.page-qa__message-main {
+  max-width: 84%;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.page-qa__message-main--user {
+  align-items: flex-end;
+}
+
+// ═══════════════════════════════════════════════════
+// Bubble
+// ═══════════════════════════════════════════════════
+
+.page-qa__bubble {
+  padding: $spacing-sm + 2px $spacing-md;
+  border: 1px solid;
+  word-break: break-word;
+}
+
+/* AI 气泡：白色背景 + 左圆角 + 阴影 */
+.page-qa__bubble--ai {
+  background-color: #ffffff;
+  border-color: $organic-border-light;
+  border-radius: 16px 16px 16px 4px;
+  box-shadow: 0 2px 8px rgba(74, 74, 74, 0.06);
+}
+
+/* 用户气泡：渐变背景 + 右圆角 */
+.page-qa__bubble--user {
+  background: linear-gradient(135deg, $organic-primary-main, $organic-accent-peach);
+  border-color: $organic-border-accent;
+  border-radius: 16px 16px 4px 16px;
+}
+
+/* 失败状态：红色边框 + 浅红背景 */
+.page-qa__bubble--failed {
+  border-color: $color-error-strong;
+  background: #fef2f2;
+}
+
+// ── Bubble Text ──
+
+.page-qa__bubble-text {
+  font-size: $font-size-sm;
+  line-height: 1.65;
+}
+
+.page-qa__bubble-text--user {
+  color: $organic-text-primary;
+  font-weight: $font-weight-medium;
+  letter-spacing: 0.2px;
+}
+
+.page-qa__bubble-text--ai {
+  color: $organic-text-primary;
+  letter-spacing: 0.3px;
+}
+
+// ═══════════════════════════════════════════════════
+// Meta Row (time + status)
+// ═══════════════════════════════════════════════════
+
+.page-qa__meta-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.page-qa__meta-row--user {
+  justify-content: flex-end;
+}
+
+.page-qa__time-text {
+  font-size: $font-size-xs;
+  color: $organic-text-tertiary;
+}
+
+.page-qa__pending-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.page-qa__pending-text {
+  font-size: $font-size-xs;
+  color: $organic-text-secondary;
+}
+
+.page-qa__failed-text {
+  font-size: $font-size-xs;
+  color: $color-error-strong;
+  font-weight: $font-weight-medium;
+}
+
+// ═══════════════════════════════════════════════════
+// Composer (Input Area)
+// ═══════════════════════════════════════════════════
+
+.page-qa__composer {
+  margin: 0 $spacing-lg;
+  padding-bottom: calc(env(safe-area-inset-bottom) + $spacing-md);
+  flex-shrink: 0;
+}
+
+.page-qa__input-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: $spacing-sm;
+  background-color: $organic-bg-paper;
+  border: 1px solid $organic-border-default;
+  border-radius: $radius-cozy;
+  padding: $spacing-xs $spacing-sm;
+  box-shadow: 0 1px 4px rgba(74, 74, 74, 0.04);
+}
+
+// ── Textarea ──
+
+.page-qa__textarea {
+  flex: 1;
+  width: 100%;
+  min-height: 36px;
+  max-height: 100px;
+  font-size: $font-size-sm;
+  color: $organic-text-primary;
+  line-height: 20px;
+  padding: $spacing-xs $spacing-sm;
+  background: transparent;
+  border: none;
+}
+
+.page-qa__textarea-placeholder {
+  color: $organic-text-tertiary;
+}
+
+// ── Send Button ──
+
+.page-qa__send-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $organic-primary-main;
+  flex-shrink: 0;
+}
+
+.page-qa__send-btn--disabled {
+  opacity: 0.45;
+}
+
+.page-qa__send-btn--pressed {
+  opacity: 0.8;
+}
+
+.page-qa__send-icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+// ── Composer Footer ──
+
+.page-qa__composer-footer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-top: $spacing-xs;
+}
+
+.page-qa__helper-text {
+  flex: 1;
+  font-size: $font-size-xs;
+  color: $organic-text-secondary;
+}
+
+.page-qa__helper-text--error {
+  color: $color-error-strong;
+}
+
+// ═══════════════════════════════════════════════════
+// Spinner (CSS-only)
+// ═══════════════════════════════════════════════════
+
+@keyframes page-qa-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.page-qa__spinner {
+  width: 12px;
+  height: 12px;
+  border: 2px solid $organic-border-light;
+  border-top-color: $organic-primary-main;
+  border-radius: 50%;
+  animation: page-qa-spin 0.8s linear infinite;
+}
+
+.page-qa__spinner--large {
+  width: 32px;
+  height: 32px;
+  border-width: 3px;
+  border-top-color: $organic-primary-main;
+}
+
+.page-qa__spinner--white {
+  border-color: rgba(255, 255, 255, 0.3);
+  border-top-color: #ffffff;
+}
