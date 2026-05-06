@@ -70,6 +70,18 @@ const TREND_ARROWS: Record<string, string> = {
   '当前标准下无有效点': '-',
 };
 
+// Chinese zone/trend → English CSS class suffix
+const ZONE_CLASS: Record<string, string> = {
+  '正常': 'normal',
+  '偏高': 'high',
+  '偏低': 'low',
+};
+const TREND_CLASS: Record<string, string> = {
+  '上升': 'up',
+  '下降': 'down',
+  '平稳': 'stable',
+};
+
 // ────────────────────────────── 主组件 ──────────────────────────────
 
 export const GrowthChartView: React.FC<GrowthChartViewProps> = ({
@@ -394,7 +406,7 @@ export const GrowthChartView: React.FC<GrowthChartViewProps> = ({
                   P{Math.round(model.assessment.latestPercentile)}
                 </Text>
                 <Text
-                  className={`growth-chart__assessment-zone growth-chart__assessment-zone--${model.assessment.zone || '正常'}`}
+                  className={`growth-chart__assessment-zone growth-chart__assessment-zone--${ZONE_CLASS[model.assessment.zone || '正常'] || ''}`}
                 >
                   {model.assessment.zone || '--'}
                 </Text>
@@ -403,7 +415,7 @@ export const GrowthChartView: React.FC<GrowthChartViewProps> = ({
               <Text className="growth-chart__assessment-percentile">--</Text>
             )}
             <Text
-              className={`growth-chart__assessment-trend growth-chart__assessment-trend--${model.assessment.trend}`}
+              className={`growth-chart__assessment-trend growth-chart__assessment-trend--${TREND_CLASS[model.assessment.trend] || ''}`}
             >
               {TREND_ARROWS[model.assessment.trend] || ''}{' '}
               {model.assessment.trend}

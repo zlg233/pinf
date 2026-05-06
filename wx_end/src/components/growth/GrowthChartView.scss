@@ -219,17 +219,17 @@
   font-weight: $font-weight-medium;
 }
 
-.growth-chart__assessment-zone--正常 {
+.growth-chart__assessment-zone--normal {
   background: $organic-accent-mint;
   color: #2E7D32;
 }
 
-.growth-chart__assessment-zone--偏高 {
+.growth-chart__assessment-zone--high {
   background: $organic-error;
   color: #C62828;
 }
 
-.growth-chart__assessment-zone--偏低 {
+.growth-chart__assessment-zone--low {
   background: $organic-error;
   color: #C62828;
 }
@@ -244,15 +244,15 @@
   }
 }
 
-.growth-chart__assessment-trend--上升 {
+.growth-chart__assessment-trend--up {
   color: #C62828;
 }
 
-.growth-chart__assessment-trend--下降 {
+.growth-chart__assessment-trend--down {
   color: #2E7D32;
 }
 
-.growth-chart__assessment-trend--平稳 {
+.growth-chart__assessment-trend--stable {
   color: $organic-text-secondary;
 }
 
