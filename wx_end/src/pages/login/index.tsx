@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { View, Text } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { useAuthStore } from '@/store';
-import { sendPhoneCode, phoneLogin, passwordLogin } from '@/services/api/auth';
+import { sendPhoneCode, phoneLogin, passwordLogin, wxMiniprogramLogin, wxBindPhone } from '@/services/api/auth';
+import { Button } from '@tarojs/components';
 import { OrganicBackground } from '@/components/ui/OrganicBackground';
 import { OrganicCard } from '@/components/ui/OrganicCard';
 import { OrganicButton } from '@/components/ui/OrganicButton';
@@ -23,6 +24,7 @@ export default function LoginPage() {
   const [countdown, setCountdown] = useState(0);
   const [debugCode, setDebugCode] = useState('');
   const [formError, setFormError] = useState('');
+  const [isWechatLoading, setIsWechatLoading] = useState(false);
 
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const authStore = useAuthStore();
@@ -142,6 +144,35 @@ export default function LoginPage() {
       notify(msg);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // ---- WeChat Mini Program Login ----
+  const handleWechatLogin = async (e: any) => {
+    setFormError('');
+    setIsWechatLoading(true);
+    try {
+      const res = await wxMiniprogramLogin();
+      const { token, user, is_new_user } = res.data;
+
+      await authStore.login(user, token, is_new_user);
+
+      if (is_new_user) {
+        // 新用户通过 getPhoneNumber 获取手机号
+        const mpCode = e?.detail?.code;
+        if (mpCode && user.wxOpenid) {
+          await wxBindPhone(mpCode, user.wxOpenid);
+        }
+        await Taro.redirectTo({ url: '/pages/set-password/index' });
+      } else {
+        await Taro.switchTab({ url: '/pages/index/index' });
+      }
+    } catch (err: any) {
+      const msg = err?.response?.data?.message || err?.message || '微信登录失败';
+      setFormError(msg);
+      notify(msg);
+    } finally {
+      setIsWechatLoading(false);
     }
   };
 
@@ -284,6 +315,24 @@ export default function LoginPage() {
                   <Text className="login__error-text">{formError}</Text>
                 </View>
               )}
+
+              {/* ---- WeChat Login Button ---- */}
+              <View className="login__wechat-section">
+                <View className="login__divider">
+                  <View className="login__divider-line" />
+                  <Text className="login__divider-text">微信一键登录</Text>
+                  <View className="login__divider-line" />
+                </View>
+                <Button
+                  className="login__wechat-btn"
+                  openType="getPhoneNumber"
+                  onGetPhoneNumber={handleWechatLogin}
+                  loading={isWechatLoading}
+                  disabled={isWechatLoading || isLoading}
+                >
+                  微信一键登录
+                </Button>
+              </View>
 
               {/* ---- Login Button ---- */}
               <View className="login__submit-btn">

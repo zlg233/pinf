@@ -23,6 +23,7 @@ import { useAppointmentStore } from '@/store/appointmentStore';
 import { useBabyStore } from '@/store/babyStore';
 
 import { confirm, notify } from '@/utils/feedback';
+import { requestSubscribeMessage, subscribeMiniprogram } from '@/services/api/notifications';
 import type { Appointment, CreateAppointmentInput, UpdateAppointmentInput } from '@/types/appointment';
 import {
   formatAppointmentDateBadge,
@@ -138,6 +139,28 @@ export default function AppointmentPage() {
     } else {
       await add({ ...payload, babyId: currentBaby?.id } as CreateAppointmentInput);
       notify('预约已创建');
+
+      // 创建成功后请求订阅消息授权
+      try {
+        const tmplIds: string[] = []; // 替换为实际的模板 ID
+        if (tmplIds.length > 0) {
+          const authResult = await requestSubscribeMessage(tmplIds);
+          const accepted = tmplIds.some((id) => authResult[id] === 'accept');
+          if (accepted) {
+            const openidRes = await Taro.getStorage({ key: 'user.openid' }).catch(() => ({ data: '' }));
+            const openid = openidRes.data as string;
+            if (openid && payload.remindAt) {
+              await subscribeMiniprogram({
+                appointment_id: 0, // 新创建的预约 ID 需从 store 获取
+                openid,
+                remind_time: payload.remindAt,
+              }).catch(() => {});
+            }
+          }
+        }
+      } catch {
+        // 用户拒绝授权，不强制
+      }
     }
 
     setEditingAppointment(null);
