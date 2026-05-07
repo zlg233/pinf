@@ -56,6 +56,9 @@ class Config:
     WECHAT_SYNC_MAX_PAGES = int(os.environ.get("WECHAT_SYNC_MAX_PAGES", "5"))
     WECHAT_SYNC_PAGE_SIZE = int(os.environ.get("WECHAT_SYNC_PAGE_SIZE", "20"))
     WECHAT_SYNC_RETRY = int(os.environ.get("WECHAT_SYNC_RETRY", "3"))
+    # 微信小程序订阅消息模板 ID
+    WECHAT_MP_TEMPLATE_APPOINTMENT = os.environ.get("WECHAT_MP_TEMPLATE_APPOINTMENT", "")
+    WECHAT_MP_TEMPLATE_GROWTH = os.environ.get("WECHAT_MP_TEMPLATE_GROWTH", "")
     # 通知/订阅调度（用于本地 demo 与后续推送接入）
     NOTIFICATIONS_ENABLED = os.environ.get("NOTIFICATIONS_ENABLED", "false").lower() in ("1", "true", "yes")
     NOTIFICATIONS_SCAN_INTERVAL_MINUTES = int(os.environ.get("NOTIFICATIONS_SCAN_INTERVAL_MINUTES", "60"))

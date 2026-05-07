@@ -1,13 +1,14 @@
 import logging
 from datetime import datetime, timezone
 
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request, current_app
 
 from models import db
 from models.appointment import Appointment
 from models.notification_subscription import NotificationSubscription
 from utils.auth import token_required, validate_request_data
 from utils.notification_sender import send_expo_push
+from utils.wechat_mp_subscribe import send_subscribe_message
 
 notifications_bp = Blueprint('notifications', __name__)
 logger = logging.getLogger(__name__)
@@ -167,3 +168,62 @@ def test_send(current_user, data):
         db.session.rollback()
         logger.exception('test send failed')
         return jsonify({'status': 'error', 'message': f'测试发送失败: {exc}'}), 500
+
+
+@notifications_bp.route('/notifications/subscribe/miniprogram', methods=['POST'])
+@token_required
+@validate_request_data([
+    {'name': 'appointment_id', 'type': int},
+    {'name': 'openid', 'type': str},
+    {'name': 'remind_time', 'type': str},
+])
+def miniprogram_subscribe(current_user, data):
+    """小程序订阅消息授权 — 前端 requestSubscribeMessage 成功后记录到后端"""
+    subscription = NotificationSubscription(
+        user_id=current_user.id,
+        appointment_id=data['appointment_id'],
+        channel='wechat_mp',
+        token=data['openid'],
+        remind_time=_parse_iso_to_utc_naive(data['remind_time']),
+        status='pending',
+    )
+    db.session.add(subscription)
+    db.session.commit()
+    return jsonify({'status': 'success', 'data': subscription.to_dict()})
+
+
+@notifications_bp.route('/notifications/send/miniprogram', methods=['POST'])
+def send_miniprogram_notification():
+    """发送小程序订阅消息（内部调用或定时任务触发）"""
+    data = request.get_json()
+    if not data or 'subscription_id' not in data:
+        return jsonify({'status': 'error', 'message': '缺少 subscription_id'}), 400
+
+    subscription = NotificationSubscription.query.get(data['subscription_id'])
+    if not subscription or subscription.status != 'pending':
+        return jsonify({'status': 'error', 'message': '无效订阅'}), 400
+
+    appointment = Appointment.query.get(subscription.appointment_id)
+    template_data = {
+        'thing1': {'value': appointment.clinic if appointment else '未知'},
+        'thing2': {'value': appointment.department if appointment else '未知'},
+        'time3': {'value': subscription.remind_time.strftime('%Y年%m月%d日 %H:%M')},
+        'thing4': {'value': appointment.note if appointment and appointment.note else '无'},
+    }
+
+    result = send_subscribe_message(
+        touser=subscription.token,
+        template_id=current_app.config.get('WECHAT_MP_TEMPLATE_APPOINTMENT', ''),
+        page=f'pages/appointments/index?id={subscription.appointment_id}',
+        data=template_data,
+    )
+
+    if result.get('errcode') == 0:
+        subscription.status = 'sent'
+        subscription.sent_at = datetime.utcnow()
+        db.session.commit()
+
+    return jsonify({
+        'status': 'success' if result.get('errcode') == 0 else 'error',
+        'data': result,
+    })
