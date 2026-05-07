@@ -5,8 +5,10 @@ from models import db
 from models.user import User
 from models.verification_code import VerificationCode
 from utils.wechat import get_wechat_user_info
+from utils.wechat_mp import code2session, get_mp_access_token
 from utils.auth import validate_request_data, token_required
 import re
+import requests
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -198,5 +200,63 @@ def wechat_login(data):
         db.session.add(user)
         db.session.commit()
 
-    token = create_access_token(identity=user.id)
+    token = create_access_token(identity=str(user.id))
     return jsonify({"status": "success", "message": "登录成功", "data": {"token": token, "user": user.to_dict()}})
+
+
+@auth_bp.route("/auth/wechat/miniprogram", methods=["POST"])
+@validate_request_data(["code"])
+def wechat_miniprogram_login(data):
+    """微信小程序登录 — 前端 wx.login() 获取 code → 后端换 openid + JWT"""
+    code = data["code"]
+    result = code2session(code)
+
+    if 'errcode' in result:
+        return jsonify({"status": "error", "message": result.get('errmsg', '微信登录失败')}), 400
+
+    openid = result['openid']
+    user = User.query.filter_by(wx_openid=openid).first()
+    is_new_user = False
+    if not user:
+        user = User(wx_openid=openid, name=f'微信用户{openid[-4:]}', role="user")
+        db.session.add(user)
+        db.session.commit()
+        is_new_user = True
+
+    token = create_access_token(identity=str(user.id))
+    return jsonify({
+        "status": "success",
+        "message": "登录成功",
+        "data": {"token": token, "user": user.to_dict(), "is_new_user": is_new_user}
+    })
+
+
+@auth_bp.route("/auth/wechat/miniprogram/phone", methods=["POST"])
+@validate_request_data([
+    {"name": "code", "type": str},
+    {"name": "openid", "type": str}
+])
+def wechat_miniprogram_bind_phone(data):
+    """微信小程序绑定手机号 — 前端 getPhoneNumber 获取 code → 后端解密手机号"""
+    code = data["code"]
+    openid = data["openid"]
+
+    access_token = get_mp_access_token()
+    url = f'https://api.weixin.qq.com/wxa/business/getuserphonenumber?access_token={access_token}'
+    resp = requests.post(url, json={'code': code}, timeout=10)
+    result = resp.json()
+
+    if result.get('errcode', 0) != 0:
+        return jsonify({"status": "error", "message": "获取手机号失败"}), 400
+
+    phone_number = result['phone_info']['purePhoneNumber']
+    user = User.query.filter_by(wx_openid=openid).first()
+    if user:
+        user.phone = phone_number
+        db.session.commit()
+
+    return jsonify({
+        "status": "success",
+        "message": "手机号绑定成功",
+        "data": {"user": user.to_dict() if user else None}
+    })

@@ -47,6 +47,9 @@ class Config:
     # 微信公众号配置
     WECHAT_APP_ID = os.environ.get("WECHAT_APP_ID", "")
     WECHAT_APP_SECRET = os.environ.get("WECHAT_APP_SECRET", "")
+    # 微信小程序配置
+    WECHAT_MP_APPID = os.environ.get("WECHAT_MP_APPID", "")
+    WECHAT_MP_SECRET = os.environ.get("WECHAT_MP_SECRET", "")
     WECHAT_API_TIMEOUT = int(os.environ.get("WECHAT_API_TIMEOUT", "10"))
     WECHAT_SYNC_ENABLED = os.environ.get("WECHAT_SYNC_ENABLED", "false").lower() in ("1", "true", "yes")
     WECHAT_SYNC_INTERVAL_MINUTES = int(os.environ.get("WECHAT_SYNC_INTERVAL_MINUTES", "60"))

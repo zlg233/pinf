@@ -98,6 +98,10 @@ _MIGRATIONS = [
         "sql": "CREATE INDEX IF NOT EXISTS idx_notification_subscriptions_status_remind_time ON notification_subscriptions(status, remind_time)",
     },
     {
+        "id": "2026_05_07_add_wx_openid_index",
+        "sql": "CREATE INDEX IF NOT EXISTS idx_users_wx_openid ON users(wx_openid)",
+    },
+    {
         "id": "2026_03_11_add_notification_trigger",
         "sql": (
             "CREATE OR REPLACE FUNCTION notification_ready_trigger() "
