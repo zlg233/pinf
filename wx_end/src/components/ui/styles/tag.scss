@@ -18,8 +18,8 @@
   }
 
   &--primary {
-    background-color: $color-primary-light;
-    color: $color-primary;
+    background-color: $organic-primary-pale;
+    color: $organic-primary-main;
   }
 
   &--accent {
@@ -50,7 +50,7 @@
     font-weight: $font-weight-medium;
 
     &--default { color: $color-text-main; }
-    &--primary { color: $color-primary; }
+    &--primary { color: $organic-primary-main; }
     &--accent { color: #D35400; }
     &--muted { color: $color-muted-text; }
   }

@@ -17,26 +17,26 @@
   // ===== Variants =====
 
   &--primary {
-    background-color: $color-primary;
-    color: $color-surface;
+    background-color: $organic-primary-main;
+    color: $organic-bg-paper;
     @include shadow-small;
   }
 
   &--secondary {
-    background-color: $color-accent;
-    color: $color-surface;
+    background-color: $organic-accent-peach;
+    color: $organic-bg-paper;
     @include shadow-small;
   }
 
   &--outline {
     background-color: transparent;
-    color: $color-primary;
-    border: 1.5px solid $color-primary;
+    color: $organic-primary-main;
+    border: 1.5px solid $organic-primary-main;
   }
 
   &--text {
     background-color: transparent;
-    color: $color-primary;
+    color: $organic-primary-main;
   }
 
   // ===== Sizes =====

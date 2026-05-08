@@ -36,11 +36,11 @@ const styles = {
     fontWeight: 500,
   } as React.CSSProperties,
   required: {
-    color: '#C54A4A',
+    color: '#D64545',
   } as React.CSSProperties,
   errorText: {
     fontSize: 12,
-    color: '#C54A4A',
+    color: '#D64545',
     marginTop: 4,
   } as React.CSSProperties,
   genderRow: {
@@ -62,21 +62,21 @@ const styles = {
     backgroundColor: '#FFFFFF',
   } as React.CSSProperties,
   genderButtonActive: {
-    borderColor: '#6B9AC4',
-    backgroundColor: '#EBF4FA',
+    borderColor: '#FFB5A7',
+    backgroundColor: '#FFF0EC',
   } as React.CSSProperties,
   genderText: {
     fontSize: 15,
     color: '#7A7A7A',
   } as React.CSSProperties,
   genderTextActive: {
-    color: '#6B9AC4',
+    color: '#FFB5A7',
     fontWeight: 700,
   } as React.CSSProperties,
   pickerTrigger: {
     borderWidth: 1.5,
     borderStyle: 'solid',
-    borderColor: '#6B9AC4',
+    borderColor: '#FFB5A7',
     borderRadius: 14,
     paddingTop: 12,
     paddingBottom: 12,
@@ -90,7 +90,7 @@ const styles = {
   } as React.CSSProperties,
   pickerText: {
     fontSize: 16,
-    color: '#6B9AC4',
+    color: '#FFB5A7',
     fontWeight: 600,
   } as React.CSSProperties,
   pickerPlaceholder: {

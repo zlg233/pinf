@@ -16,7 +16,7 @@
     width: 60px;
     height: 70px;
     border-radius: $border-radius-medium;
-    background: $color-primary-light;
+    background: $organic-primary-pale;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -28,7 +28,7 @@
   &__date-day {
     font-size: 18px;
     font-weight: $font-weight-bold;
-    color: $color-primary;
+    color: $organic-primary-main;
   }
 
   &__date-month {
@@ -83,7 +83,7 @@
   }
 
   &__action-text {
-    color: $color-primary;
+    color: $organic-primary-main;
     font-size: $font-size-sm;
     font-weight: $font-weight-bold;
   }

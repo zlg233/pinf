@@ -40,7 +40,7 @@
   &__thumb {
     height: 90px;
     border-radius: $border-radius-medium;
-    background: $color-primary-light;
+    background: $organic-primary-pale;
     margin-bottom: $spacing-sm;
     display: flex;
     align-items: center;
@@ -56,14 +56,14 @@
 
   &__thumb-placeholder {
     font-size: $font-size-2xl;
-    color: $color-primary;
+    color: $organic-primary-main;
     opacity: 0.5;
   }
 
   &__tag {
     align-self: flex-start;
-    background: $color-primary-light;
-    color: $color-primary;
+    background: $organic-primary-pale;
+    color: $organic-primary-main;
     border-radius: $border-radius-small;
     padding: 2px 8px;
     font-size: $font-size-xs;

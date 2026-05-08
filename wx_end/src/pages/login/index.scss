@@ -88,7 +88,7 @@
 
     &--active {
       background: #FFFFFF;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 2px 8px rgba(255, 181, 167, 0.18);
     }
 
     &--hover {
@@ -133,7 +133,7 @@
     height: 44px;
     background: #FFF0EC;
     border-radius: 16px;
-    border: 1px solid rgba(74, 74, 74, 0.12);
+    border: 1px solid rgba(255, 181, 167, 0.45);
     white-space: nowrap;
     transition: opacity 0.2s ease;
 
@@ -175,7 +175,7 @@
 
   &__error-text {
     font-size: 13px;
-    color: #C54A4A;
+    color: $organic-error-strong;
   }
 
   // ---- Submit Button ----

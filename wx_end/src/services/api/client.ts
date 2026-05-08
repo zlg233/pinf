@@ -1,6 +1,11 @@
 import Taro from '@tarojs/taro';
 
-const API_BASE_URL = 'https://backend.pinf.top/api';
+// 根据 NODE_ENV 切换 API 地址（由 config/dev.ts 和 config/prod.ts 注入）
+const API_BASE_URL = process.env.NODE_ENV === 'production'
+  ? 'https://backend.pinf.top/api'
+  : 'http://localhost:5010/api';
+// 注意：开发环境需要在微信开发者工具中
+// 勾选"不校验合法域名"才能访问 localhost
 const REQUEST_TIMEOUT = 15000;
 const MAX_RETRIES = 2;
 

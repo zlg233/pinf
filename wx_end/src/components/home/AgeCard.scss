@@ -5,7 +5,7 @@
   position: relative;
   overflow: hidden;
   border-radius: $radius-soft;
-  background: linear-gradient(135deg, $color-primary, #86B3D1);
+  background: linear-gradient(135deg, $organic-primary-main, $organic-accent-peach);
   padding: $spacing-xl;
 
   &::before {

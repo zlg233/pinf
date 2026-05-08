@@ -9,9 +9,6 @@
 
 @use '../../components/ui/styles/variables' as *;
 
-// 页面级常量
-$color-error-strong: #D64545;
-
 // ── Container ──
 
 .page-qa {
@@ -276,7 +273,7 @@ $color-error-strong: #D64545;
   background-color: #ffffff;
   border-color: $organic-border-light;
   border-radius: 16px 16px 16px 4px;
-  box-shadow: 0 2px 8px rgba(74, 74, 74, 0.06);
+  box-shadow: 0 2px 8px rgba(255, 181, 167, 0.12);
 }
 
 /* 用户气泡：渐变背景 + 右圆角 */
@@ -288,7 +285,7 @@ $color-error-strong: #D64545;
 
 /* 失败状态：红色边框 + 浅红背景 */
 .page-qa__bubble--failed {
-  border-color: $color-error-strong;
+  border-color: $organic-error-strong;
   background: #fef2f2;
 }
 
@@ -300,7 +297,7 @@ $color-error-strong: #D64545;
 }
 
 .page-qa__bubble-text--user {
-  color: $organic-text-primary;
+  color: #FFFFFF;
   font-weight: $font-weight-medium;
   letter-spacing: 0.2px;
 }
@@ -344,7 +341,7 @@ $color-error-strong: #D64545;
 
 .page-qa__failed-text {
   font-size: $font-size-xs;
-  color: $color-error-strong;
+  color: $organic-error-strong;
   font-weight: $font-weight-medium;
 }
 
@@ -431,7 +428,7 @@ $color-error-strong: #D64545;
 }
 
 .page-qa__helper-text--error {
-  color: $color-error-strong;
+  color: $organic-error-strong;
 }
 
 // ═══════════════════════════════════════════════════

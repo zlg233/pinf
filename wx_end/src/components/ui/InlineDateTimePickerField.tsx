@@ -46,7 +46,7 @@ type Props = {
 const TRIGGER_STYLE: React.CSSProperties = {
   borderWidth: 1.5,
   borderStyle: 'solid',
-  borderColor: '#6B9AC4',
+  borderColor: '#FFB5A7',
   borderRadius: 14,
   padding: '12px 20px',
   minHeight: 48,
@@ -58,7 +58,7 @@ const TRIGGER_STYLE: React.CSSProperties = {
 };
 const TRIGGER_TEXT_STYLE: React.CSSProperties = {
   fontSize: 16,
-  color: '#6B9AC4',
+  color: '#FFB5A7',
   fontWeight: 600,
   whiteSpace: 'nowrap',
 };
