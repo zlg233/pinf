@@ -25,7 +25,7 @@ export function initECharts(
   width: number,
   height: number,
 ): echarts.ECharts {
-  const dpr = Taro.getSystemInfoSync().pixelRatio || 1;
+  const { pixelRatio: dpr = 1 } = Taro.getWindowInfo();
   const ctx = canvasNode.getContext('2d');
 
   if (!ctx) {

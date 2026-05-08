@@ -30,8 +30,7 @@ export const Modal: React.FC<ModalProps> = ({
   containerStyle,
   position = 'bottom',
 }) => {
-  const systemInfo = Taro.getSystemInfoSync();
-  const screenHeight = systemInfo.windowHeight;
+  const { windowHeight: screenHeight } = Taro.getWindowInfo();
 
   const [mounted, setMounted] = useState(false);
   const [animatingIn, setAnimatingIn] = useState(false);

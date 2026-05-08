@@ -211,6 +211,16 @@
     letter-spacing: -0.3px;
   }
 
+  &__section-link {
+    font-size: $font-size-sm;
+    color: $organic-primary-main;
+    font-weight: $font-weight-medium;
+
+    &--pressed {
+      opacity: 0.7;
+    }
+  }
+
   // ===== Appointment Card =====
   &__appointment-content {
     display: flex;

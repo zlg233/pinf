@@ -112,9 +112,7 @@ export const GrowthChartView: React.FC<GrowthChartViewProps> = ({
   const [fullscreenZoom, setFullscreenZoom] = useState(1);
   const [chartKey, setChartKey] = useState(0);
   const chartInstanceRef = useRef<any>(null);
-  const systemInfo = Taro.getSystemInfoSync();
-  const windowWidth = systemInfo.windowWidth;
-  const windowHeight = systemInfo.windowHeight;
+  const { windowWidth, windowHeight } = Taro.getWindowInfo();
 
   // ── 从 records 中过滤出当前 metric 的数据 ──
   const metricRecords = useMemo(

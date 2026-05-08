@@ -194,9 +194,15 @@ export default function Index() {
   const actionItems = [
     {
       id: 'growth',
-      title: '成长记录',
+      title: '成长曲线',
       icon: '',
-      onClick: () => setShowGrowthModal(true),
+      onClick: () => Taro.navigateTo({ url: '/pages/growth/index' }),
+    },
+    {
+      id: 'qa',
+      title: 'AI 问答',
+      icon: '',
+      onClick: () => Taro.navigateTo({ url: '/pages/qa/index' }),
     },
     {
       id: 'appointment',
@@ -209,12 +215,6 @@ export default function Index() {
       title: '内容课堂',
       icon: '',
       onClick: () => Taro.switchTab({ url: '/pages/classroom/index' }),
-    },
-    {
-      id: 'profile',
-      title: '我的',
-      icon: '',
-      onClick: () => Taro.switchTab({ url: '/pages/profile/index' }),
     },
   ];
 
@@ -364,10 +364,20 @@ export default function Index() {
         {/* Growth Record Preview */}
         <View className="index__section-header" style={{ marginTop: '16px' }}>
           <Text className="index__section-title">成长记录</Text>
+          <View
+            onClick={() => Taro.navigateTo({ url: '/pages/growth/index' })}
+            hoverClass="index__section-link--pressed"
+          >
+            <Text className="index__section-link">查看更多 ›</Text>
+          </View>
         </View>
 
         {currentGrowth.length > 0 ? (
-          <OrganicCard shadow style={{ marginBottom: '20px' }}>
+          <OrganicCard
+            shadow
+            style={{ marginBottom: '20px' }}
+            onPress={() => Taro.navigateTo({ url: '/pages/growth/index' })}
+          >
             <View className="index__growth-preview">
               <Text className="index__growth-preview-title">最近记录</Text>
               <View className="index__growth-metrics">

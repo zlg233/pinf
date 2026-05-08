@@ -45,8 +45,8 @@ export const EcCanvas: React.FC<EcCanvasProps> = ({
   const touchStartRef = useRef({ x: 0, y: 0 });
   const onClickRef = useRef(onClick);
   onClickRef.current = onClick;
-  const systemInfo = Taro.getSystemInfoSync();
-  const canvasWidth = width || systemInfo.windowWidth;
+  const { windowWidth: sw } = Taro.getWindowInfo();
+  const canvasWidth = width || sw;
 
   // ─────────────────────── 初始化 ───────────────────────
 
