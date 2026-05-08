@@ -32,15 +32,15 @@ def register_device(current_user, data):
             existing.last_seen_at = db.func.now()
             db.session.add(existing)
             db.session.commit()
-            return jsonify({"status": "success", "message": "device updated", "data": existing.to_dict()})
+            return jsonify({"status": "success", "message": "设备已更新", "data": existing.to_dict()})
 
         d = DeviceToken(user_id=current_user.id, token=token, platform=platform)
         db.session.add(d)
         db.session.commit()
-        return jsonify({"status": "success", "message": "device registered", "data": d.to_dict()})
+        return jsonify({"status": "success", "message": "设备注册成功", "data": d.to_dict()})
     except Exception as exc:
         db.session.rollback()
-        return jsonify({"status": "error", "message": f"register failed: {exc}"}), 500
+        return jsonify({"status": "error", "message": f"设备注册失败: {exc}"}), 500
 
 
 @devices_bp.route("/devices/<int:device_id>", methods=["DELETE"])
@@ -48,11 +48,43 @@ def register_device(current_user, data):
 def unregister_device(current_user, device_id):
     d = DeviceToken.query.filter_by(id=device_id, user_id=current_user.id).first()
     if not d:
-        return jsonify({"status": "error", "message": "device not found"}), 404
+        return jsonify({"status": "error", "message": "设备未找到或无权限"}), 404
     try:
         db.session.delete(d)
         db.session.commit()
-        return jsonify({"status": "success", "message": "device unregistered"})
+        return jsonify({"status": "success", "message": "设备已注销"})
     except Exception as exc:
         db.session.rollback()
-        return jsonify({"status": "error", "message": f"unregister failed: {exc}"}), 500
+        return jsonify({"status": "error", "message": f"设备注销失败: {exc}"}), 500
+
+
+@devices_bp.route("/devices/register/miniprogram", methods=["POST"])
+@token_required
+def register_miniprogram_device(current_user):
+    """注册小程序设备（用于统计和会话管理）"""
+    data = request.json or {}
+    openid = data.get("openid", "")
+    if not openid:
+        return jsonify({"status": "error", "message": "openid 不能为空"}), 400
+
+    try:
+        existing = DeviceToken.query.filter_by(token=openid).first()
+        if existing:
+            existing.user_id = current_user.id
+            existing.platform = "wechat_mp"
+            existing.last_seen_at = db.func.now()
+            db.session.add(existing)
+            db.session.commit()
+            return jsonify({"status": "success", "message": "设备已更新", "data": existing.to_dict()})
+
+        device = DeviceToken(
+            user_id=current_user.id,
+            token=openid,
+            platform="wechat_mp",
+        )
+        db.session.add(device)
+        db.session.commit()
+        return jsonify({"status": "success", "message": "设备注册成功", "data": device.to_dict()})
+    except Exception as exc:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": f"设备注册失败: {exc}"}), 500
