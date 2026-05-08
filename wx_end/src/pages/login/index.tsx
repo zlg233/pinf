@@ -206,9 +206,6 @@ export default function LoginPage() {
         <View className="login__scroll-content">
           {/* ---- Logo Area ---- */}
           <View className="login__logo-area">
-            <View className="login__logo-circle">
-              <Text className="login__logo-text">早</Text>
-            </View>
             <Text className="login__app-name">早护通</Text>
             <Text className="login__slogan">新生儿/早产儿健康管理</Text>
           </View>
@@ -320,7 +317,7 @@ export default function LoginPage() {
               <View className="login__wechat-section">
                 <View className="login__divider">
                   <View className="login__divider-line" />
-                  <Text className="login__divider-text">微信一键登录</Text>
+                  <Text className="login__divider-text">微信授权</Text>
                   <View className="login__divider-line" />
                 </View>
                 <Button

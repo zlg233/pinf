@@ -81,9 +81,6 @@ export default function SetPasswordPage() {
         <View className="set-password__scroll-content">
           {/* ---- Logo Area ---- */}
           <View className="set-password__logo-area">
-            <View className="set-password__logo-circle">
-              <Text className="set-password__logo-text">早</Text>
-            </View>
             <Text className="set-password__app-name">设置密码</Text>
             <Text className="set-password__slogan">
               请设置您的登录密码，用于后续快捷登录
