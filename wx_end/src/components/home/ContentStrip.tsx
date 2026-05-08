@@ -37,6 +37,7 @@ const ContentStrip: React.FC<ContentStripProps> = ({ title, items, onPressItem }
                   className="content-strip__thumb-image"
                   src={item.imageUrl}
                   mode="aspectFill"
+                  lazyLoad
                 />
               ) : (
                 <Text className="content-strip__thumb-placeholder">&#xe034;</Text>

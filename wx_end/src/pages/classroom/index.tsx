@@ -448,6 +448,7 @@ export default function ClassroomPage() {
                           src={item.data.coverUrl}
                           className="page-classroom__article-thumb"
                           mode="aspectFill"
+                          lazyLoad
                         />
                       ) : (
                         <View className="page-classroom__article-thumb page-classroom__thumb-center">

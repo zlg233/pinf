@@ -132,6 +132,7 @@ export default function ArticleDetailPage() {
                   className="page-article-detail__cover"
                   src={article.coverUrl}
                   mode="aspectFill"
+                  lazyLoad
                 />
               ) : (
                 <View className="page-article-detail__cover-placeholder" />
