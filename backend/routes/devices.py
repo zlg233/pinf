@@ -1,8 +1,12 @@
+import logging
+
 from flask import Blueprint, request, jsonify
 from models import db
 from models.device_token import DeviceToken
 from models.appointment import Appointment
 from utils.auth import token_required, validate_request_data
+
+logger = logging.getLogger(__name__)
 
 devices_bp = Blueprint("devices", __name__)
 
@@ -40,6 +44,7 @@ def register_device(current_user, data):
         return jsonify({"status": "success", "message": "设备注册成功", "data": d.to_dict()})
     except Exception as exc:
         db.session.rollback()
+        logger.exception("register device failed")
         return jsonify({"status": "error", "message": f"设备注册失败: {exc}"}), 500
 
 
@@ -55,17 +60,18 @@ def unregister_device(current_user, device_id):
         return jsonify({"status": "success", "message": "设备已注销"})
     except Exception as exc:
         db.session.rollback()
+        logger.exception("unregister device failed")
         return jsonify({"status": "error", "message": f"设备注销失败: {exc}"}), 500
 
 
 @devices_bp.route("/devices/register/miniprogram", methods=["POST"])
 @token_required
-def register_miniprogram_device(current_user):
+@validate_request_data([
+    {"name": "openid", "type": str},
+])
+def register_miniprogram_device(current_user, data):
     """注册小程序设备（用于统计和会话管理）"""
-    data = request.json or {}
-    openid = data.get("openid", "")
-    if not openid:
-        return jsonify({"status": "error", "message": "openid 不能为空"}), 400
+    openid = data.get("openid")
 
     try:
         existing = DeviceToken.query.filter_by(token=openid).first()
@@ -87,4 +93,5 @@ def register_miniprogram_device(current_user):
         return jsonify({"status": "success", "message": "设备注册成功", "data": device.to_dict()})
     except Exception as exc:
         db.session.rollback()
+        logger.exception("register miniprogram device failed")
         return jsonify({"status": "error", "message": f"设备注册失败: {exc}"}), 500
