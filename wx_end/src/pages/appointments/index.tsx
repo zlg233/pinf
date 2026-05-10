@@ -244,7 +244,14 @@ export default function AppointmentPage() {
   // ── 渲染 ──
   return (
     <OrganicBackground variant="morning">
-      <View className="page-appointments">
+      <ScrollView
+        scrollY
+        className="page-appointments__scroll"
+        refresherEnabled
+        refresherTriggered={isRefreshing}
+        onRefresherRefresh={handleRefresh}
+      >
+        <View className="page-appointments__scroll-inner">
         {/* ════ 头部 ════ */}
         <View className="page-appointments__header">
           <View
@@ -258,15 +265,7 @@ export default function AppointmentPage() {
           <View className="page-appointments__placeholder" />
         </View>
 
-        {/* ════ 内容区（含下拉刷新） ════ */}
-        <ScrollView
-          className="page-appointments__scroll"
-          scrollY
-          refresherEnabled
-          refresherTriggered={isRefreshing}
-          onRefresherRefresh={handleRefresh}
-        >
-          {/* ════ 概要统计卡片 ════ */}
+        {/* ════ 概要统计卡片 ════ */}
           <OrganicCard shadow>
             <View className="page-appointments__summary-row">
               <View className="page-appointments__summary-item">
@@ -340,21 +339,21 @@ export default function AppointmentPage() {
 
           {/* 底部留白 */}
           <View className="page-appointments__bottom-spacer" />
-        </ScrollView>
+        </View>
+      </ScrollView>
 
-        {/* ════ 预约弹窗 ════ */}
-        <AppointmentModal
-          visible={showModal}
-          onClose={() => {
-            setEditingAppointment(null);
-            setShowModal(false);
-          }}
-          onSubmit={handleSubmit}
-          initialValues={editingAppointment ?? undefined}
-          title={editingAppointment ? '编辑预约' : '添加预约'}
-          submitText={editingAppointment ? '保存修改' : '保存预约'}
-        />
-      </View>
+      {/* ════ 预约弹窗 ════ */}
+      <AppointmentModal
+        visible={showModal}
+        onClose={() => {
+          setEditingAppointment(null);
+          setShowModal(false);
+        }}
+        onSubmit={handleSubmit}
+        initialValues={editingAppointment ?? undefined}
+        title={editingAppointment ? '编辑预约' : '添加预约'}
+        submitText={editingAppointment ? '保存修改' : '保存预约'}
+      />
     </OrganicBackground>
   );
 }

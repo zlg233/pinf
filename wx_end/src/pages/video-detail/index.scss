@@ -4,23 +4,13 @@
 
 @use '../../components/ui/styles/variables' as *;
 
-// ── Container ──
-.page-video-detail {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-  background-color: $organic-bg-cream;
-}
-
 // ── Header ──
 .page-video-detail__header {
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 44px $spacing-lg $spacing-md;
-  background-color: $organic-bg-paper;
-  border-bottom: 1px solid $organic-border-subtle;
-  flex-shrink: 0;
+  padding-top: 44px;
+  padding-bottom: $spacing-md;
 }
 
 .page-video-detail__back-btn {
@@ -54,6 +44,12 @@
 // ── Scroll View ──
 .page-video-detail__scroll {
   flex: 1;
+  width: 100%;
+}
+
+.page-video-detail__scroll-inner {
+  padding: 0 $spacing-lg;
+  padding-bottom: 80px;
 }
 
 // ── Loading State ──

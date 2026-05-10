@@ -286,7 +286,7 @@
 /* 失败状态：红色边框 + 浅红背景 */
 .page-qa__bubble--failed {
   border-color: $organic-error-strong;
-  background: #fef2f2;
+  background: $organic-error;
 }
 
 // ── Bubble Text ──

@@ -228,6 +228,7 @@ export default function Index() {
         refresherTriggered={isRefreshing}
         onRefresherRefresh={handleRefresh}
       >
+        <View className="index__scroll-inner">
         {/* Greeting Section */}
         <View className="index__greeting">
           <Text className="index__greeting-text">{greeting.text}</Text>
@@ -302,6 +303,12 @@ export default function Index() {
         {/* Recent Appointments */}
         <View className="index__section-header" style={{ marginTop: '16px' }}>
           <Text className="index__section-title">近期复诊</Text>
+          <View
+            onClick={() => Taro.navigateTo({ url: '/pages/appointments/index' })}
+            hoverClass="index__section-link--pressed"
+          >
+            <Text className="index__section-link">查看更多 ›</Text>
+          </View>
         </View>
 
         {appointmentLoading ? (
@@ -334,7 +341,7 @@ export default function Index() {
                   : '已过期';
 
             return (
-              <OrganicCard key={item.id} shadow style={{ marginBottom: '12px' }}>
+              <OrganicCard key={item.id} shadow style={{ marginBottom: '12px' }} onPress={() => Taro.navigateTo({ url: '/pages/appointments/index' })}>
                 <View className="index__appointment-content">
                   <View className="index__appointment-date">
                     <Text className="index__appointment-day">{badge.day}</Text>
@@ -441,6 +448,7 @@ export default function Index() {
         </OrganicCard>
 
         <View className="index__bottom-spacer" />
+        </View>
       </ScrollView>
 
       {/* Floating Action Button */}

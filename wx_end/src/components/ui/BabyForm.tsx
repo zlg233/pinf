@@ -24,7 +24,7 @@ interface BabyFormProps {
 // 内联样式常量（对应 RN StyleSheet.create 的值）
 const styles = {
   scrollView: {
-    flex: 1,
+    height: '100%',
   } as React.CSSProperties,
   inputContainer: {
     marginBottom: 16,

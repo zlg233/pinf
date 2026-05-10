@@ -221,17 +221,17 @@
 
 .growth-chart__assessment-zone--normal {
   background: $organic-accent-mint;
-  color: #2E7D32;
+  color: $organic-success;
 }
 
 .growth-chart__assessment-zone--high {
   background: $organic-error;
-  color: #C62828;
+  color: $organic-error-strong;
 }
 
 .growth-chart__assessment-zone--low {
   background: $organic-error;
-  color: #C62828;
+  color: $organic-error-strong;
 }
 
 .growth-chart__assessment-trend {
@@ -245,11 +245,11 @@
 }
 
 .growth-chart__assessment-trend--up {
-  color: #C62828;
+  color: $organic-error-strong;
 }
 
 .growth-chart__assessment-trend--down {
-  color: #2E7D32;
+  color: $organic-accent-mint;
 }
 
 .growth-chart__assessment-trend--stable {

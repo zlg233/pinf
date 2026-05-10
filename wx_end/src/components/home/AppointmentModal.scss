@@ -2,13 +2,14 @@
 
 .appointment-modal {
   &__scroll {
-    padding-bottom: $spacing-lg;
+    height: 100%;
   }
 
   &__form {
     display: flex;
     flex-direction: column;
     gap: $spacing-md;
+    padding-bottom: $spacing-lg;
   }
 
   &__datetime-row {

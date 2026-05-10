@@ -65,7 +65,8 @@ export default function VideoDetailPage() {
   // ── 渲染 ──
   return (
     <OrganicBackground variant="morning">
-      <View className="page-video-detail">
+      <ScrollView className="page-video-detail__scroll" scrollY>
+        <View className="page-video-detail__scroll-inner">
         {/* ════ 头部导航 ════ */}
         <View className="page-video-detail__header">
           <View
@@ -78,9 +79,7 @@ export default function VideoDetailPage() {
           </View>
         </View>
 
-        {/* ════ 内容区 ════ */}
-        <ScrollView className="page-video-detail__scroll" scrollY>
-          {loading ? (
+        {loading ? (
             /* ── 加载中 ── */
             <View className="page-video-detail__loading">
               <View className="page-video-detail__spinner" />
@@ -144,8 +143,8 @@ export default function VideoDetailPage() {
 
           {/* 底部留白 */}
           <View className="page-video-detail__bottom-spacer" />
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
     </OrganicBackground>
   );
 }

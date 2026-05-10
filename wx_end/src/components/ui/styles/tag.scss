@@ -23,8 +23,8 @@
   }
 
   &--accent {
-    background-color: #FFEAA7;
-    color: #D35400;
+    background-color: $organic-warning;
+    color: $organic-accent-peach;
   }
 
   &--muted {
@@ -51,7 +51,7 @@
 
     &--default { color: $color-text-main; }
     &--primary { color: $organic-primary-main; }
-    &--accent { color: #D35400; }
+    &--accent { color: $organic-accent-peach; }
     &--muted { color: $color-muted-text; }
   }
 }

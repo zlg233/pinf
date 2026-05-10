@@ -6,6 +6,9 @@
   &__scroll {
     flex: 1;
     width: 100%;
+  }
+
+  &__scroll-inner {
     padding: 0 $spacing-lg;
     padding-bottom: 120px;
     box-sizing: border-box;
@@ -290,7 +293,7 @@
     }
 
     &--expired {
-      background: #E0E0E0;
+      background: $color-muted-bg;
     }
   }
 

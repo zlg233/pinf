@@ -81,7 +81,13 @@ export default function ArticleDetailPage() {
   // ── 渲染 ──
   return (
     <OrganicBackground variant="morning">
-      <View className="page-article-detail">
+      <ScrollView
+        className="page-article-detail__scroll"
+        scrollY
+        enhanced
+        showScrollbar={false}
+      >
+        <View className="page-article-detail__scroll-inner">
         {/* ════ 头部 ════ */}
         <View className="page-article-detail__header">
           <View
@@ -94,13 +100,6 @@ export default function ArticleDetailPage() {
           </View>
         </View>
 
-        {/* ════ 内容区 ════ */}
-        <ScrollView
-          className="page-article-detail__scroll"
-          scrollY
-          enhanced
-          showScrollbar={false}
-        >
           {/* ── 加载状态 ── */}
           {loading ? (
             <View className="page-article-detail__loading">
@@ -184,8 +183,8 @@ export default function ArticleDetailPage() {
               </View>
             </OrganicCard>
           )}
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
     </OrganicBackground>
   );
 }

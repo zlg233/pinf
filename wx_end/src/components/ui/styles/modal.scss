@@ -68,6 +68,8 @@
     position: relative;
     transition: transform 300ms ease, opacity 200ms ease;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
 
     // Minimum width for content
     min-width: 100%;
@@ -142,6 +144,8 @@
 
   &__body {
     padding-bottom: $spacing-md;
+    flex: 1;
+    min-height: 0;
   }
 
   &__body--fill {

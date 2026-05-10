@@ -340,15 +340,14 @@ export default function ClassroomPage() {
 
   return (
     <OrganicBackground variant="morning">
-      <View className="page-classroom">
-        <ScrollView
-          className="page-classroom__scroll"
-          scrollY
-          refresherEnabled
-          refresherTriggered={refreshing}
-          onRefresherRefresh={handleRefresh}
-        >
-          <View className="page-classroom__inner">
+      <ScrollView
+        className="page-classroom__scroll"
+        scrollY
+        refresherEnabled
+        refresherTriggered={refreshing}
+        onRefresherRefresh={handleRefresh}
+      >
+        <View className="page-classroom__inner">
             {/* ──── Title row ──── */}
             <View className="page-classroom__status-spacer" />
             <View className="page-classroom__title-row">
@@ -493,9 +492,8 @@ export default function ClassroomPage() {
 
             {/* bottom safe-area spacer */}
             <View className="page-classroom__bottom-spacer" />
-          </View>
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
     </OrganicBackground>
   );
 }

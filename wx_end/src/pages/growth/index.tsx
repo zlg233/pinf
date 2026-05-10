@@ -116,9 +116,16 @@ export default function GrowthPage() {
   // ── 渲染 ──
   return (
     <OrganicBackground variant="morning">
-      <View className="page-growth">
-      {/* ════ 头部 ════ */}
-      <View className="page-growth__header">
+      <ScrollView
+        className="page-growth__scroll"
+        scrollY
+        refresherEnabled
+        refresherTriggered={isRefreshing}
+        onRefresherRefresh={handleRefresh}
+      >
+        <View className="page-growth__scroll-inner">
+        {/* ════ 头部 ════ */}
+        <View className="page-growth__header">
         <View
           className="page-growth__back-btn"
           onClick={handleGoBack}
@@ -136,14 +143,6 @@ export default function GrowthPage() {
         </View>
       </View>
 
-      {/* ════ 内容区（含下拉刷新） ════ */}
-      <ScrollView
-        className="page-growth__scroll"
-        scrollY
-        refresherEnabled
-        refresherTriggered={isRefreshing}
-        onRefresherRefresh={handleRefresh}
-      >
         {!currentBaby ? (
           <View className="page-growth__center">
             <Text className="page-growth__center-icon">{'\u{1F476}'}</Text>
@@ -240,6 +239,7 @@ export default function GrowthPage() {
             <View className="page-growth__bottom-spacer" />
           </>
         )}
+        </View>
       </ScrollView>
 
       {/* ════ 添加记录弹窗 ════ */}
@@ -248,7 +248,6 @@ export default function GrowthPage() {
         onClose={() => setShowModal(false)}
         onSubmit={handleSubmit}
       />
-    </View>
     </OrganicBackground>
   );
 }
