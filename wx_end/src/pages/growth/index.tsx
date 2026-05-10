@@ -19,6 +19,7 @@ import { OrganicCard } from '@/components/ui/OrganicCard';
 
 import { useBabyStore } from '@/store/babyStore';
 import { useGrowthStore } from '@/store/growthStore';
+import { useAuthStore } from '@/store';
 
 import type { GrowthMetric } from '@/types/growth';
 import type { CreateGrowthInput } from '@/types/growth';
@@ -35,7 +36,7 @@ export default function GrowthPage() {
     : undefined;
 
   // ── Store ──
-  const { currentBaby, fetchBabies, selectBaby } = useBabyStore();
+  const { currentBaby, initialize, selectBaby } = useBabyStore();
   const {
     records,
     fetch: fetchGrowth,
@@ -44,6 +45,8 @@ export default function GrowthPage() {
     remove: removeGrowth,
     loading,
   } = useGrowthStore();
+
+  const { isAuthenticated } = useAuthStore();
 
   // ── 内部状态 ──
   const [showModal, setShowModal] = useState(false);
@@ -54,8 +57,9 @@ export default function GrowthPage() {
 
   // ── 初始化：确保有 baby 数据 ──
   useEffect(() => {
+    if (!isAuthenticated) return;
     if (!currentBaby && babyIdFromRoute) {
-      fetchBabies().then(() => {
+      initialize().then(() => {
         selectBaby(babyIdFromRoute);
       });
     }

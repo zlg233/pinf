@@ -59,6 +59,7 @@ export default function Index() {
     babies,
     currentBaby,
     fetchBabies,
+    initialize,
     createBaby,
     updateBaby,
     selectBaby,
@@ -103,8 +104,8 @@ export default function Index() {
 
   // ========== Data Loading ==========
   useDidShow(() => {
-    fetchBabies().catch(() => {});
     if (isAuthenticated) {
+      initialize().catch(() => {});
       fetchAppointments().catch(() => {});
     }
   });
