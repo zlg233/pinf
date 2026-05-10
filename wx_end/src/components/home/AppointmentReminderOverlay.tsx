@@ -96,7 +96,7 @@ const AppointmentReminderOverlay: React.FC = () => {
 
   const handleViewAll = () => {
     setVisible(false);
-    Taro.navigateTo({ url: '/pages/index/index' });
+    Taro.navigateTo({ url: '/pages/appointments/index' });
   };
 
   return (

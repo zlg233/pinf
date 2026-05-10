@@ -33,6 +33,23 @@ bun run lint                    # ESLint 检查
 npx tsc --noEmit               # TypeScript 类型检查
 ```
 
+### 微信小程序开发 (wx_end/)
+```bash
+cd wx_end
+
+# 安装依赖（仅允许 bun）
+bun install
+
+# 构建微信小程序
+bun run build:weapp
+
+# 开发模式（watch 热更新）
+bun run dev:weapp
+
+# 构建产物在 dist/ 目录，用微信开发者工具打开 wx_end 目录即可预览
+# 开发者工具需勾选"不校验合法域名"才能访问 localhost:5010
+```
+
 ### 后端开发
 ```bash
 cd backend
@@ -63,6 +80,13 @@ docker compose up -d
 - **状态管理**: Zustand，位于 `store/`
 - **API 客户端**: Axios 封装，位于 `services/api/`
 - **UI 组件**: Organic 体系，位于 `components/ui/`
+
+### 微信小程序 (wx_end/)
+- **框架**: Taro 3.x + React + TypeScript + Webpack5
+- **路由**: `src/app.config.ts` 声明式页面配置
+- **编译输出**: `dist/` → 微信开发者工具直接打开 `wx_end/` 目录
+- **API 客户端**: `Taro.request` 封装，位于 `services/api/client.ts`
+- **组件库**: 项目内 Organic 体系 (`components/ui/`)，复用 app_end 设计 token
 
 ### 后端 (backend/)
 - **框架**: Flask 2.3.3 + Python 3.11+
