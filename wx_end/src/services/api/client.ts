@@ -1,7 +1,7 @@
 import Taro from '@tarojs/taro';
 
 // 根据 NODE_ENV 切换 API 地址（由 config/dev.ts 和 config/prod.ts 注入）
-const API_BASE_URL = process.env.NODE_ENV === 'production'
+export const API_BASE_URL = process.env.NODE_ENV === 'production'
   ? 'https://backend.pinf.top/api'
   : 'http://localhost:5010/api';
 // 注意：开发环境需要在微信开发者工具中

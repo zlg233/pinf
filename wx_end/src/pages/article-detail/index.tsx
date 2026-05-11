@@ -32,10 +32,23 @@ const formatDate = (value?: string | null): string => {
 };
 
 /**
- * 清洗 HTML 内容：修复 &amp; 实体，确保图片 URL 正确
+ * 清洗 HTML 内容，使其可在 RichText 中正常渲染。
+ *
+ * 微信公众号文章 HTML 有两个常见问题：
+ * 1. 图片使用 data-src 懒加载，RichText 只认 src → 需将 data-src 转为 src
+ * 2. 部分 HTML 实体可能二次编码（&quot; / &#34; 等）→ 需解码
  */
 const cleanHtml = (content: string): string => {
-  return content.replace(/&amp;/g, '&');
+  return content
+    // data-src → src（微信文章懒加载图片）
+    .replace(/\bdata-src\b/g, 'src')
+    // 解码常见 HTML 实体
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#34;/g, '"')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&#39;/g, "'");
 };
 
 export default function ArticleDetailPage() {

@@ -48,6 +48,11 @@
 }
 
 .page-video-detail__scroll-inner {
+  // padding 从 scroll-view 子元素移至内层 wrapper，
+  // 避免微信 webview 渲染模式下的 scroll-view padding 兼容警告
+}
+
+.page-video-detail__scroll-body {
   padding: 0 $spacing-lg;
   padding-bottom: 80px;
 }

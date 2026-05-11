@@ -122,8 +122,13 @@ export default function Index() {
   const currentGrowth = currentBaby?.id ? records[currentBaby.id] || [] : [];
 
   const filteredAppointments = useMemo(() => {
-    if (!currentBaby) return appointments;
-    return appointments.filter((item) => item.baby?.id === currentBaby.id);
+    const list = currentBaby
+      ? appointments.filter((item) => item.baby?.id === currentBaby.id)
+      : appointments;
+    // 只展示待就诊的未来预约，按预约日期倒序（最近的排最前）
+    return list
+      .filter((item) => item.status !== 'completed' && item.status !== 'overdue')
+      .sort((a, b) => new Date(b.scheduledAt).getTime() - new Date(a.scheduledAt).getTime());
   }, [appointments, currentBaby]);
 
   const editingBaby = editingBabyId
@@ -196,25 +201,25 @@ export default function Index() {
     {
       id: 'growth',
       title: '成长曲线',
-      icon: '',
+      icon: '📈',
       onClick: () => Taro.navigateTo({ url: '/pages/growth/index' }),
     },
     {
       id: 'qa',
       title: 'AI 问答',
-      icon: '',
+      icon: '💬',
       onClick: () => Taro.navigateTo({ url: '/pages/qa/index' }),
     },
     {
       id: 'appointment',
       title: '添加预约',
-      icon: '',
+      icon: '📅',
       onClick: () => setShowAppointmentModal(true),
     },
     {
       id: 'classroom',
       title: '内容课堂',
-      icon: '',
+      icon: '📚',
       onClick: () => Taro.switchTab({ url: '/pages/classroom/index' }),
     },
   ];
@@ -303,7 +308,7 @@ export default function Index() {
 
         {/* Recent Appointments */}
         <View className="index__section-header" style={{ marginTop: '16px' }}>
-          <Text className="index__section-title">近期复诊</Text>
+          <Text className="index__section-title">近期预约</Text>
           <View
             onClick={() => Taro.navigateTo({ url: '/pages/appointments/index' })}
             hoverClass="index__section-link--pressed"
@@ -327,7 +332,7 @@ export default function Index() {
           <OrganicCard variant="ghost">
             <View className="index__empty-content">
               <Text className="index__empty-text">暂无预约</Text>
-              <Text className="index__empty-subtext">点击快捷入口添加复诊预约</Text>
+              <Text className="index__empty-subtext">点击快捷入口添加预约</Text>
             </View>
           </OrganicCard>
         ) : (

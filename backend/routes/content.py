@@ -255,10 +255,50 @@ def get_videos(current_user):
     return jsonify(payload)
 
 
+@content_bp.route("/content/videos/<int:video_id>/watch", methods=["GET"])
+def watch_video(video_id):
+    """返回一个 HTML 页面，用 iframe 嵌入微信视频页。
+
+    WebView 只能加载已白名单的域名（backend.pinf.top），不能直接加载 mp.weixin.qq.com。
+    此路由在 backend.pinf.top 域下，页面内用 iframe 绕过白名单限制。
+    """
+    video = Video.query.get(video_id)
+    if not video or not video.down_url:
+        return "<h1>视频不存在</h1>", 404
+
+    # http → https，确保 iframe 能加载
+    video_url = (video.down_url or "").replace("http://", "https://")
+
+    html = f"""<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<style>
+  * {{ margin:0; padding:0; }}
+  html, body {{ width:100%; height:100%; overflow:hidden; }}
+  iframe {{ width:100%; height:100%; border:none; }}
+</style>
+</head>
+<body>
+  <iframe src="{video_url}" allowfullscreen></iframe>
+</body>
+</html>"""
+    return html, 200, {"Content-Type": "text/html; charset=utf-8"}
+
+
 @content_bp.route("/content/videos/<int:video_id>", methods=["GET"])
 @token_required
 def get_video_detail(current_user, video_id):
     video = Video.query.get(video_id)
     if not video:
         return jsonify({"status": "error", "message": "视频不存在"}), 404
-    return jsonify({"status": "success", "data": video.to_dict()})
+    data = video.to_dict()
+    logger.info(
+        "视频详情请求: video_id=%s, media_id=%s, down_url=%s, url=%s",
+        video_id,
+        video.media_id,
+        video.down_url[:200] if video.down_url else None,
+        video.url[:200] if video.url else None,
+    )
+    return jsonify({"status": "success", "data": data})

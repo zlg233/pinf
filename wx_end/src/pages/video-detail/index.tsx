@@ -1,21 +1,36 @@
 /**
  * 视频详情页 (Taro/WeChat Mini-Program)
  *
- * 从 React Native 迁移: expo-router useLocalSearchParams -> Taro.useRouter,
- * RN WebView video -> Taro <Video> 组件 (微信原生),
- * RN ActivityIndicator -> CSS spinner, RN TouchableOpacity -> View + onClick + hoverClass
+ * 微信素材 API 返回的 down_url 为视频页面链接（mp.weixin.qq.com），非直链 .mp4。
+ * → 微信页面 URL 用 <WebView> 嵌入（页面自带播放器）
+ * → 其他直链 URL 用原生 <Video> 组件播放
  */
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, ScrollView, Video } from '@tarojs/components';
+import { View, Text, ScrollView, Video, WebView } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 
 import { OrganicBackground } from '@/components/ui/OrganicBackground';
 import { OrganicCard } from '@/components/ui/OrganicCard';
 import * as contentApi from '@/services/api/content';
+import { API_BASE_URL } from '@/services/api/client';
 import type { ContentVideo } from '@/types/content';
 
 import './index.scss';
+
+/** 清洗 URL + http → https */
+const sanitizeUrl = (url?: string | null): string => {
+  if (!url) return '';
+  return url
+    .trim()
+    .replace(/^["“”]+|["“”]+$/g, '')
+    .replace(/&quot;/g, '')
+    .replace(/&#34;/g, '')
+    .replace(/^http:\/\//, 'https://');
+};
+
+const isWechatVideoPage = (url?: string | null): boolean =>
+  !!url && /mp\.weixin\.qq\.com/.test(url);
 
 export default function VideoDetailPage() {
   // ── 路由参数 ──
@@ -52,8 +67,6 @@ export default function VideoDetailPage() {
     fetchDetail();
   }, [fetchDetail]);
 
-  // ── 事件处理 ──
-
   const handleGoBack = () => {
     Taro.navigateBack();
   };
@@ -62,11 +75,29 @@ export default function VideoDetailPage() {
     setError('视频加载失败');
   };
 
-  // ── 渲染 ──
+  const handleWebViewError = () => {
+    setError('视频页面加载失败');
+  };
+
+  const videoUrl = sanitizeUrl(video?.downUrl);
+
+  // ── 微信视频页面 → WebView 全屏（经后端代理页绕过业务域名白名单）──
+  if (video && isWechatVideoPage(video.downUrl)) {
+    const watchUrl = `${API_BASE_URL}/content/videos/${videoId}/watch`;
+    return (
+      <WebView
+        src={watchUrl}
+        onError={handleWebViewError}
+      />
+    );
+  }
+
+  // ── 非微信页面（直链或加载中/错误）→ 标准布局 ──
   return (
     <OrganicBackground variant="morning">
       <ScrollView className="page-video-detail__scroll" scrollY>
         <View className="page-video-detail__scroll-inner">
+        <View className="page-video-detail__scroll-body">
         {/* ════ 头部导航 ════ */}
         <View className="page-video-detail__header">
           <View
@@ -74,7 +105,7 @@ export default function VideoDetailPage() {
             onClick={handleGoBack}
             hoverClass="page-video-detail__back-btn--pressed"
           >
-            <Text className="page-video-detail__back-icon">{'\u2039'}</Text>
+            <Text className="page-video-detail__back-icon">{'‹'}</Text>
             <Text className="page-video-detail__back-text">返回</Text>
           </View>
         </View>
@@ -111,11 +142,11 @@ export default function VideoDetailPage() {
                 </Text>
               ) : null}
 
-              {video.downUrl ? (
+              {videoUrl ? (
                 <View className="page-video-detail__video-wrapper">
                   <Video
-                    src={video.downUrl}
-                    poster={video.coverUrl || undefined}
+                    src={videoUrl}
+                    poster={sanitizeUrl(video.coverUrl) || undefined}
                     className="page-video-detail__video"
                     controls
                     autoplay={false}
@@ -143,6 +174,7 @@ export default function VideoDetailPage() {
 
           {/* 底部留白 */}
           <View className="page-video-detail__bottom-spacer" />
+        </View>
         </View>
       </ScrollView>
     </OrganicBackground>
