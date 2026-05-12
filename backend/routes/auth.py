@@ -1,8 +1,14 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db
 from models.user import User
+from models.baby import Baby
+from models.appointment import Appointment
+from models.growth import GrowthRecord
+from models.chat import ChatMessage
+from models.notification_subscription import NotificationSubscription
+from models.device_token import DeviceToken
 from models.verification_code import VerificationCode
 from utils.wechat import get_wechat_user_info
 from utils.wechat_mp import code2session, get_mp_access_token
@@ -260,3 +266,53 @@ def wechat_miniprogram_bind_phone(data):
         "message": "手机号绑定成功",
         "data": {"user": user.to_dict() if user else None}
     })
+
+
+@auth_bp.route("/auth/account", methods=["DELETE"])
+@token_required
+def delete_account(current_user):
+    """删除用户账号，级联删除所有关联数据（宝宝、预约、生长记录、聊天、设备、订阅）"""
+    force = request.args.get("force", "false").lower() == "true"
+
+    uid = current_user.id
+    baby_count = Baby.query.filter_by(user_id=uid).count()
+    appointment_count = Appointment.query.filter_by(user_id=uid).count()
+    growth_count = sum(
+        GrowthRecord.query.filter(GrowthRecord.baby_id == b.id).count()
+        for b in Baby.query.filter_by(user_id=uid).all()
+    )
+    chat_count = ChatMessage.query.filter_by(user_id=uid).count()
+    sub_count = NotificationSubscription.query.filter_by(user_id=uid).count()
+    device_count = DeviceToken.query.filter_by(user_id=uid).count()
+    total_related = baby_count + appointment_count + growth_count + chat_count + sub_count + device_count
+
+    if total_related > 0 and not force:
+        return jsonify({
+            "status": "confirm_required",
+            "message": (
+                f"删除账号将同时清除以下数据：\n"
+                f"• {baby_count} 个宝宝（含其生长记录 {growth_count} 条）\n"
+                f"• {appointment_count} 条预约记录\n"
+                f"• {chat_count} 条聊天记录\n"
+                f"• {sub_count} 条提醒订阅\n"
+                f"• {device_count} 个登录设备\n"
+                f"共计 {total_related} 条数据，此操作不可恢复，是否确认删除？"
+            ),
+            "data": {
+                "babyCount": baby_count,
+                "appointmentCount": appointment_count,
+                "growthCount": growth_count,
+                "chatCount": chat_count,
+                "subCount": sub_count,
+                "deviceCount": device_count,
+                "totalRelated": total_related,
+            }
+        }), 409
+
+    try:
+        db.session.delete(current_user)
+        db.session.commit()
+        return jsonify({"status": "success", "message": "账号已删除"})
+    except Exception as exc:
+        db.session.rollback()
+        return jsonify({"status": "error", "message": f"删除失败: {exc}"}), 500

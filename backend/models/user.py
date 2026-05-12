@@ -17,6 +17,10 @@ class User(db.Model):
     babies = db.relationship("Baby", backref="user", lazy=True, cascade="all, delete-orphan")
     appointments = db.relationship("Appointment", backref="user", lazy=True, cascade="all, delete-orphan")
     chat_messages = db.relationship("ChatMessage", backref="user", lazy=True, cascade="all, delete-orphan")
+    device_tokens = db.relationship("DeviceToken", backref="user", lazy=True, cascade="all, delete-orphan")
+    notification_subscriptions = db.relationship(
+        "NotificationSubscription", backref="user", lazy=True, cascade="all, delete-orphan"
+    )
 
     def to_dict(self):
         return {

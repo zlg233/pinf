@@ -2,6 +2,9 @@ from datetime import datetime
 from flask import Blueprint, jsonify, request
 from models import db
 from models.baby import Baby
+from models.appointment import Appointment
+from models.growth import GrowthRecord
+from models.chat import ChatMessage
 from utils.auth import token_required, validate_request_data
 
 baby_bp = Blueprint("baby", __name__)
@@ -101,6 +104,26 @@ def delete_baby(current_user, baby_id):
     baby = Baby.query.filter_by(id=baby_id, user_id=current_user.id).first()
     if not baby:
         return jsonify({"status": "error", "message": "宝宝不存在或无权限"}), 404
+
+    force = request.args.get("force", "false").lower() == "true"
+
+    appointment_count = Appointment.query.filter_by(baby_id=baby.id).count()
+    growth_count = GrowthRecord.query.filter_by(baby_id=baby.id).count()
+    chat_count = ChatMessage.query.filter_by(baby_id=baby.id).count()
+    total_related = appointment_count + growth_count + chat_count
+
+    if total_related > 0 and not force:
+        return jsonify({
+            "status": "confirm_required",
+            "message": f"删除宝宝「{baby.name}」将同时删除 {appointment_count} 条预约记录、{growth_count} 条生长记录、{chat_count} 条聊天记录，共计 {total_related} 条数据，此操作不可恢复，是否确认删除？",
+            "data": {
+                "appointmentCount": appointment_count,
+                "growthCount": growth_count,
+                "chatCount": chat_count,
+                "totalRelated": total_related,
+            }
+        }), 409
+
     try:
         db.session.delete(baby)
         db.session.commit()

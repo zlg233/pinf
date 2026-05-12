@@ -16,6 +16,10 @@ class Appointment(db.Model):
     note = db.Column(db.Text)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
+    notification_subscriptions = db.relationship(
+        "NotificationSubscription", backref="appointment", lazy=True, cascade="all, delete-orphan"
+    )
+
     def to_dict(self):
         return {
             "id": self.id,

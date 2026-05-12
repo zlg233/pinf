@@ -233,6 +233,19 @@ def delete_appointment(current_user, appointment_id):
     appointment = _find_appointment(current_user.id, appointment_id)
     if not appointment:
         return jsonify({"status": "error", "message": "预约不存在或无权限"}), 404
+
+    force = request.args.get("force", "false").lower() == "true"
+    subscription_count = NotificationSubscription.query.filter_by(
+        appointment_id=appointment.id
+    ).count()
+
+    if subscription_count > 0 and not force:
+        return jsonify({
+            "status": "confirm_required",
+            "message": f"该预约有 {subscription_count} 条提醒订阅，删除预约将同时取消这些提醒，是否确认删除？",
+            "data": {"subscriptionCount": subscription_count}
+        }), 409
+
     try:
         db.session.delete(appointment)
         db.session.commit()

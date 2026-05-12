@@ -21,7 +21,9 @@ class Baby(db.Model):
     appointments = db.relationship(
         "Appointment", backref="baby", lazy=True, cascade="all, delete-orphan"
     )
-    chat_messages = db.relationship("ChatMessage", backref="baby", lazy=True)
+    chat_messages = db.relationship(
+        "ChatMessage", backref="baby", lazy=True, cascade="all, delete-orphan"
+    )
 
     def to_dict(self):
         return {
