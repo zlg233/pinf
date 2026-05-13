@@ -121,6 +121,24 @@ _MIGRATIONS = [
             "  EXECUTE FUNCTION notification_ready_trigger();"
         ),
     },
+    {
+        "id": "2026_05_14_add_baby_id_to_notification_subscriptions",
+        "sql": "ALTER TABLE notification_subscriptions ADD COLUMN IF NOT EXISTS baby_id INTEGER REFERENCES babies(id)",
+    },
+    {
+        "id": "2026_05_14_backfill_baby_id_for_notification_subscriptions",
+        "sql": (
+            "UPDATE notification_subscriptions ns "
+            "SET baby_id = a.baby_id "
+            "FROM appointments a "
+            "WHERE ns.appointment_id = a.id "
+            "AND ns.baby_id IS NULL"
+        ),
+    },
+    {
+        "id": "2026_05_14_add_baby_id_index_to_notification_subscriptions",
+        "sql": "CREATE INDEX IF NOT EXISTS idx_notification_subscriptions_baby_id ON notification_subscriptions(baby_id)",
+    },
 
 ]
 

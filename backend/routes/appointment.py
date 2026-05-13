@@ -102,6 +102,14 @@ def get_appointment_summary(current_user):
     if window_days < 1 or window_days > 30:
         return jsonify({"status": "error", "message": "windowDays 需在 1-30 之间"}), 400
 
+    # 可选的 babyId 过滤
+    baby_id = request.args.get("babyId")
+    if baby_id:
+        try:
+            baby_id = int(baby_id)
+        except ValueError:
+            return jsonify({"status": "error", "message": "babyId 必须是数字"}), 400
+
     mark_overdue_appointments(current_user.id)
 
     now = now_local_naive()
@@ -110,6 +118,8 @@ def get_appointment_summary(current_user):
     upcoming_deadline = start_of_today + timedelta(days=window_days + 1)
 
     base_query = Appointment.query.filter_by(user_id=current_user.id, status="pending")
+    if baby_id:
+        base_query = base_query.filter_by(baby_id=baby_id)
     today_items = (
         base_query.filter(
             Appointment.scheduled_at >= start_of_today,

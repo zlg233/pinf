@@ -8,7 +8,7 @@ import { OrganicButton } from '@/components/ui';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { organicTheme } from '@/constants/theme';
 import { getAppointmentSummary } from '@/services/api/appointment';
-import { useAuthStore } from '@/store';
+import { useAuthStore, useBabyStore } from '@/store';
 import type { AppointmentSummary } from '@/types/appointment';
 import { formatAppointmentDateTime } from '@/utils/appointment';
 
@@ -19,6 +19,7 @@ export function AppointmentReminderOverlay() {
   const router = useRouter();
   const segments = useSegments();
   const { isAuthenticated, isLoading, user } = useAuthStore();
+  const { currentBaby } = useBabyStore();
   const [summary, setSummary] = useState<AppointmentSummary | null>(null);
   const [visible, setVisible] = useState(false);
   const shownKeyRef = useRef('');
@@ -40,7 +41,7 @@ export function AppointmentReminderOverlay() {
     }
 
     let cancelled = false;
-    getAppointmentSummary()
+    getAppointmentSummary(currentBaby?.id)
       .then((data) => {
         if (cancelled) return;
 
@@ -64,7 +65,7 @@ export function AppointmentReminderOverlay() {
     return () => {
       cancelled = true;
     };
-  }, [isAuthenticated, isAuthFlow, isLoading, routeKey, user?.id]);
+  }, [currentBaby?.id, isAuthenticated, isAuthFlow, isLoading, routeKey, user?.id]);
 
   const previewItems = useMemo(() => {
     if (!summary) return [];

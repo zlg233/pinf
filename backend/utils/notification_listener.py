@@ -79,7 +79,15 @@ def start_notification_listener(app):
 
             # 发送推送
             from utils.notification_sender import send_expo_push
-            title = f'预约提醒（ID:{sub.appointment_id}）'
+
+            # 获取宝贝名称
+            baby_name = ''
+            if sub.appointment_id:
+                appointment = Appointment.query.get(sub.appointment_id)
+                if appointment and appointment.baby:
+                    baby_name = appointment.baby.name
+
+            title = f'预约提醒 - {baby_name}' if baby_name else '预约提醒'
             body = '您的预约即将到来，请按时就诊。'
             sent_ok = send_expo_push(sub.token, title, body, {'subscriptionId': sub.id})
 

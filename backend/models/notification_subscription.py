@@ -7,6 +7,7 @@ class NotificationSubscription(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
+    baby_id = db.Column(db.Integer, db.ForeignKey("babies.id"), nullable=True, index=True)
     appointment_id = db.Column(db.Integer, db.ForeignKey("appointments.id"), nullable=True, index=True)
     channel = db.Column(db.String(32), nullable=False, default="push")
     token = db.Column(db.String(512), nullable=True)
@@ -24,6 +25,7 @@ class NotificationSubscription(db.Model):
         return {
             "id": self.id,
             "appointmentId": self.appointment_id,
+            "babyId": self.baby_id,
             "userId": self.user_id,
             "channel": self.channel,
             "token": self.token,

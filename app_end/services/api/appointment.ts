@@ -27,8 +27,12 @@ export const createAppointment = async (
   return res.data.data;
 };
 
-export const getAppointmentSummary = async (windowDays = 3): Promise<AppointmentSummary> => {
-  const res = await api.get<ApiResponse<AppointmentSummary>>('/appointments/summary', { windowDays });
+export const getAppointmentSummary = async (babyId?: number, windowDays = 3): Promise<AppointmentSummary> => {
+  const params: Record<string, number> = { windowDays };
+  if (babyId) {
+    params.babyId = babyId;
+  }
+  const res = await api.get<ApiResponse<AppointmentSummary>>('/appointments/summary', params);
   return res.data.data;
 };
 

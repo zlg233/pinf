@@ -76,6 +76,7 @@ def create_subscription(current_user, data):
 
     sub = NotificationSubscription(
         user_id=current_user.id,
+        baby_id=appointment.baby_id,
         appointment_id=appointment.id,
         remind_time=remind_time,
         channel=channel,
@@ -179,8 +180,13 @@ def test_send(current_user, data):
 ])
 def miniprogram_subscribe(current_user, data):
     """小程序订阅消息授权 — 前端 requestSubscribeMessage 成功后记录到后端"""
+    appointment = Appointment.query.filter_by(id=data['appointment_id'], user_id=current_user.id).first()
+    if not appointment:
+        return jsonify({'status': 'error', 'message': '预约不存在或无权限'}), 404
+
     subscription = NotificationSubscription(
         user_id=current_user.id,
+        baby_id=appointment.baby_id,
         appointment_id=data['appointment_id'],
         channel='wechat_mp',
         token=data['openid'],
