@@ -3,6 +3,7 @@ import { View, Text } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 import { OrganicButton } from '@/components/ui/OrganicButton';
 import { useAuthStore } from '@/store';
+import { useBabyStore } from '@/store/babyStore';
 import { getAppointmentSummary } from '@/services/api/appointment';
 import { formatAppointmentDateTime } from '@/utils/appointment';
 import type { AppointmentSummary } from '@/types/appointment';
@@ -14,6 +15,7 @@ const STORAGE_PREFIX = 'appointment_reminder_shown_';
 
 const AppointmentReminderOverlay: React.FC = () => {
   const { isAuthenticated, isLoading, user } = useAuthStore();
+  const { currentBaby, isLoading: isBabyLoading } = useBabyStore();
   const [summary, setSummary] = useState<AppointmentSummary | null>(null);
   const [visible, setVisible] = useState(false);
   const shownKeyRef = useRef('');
@@ -23,20 +25,20 @@ const AppointmentReminderOverlay: React.FC = () => {
   const routeKey = currentPage;
 
   useEffect(() => {
-    if (isLoading || !isAuthenticated || isAuthFlow) {
+    if (isLoading || isBabyLoading || !isAuthenticated || isAuthFlow) {
       shownKeyRef.current = '';
       setVisible(false);
       return;
     }
 
-    const todayKey = `${user?.id ?? 'anonymous'}:${new Date().toDateString()}`;
+    const todayKey = `${user?.id ?? 'anonymous'}:${currentBaby?.id ?? 'no-baby'}:${new Date().toDateString()}`;
     if (shownKeyRef.current === todayKey) return;
 
     let cancelled = false;
 
     let storedDate = '';
     try {
-      storedDate = Taro.getStorageSync(`${STORAGE_PREFIX}${user?.id ?? 'anonymous'}`) as string;
+      storedDate = Taro.getStorageSync(`${STORAGE_PREFIX}${user?.id ?? 'anonymous'}:${currentBaby?.id ?? 'no-baby'}`) as string;
     } catch {
       // key not found, treat as not shown
     }
@@ -45,7 +47,7 @@ const AppointmentReminderOverlay: React.FC = () => {
       return;
     }
 
-    getAppointmentSummary()
+    getAppointmentSummary(currentBaby?.id)
       .then((data) => {
         if (cancelled) return;
 
@@ -57,7 +59,7 @@ const AppointmentReminderOverlay: React.FC = () => {
 
         shownKeyRef.current = todayKey;
         Taro.setStorageSync(
-          `${STORAGE_PREFIX}${user?.id ?? 'anonymous'}`,
+          `${STORAGE_PREFIX}${user?.id ?? 'anonymous'}:${currentBaby?.id ?? 'no-baby'}`,
           new Date().toDateString(),
         );
         setSummary(data);
@@ -73,7 +75,7 @@ const AppointmentReminderOverlay: React.FC = () => {
     return () => {
       cancelled = true;
     };
-  }, [isAuthenticated, isAuthFlow, isLoading, routeKey, user?.id]);
+  }, [currentBaby?.id, isAuthenticated, isAuthFlow, isBabyLoading, isLoading, routeKey, user?.id]);
 
   const previewItems = useMemo(() => {
     if (!summary) return [];
