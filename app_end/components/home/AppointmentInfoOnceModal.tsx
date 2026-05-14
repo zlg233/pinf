@@ -8,6 +8,7 @@ import { OrganicButton } from '@/components/ui';
 import { organicTheme } from '@/constants/theme';
 import { useAuthStore } from '@/store';
 import { useAppointmentStore } from '@/store/appointmentStore';
+import { useBabyStore } from '@/store/babyStore';
 import {
   formatAppointmentDateTime,
   getAppointmentEffectiveStatus,
@@ -20,6 +21,7 @@ const AUTH_SEGMENTS = new Set(['login', 'set-password']);
 export function AppointmentInfoOnceModal() {
   const segments = useSegments();
   const { isAuthenticated, isLoading } = useAuthStore();
+  const { currentBaby } = useBabyStore();
   const { appointments, fetch, loading } = useAppointmentStore();
   const [visible, setVisible] = useState(false);
   const shownInSessionRef = useRef(false);
@@ -37,15 +39,21 @@ export function AppointmentInfoOnceModal() {
   }, [fetch, isAuthenticated, isAuthFlow]);
 
   const pendingAppointments = useMemo(() => {
-    return appointments
-      .filter((item) => getAppointmentEffectiveStatus(item) === 'pending')
+    let filtered = appointments.filter((item) => getAppointmentEffectiveStatus(item) === 'pending');
+
+    // 按当前选中的宝贝过滤
+    if (currentBaby) {
+      filtered = filtered.filter((item) => item.babyId === currentBaby.id);
+    }
+
+    return filtered
       .sort((a, b) => {
         const left = parseAppointmentDate(a.scheduledAt)?.getTime() ?? Number.MAX_SAFE_INTEGER;
         const right = parseAppointmentDate(b.scheduledAt)?.getTime() ?? Number.MAX_SAFE_INTEGER;
         return left - right;
       })
       .slice(0, MAX_ITEMS);
-  }, [appointments]);
+  }, [appointments, currentBaby]);
   const hasOverdueAppointments = useMemo(
     () => appointments.some((item) => getAppointmentEffectiveStatus(item) === 'overdue'),
     [appointments]
