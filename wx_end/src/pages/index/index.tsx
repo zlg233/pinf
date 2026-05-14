@@ -204,12 +204,13 @@ export default function Index() {
       icon: '📈',
       onClick: () => Taro.navigateTo({ url: '/pages/growth/index' }),
     },
-    {
-      id: 'qa',
-      title: 'AI 问答',
-      icon: '💬',
-      onClick: () => Taro.navigateTo({ url: '/pages/qa/index' }),
-    },
+    // AI 问答入口暂时隐藏（微信审核）
+    // {
+    //   id: 'qa',
+    //   title: 'AI 问答',
+    //   icon: '💬',
+    //   onClick: () => Taro.navigateTo({ url: '/pages/qa/index' }),
+    // },
     {
       id: 'appointment',
       title: '添加预约',
