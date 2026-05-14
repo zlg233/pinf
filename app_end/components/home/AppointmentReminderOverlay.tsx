@@ -19,7 +19,7 @@ export function AppointmentReminderOverlay() {
   const router = useRouter();
   const segments = useSegments();
   const { isAuthenticated, isLoading, user } = useAuthStore();
-  const { currentBaby } = useBabyStore();
+  const { currentBaby, isLoading: isBabyLoading } = useBabyStore();
   const [summary, setSummary] = useState<AppointmentSummary | null>(null);
   const [visible, setVisible] = useState(false);
   const shownKeyRef = useRef('');
@@ -29,13 +29,13 @@ export function AppointmentReminderOverlay() {
   const routeKey = useMemo(() => segments.join('/'), [segments]);
 
   useEffect(() => {
-    if (isLoading || !isAuthenticated || isAuthFlow) {
+    if (isLoading || isBabyLoading || !isAuthenticated || isAuthFlow) {
       shownKeyRef.current = '';
       setVisible(false);
       return;
     }
 
-    const todayKey = `${user?.id ?? 'anonymous'}:${new Date().toDateString()}`;
+    const todayKey = `${user?.id ?? 'anonymous'}:${currentBaby?.id ?? 'no-baby'}:${new Date().toDateString()}`;
     if (shownKeyRef.current === todayKey) {
       return;
     }
@@ -65,7 +65,7 @@ export function AppointmentReminderOverlay() {
     return () => {
       cancelled = true;
     };
-  }, [currentBaby?.id, isAuthenticated, isAuthFlow, isLoading, routeKey, user?.id]);
+  }, [currentBaby?.id, isAuthenticated, isAuthFlow, isBabyLoading, isLoading, routeKey, user?.id]);
 
   const previewItems = useMemo(() => {
     if (!summary) return [];
