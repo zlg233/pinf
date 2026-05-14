@@ -8,6 +8,7 @@ import 'react-native-reanimated';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { AppointmentCompletionPrompt } from '@/components/home';
+import { AppointmentReminderOverlay } from '@/components/home/AppointmentReminderOverlay';
 import { FeedbackProvider } from '@/contexts/FeedbackContext';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { setUnauthorizedHandler } from '@/services/api/client';
@@ -109,6 +110,7 @@ export default function RootLayout() {
       <ThemeProvider>
         <FeedbackProvider>
           <AppointmentCompletionPrompt />
+          <AppointmentReminderOverlay />
           <Stack>
             <Stack.Screen name="login" options={{ headerShown: false }} />
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
