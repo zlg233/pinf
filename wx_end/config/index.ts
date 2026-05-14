@@ -30,6 +30,9 @@ const config = {
   },
   cache: { enable: false },
   mini: {
+    optimizeMainPackage: {
+      enable: true,
+    },
     miniCssExtractPluginOption: {
       ignoreOrder: true,
     },

@@ -6,8 +6,28 @@
  */
 
 import Taro from '@tarojs/taro';
-import * as echarts from 'echarts';
-import type { EChartsOption } from 'echarts';
+import * as echarts from 'echarts/core';
+import { LineChart } from 'echarts/charts';
+import {
+  TooltipComponent,
+  GridComponent,
+  LegendComponent,
+  DataZoomComponent,
+  MarkPointComponent,
+} from 'echarts/components';
+import { CanvasRenderer } from 'echarts/renderers';
+import type { EChartsOption } from 'echarts/core';
+
+// 注册需要的组件
+echarts.use([
+  LineChart,
+  TooltipComponent,
+  GridComponent,
+  LegendComponent,
+  DataZoomComponent,
+  MarkPointComponent,
+  CanvasRenderer,
+]);
 
 export type { EChartsOption };
 export { echarts };

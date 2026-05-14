@@ -257,31 +257,61 @@ def get_videos(current_user):
 
 @content_bp.route("/content/videos/<int:video_id>/watch", methods=["GET"])
 def watch_video(video_id):
-    """返回一个 HTML 页面，用 iframe 嵌入微信视频页。
+    """返回一个 HTML 页面，用 JavaScript 重定向到微信视频页。
 
     WebView 只能加载已白名单的域名（backend.pinf.top），不能直接加载 mp.weixin.qq.com。
-    此路由在 backend.pinf.top 域下，页面内用 iframe 绕过白名单限制。
+    此路由在 backend.pinf.top 域下，页面内用 JavaScript 重定向到微信视频页。
     """
     video = Video.query.get(video_id)
     if not video or not video.down_url:
         return "<h1>视频不存在</h1>", 404
 
-    # http → https，确保 iframe 能加载
+    # http → https，确保能加载
     video_url = (video.down_url or "").replace("http://", "https://")
 
     html = f"""<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>视频播放</title>
 <style>
   * {{ margin:0; padding:0; }}
-  html, body {{ width:100%; height:100%; overflow:hidden; }}
-  iframe {{ width:100%; height:100%; border:none; }}
+  html, body {{ width:100%; height:100%; background:#000; }}
+  .loading {{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }}
+  .spinner {{
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-top-color: #fff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-bottom: 16px;
+  }}
+  @keyframes spin {{
+    to {{ transform: rotate(360deg); }}
+  }}
 </style>
 </head>
 <body>
-  <iframe src="{video_url}" allowfullscreen></iframe>
+  <div class="loading">
+    <div class="spinner"></div>
+    <div>正在加载视频...</div>
+  </div>
+  <script>
+    // 延迟跳转，确保页面加载完成
+    setTimeout(function() {{
+      window.location.href = '{video_url}';
+    }}, 100);
+  </script>
 </body>
 </html>"""
     return html, 200, {"Content-Type": "text/html; charset=utf-8"}

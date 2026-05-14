@@ -23,7 +23,7 @@ const sanitizeUrl = (url?: string | null): string => {
   if (!url) return '';
   return url
     .trim()
-    .replace(/^["“”]+|["“”]+$/g, '')
+    .replace(/^["""]+|["""]+$/g, '')
     .replace(/&quot;/g, '')
     .replace(/&#34;/g, '')
     .replace(/^http:\/\//, 'https://');

@@ -6,11 +6,22 @@ export default defineAppConfig({
     'pages/profile/index',
     'pages/login/index',
     'pages/set-password/index',
-    'pages/growth/index',
     'pages/appointments/index',
     'pages/article-detail/index',
     'pages/video-detail/index',
   ],
+  subpackages: [
+    {
+      root: 'pages/growth',
+      pages: ['index'],
+    },
+  ],
+  preloadRule: {
+    'pages/index/index': {
+      network: 'all',
+      packages: ['pages/growth'],
+    },
+  },
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#fff',
