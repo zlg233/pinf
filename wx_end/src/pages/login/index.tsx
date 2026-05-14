@@ -25,6 +25,7 @@ export default function LoginPage() {
   const [debugCode, setDebugCode] = useState('');
   const [formError, setFormError] = useState('');
   const [isWechatLoading, setIsWechatLoading] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const authStore = useAuthStore();
@@ -90,6 +91,12 @@ export default function LoginPage() {
 
   // ---- Login ----
   const handleLogin = async () => {
+    // Check terms agreement
+    if (!agreedToTerms) {
+      setFormError('请先阅读并同意《用户服务协议》和《隐私政策》');
+      return;
+    }
+
     // Phone validation
     if (!phone) {
       setFormError('请输入手机号');
@@ -149,6 +156,12 @@ export default function LoginPage() {
 
   // ---- WeChat Mini Program Login ----
   const handleWechatLogin = async (e: any) => {
+    // Check terms agreement
+    if (!agreedToTerms) {
+      setFormError('请先阅读并同意《用户服务协议》和《隐私政策》');
+      return;
+    }
+
     setFormError('');
     setIsWechatLoading(true);
     try {
@@ -331,6 +344,22 @@ export default function LoginPage() {
                 </Button>
               </View>
 
+              {/* ---- Terms Agreement ---- */}
+              <View className="login__terms">
+                <View
+                  className={`login__checkbox${agreedToTerms ? ' login__checkbox--checked' : ''}`}
+                  onClick={() => setAgreedToTerms(!agreedToTerms)}
+                >
+                  {agreedToTerms && <Text className="login__checkbox-icon">✓</Text>}
+                </View>
+                <Text className="login__terms-text">
+                  我已阅读并同意
+                  <Text className="login__terms-link" onClick={() => Taro.navigateTo({ url: '/pages/terms/index' })}>《用户服务协议》</Text>
+                  和
+                  <Text className="login__terms-link" onClick={() => Taro.navigateTo({ url: '/pages/privacy/index' })}>《隐私政策》</Text>
+                </Text>
+              </View>
+
               {/* ---- Login Button ---- */}
               <View className="login__submit-btn">
                 <OrganicButton
@@ -338,15 +367,10 @@ export default function LoginPage() {
                   variant="primary"
                   size="large"
                   loading={isLoading}
-                  disabled={isLoading}
+                  disabled={isLoading || !agreedToTerms}
                   onPress={handleLogin}
                 />
               </View>
-
-              {/* ---- Terms Hint ---- */}
-              <Text className="login__hint">
-                登录即表示同意《用户服务协议》和《隐私政策》
-              </Text>
             </View>
           </OrganicCard>
         </View>

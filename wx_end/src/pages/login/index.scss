@@ -219,4 +219,49 @@
     margin-top: 16px;
     margin-bottom: 8px;
   }
+
+  // ---- Terms Agreement ----
+  &__terms {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    margin-top: 16px;
+    padding: 0 4px;
+  }
+
+  &__checkbox {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1.5px solid #CCCCCC;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 8px;
+    margin-top: 2px;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+
+    &--checked {
+      background: #FFB5A7;
+      border-color: #FFB5A7;
+    }
+  }
+
+  &__checkbox-icon {
+    font-size: 12px;
+    color: #FFFFFF;
+    font-weight: 600;
+  }
+
+  &__terms-text {
+    font-size: 12px;
+    color: #7A7A7A;
+    line-height: 1.5;
+  }
+
+  &__terms-link {
+    color: #FFB5A7;
+    font-weight: 500;
+  }
 }

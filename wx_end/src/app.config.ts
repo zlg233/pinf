@@ -2,7 +2,7 @@ export default defineAppConfig({
   pages: [
     'pages/index/index',
     'pages/classroom/index',
-    'pages/qa/index',
+    // 'pages/qa/index',  // AI问答页面已隐藏（微信审核要求）
     'pages/profile/index',
     'pages/login/index',
     'pages/set-password/index',
