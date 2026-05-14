@@ -2,18 +2,17 @@
  * 视频详情页 (Taro/WeChat Mini-Program)
  *
  * 微信素材 API 返回的 down_url 为视频页面链接（mp.weixin.qq.com），非直链 .mp4。
- * → 微信页面 URL 用 <WebView> 嵌入（页面自带播放器）
- * → 其他直链 URL 用原生 <Video> 组件播放
+ * → 微信视频页面使用原生 Video 组件播放（微信小程序支持直接播放微信视频链接）
+ * → 其他直链 URL 也用原生 Video 组件播放
  */
 
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, ScrollView, Video, WebView } from '@tarojs/components';
+import { View, Text, ScrollView, Video } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 
 import { OrganicBackground } from '@/components/ui/OrganicBackground';
 import { OrganicCard } from '@/components/ui/OrganicCard';
 import * as contentApi from '@/services/api/content';
-import { API_BASE_URL } from '@/services/api/client';
 import type { ContentVideo } from '@/types/content';
 
 import './index.scss';
@@ -28,9 +27,6 @@ const sanitizeUrl = (url?: string | null): string => {
     .replace(/&#34;/g, '')
     .replace(/^http:\/\//, 'https://');
 };
-
-const isWechatVideoPage = (url?: string | null): boolean =>
-  !!url && /mp\.weixin\.qq\.com/.test(url);
 
 export default function VideoDetailPage() {
   // ── 路由参数 ──
@@ -71,28 +67,14 @@ export default function VideoDetailPage() {
     Taro.navigateBack();
   };
 
-  const handleVideoError = () => {
-    setError('视频加载失败');
-  };
-
-  const handleWebViewError = () => {
-    setError('视频页面加载失败');
+  const handleVideoError = (e: any) => {
+    console.error('Video error:', e);
+    setError('视频加载失败，请检查网络连接');
   };
 
   const videoUrl = sanitizeUrl(video?.downUrl);
 
-  // ── 微信视频页面 → WebView 全屏（经后端代理页绕过业务域名白名单）──
-  if (video && isWechatVideoPage(video.downUrl)) {
-    const watchUrl = `${API_BASE_URL}/content/videos/${videoId}/watch`;
-    return (
-      <WebView
-        src={watchUrl}
-        onError={handleWebViewError}
-      />
-    );
-  }
-
-  // ── 非微信页面（直链或加载中/错误）→ 标准布局 ──
+  // ── 渲染 ──
   return (
     <OrganicBackground variant="morning">
       <ScrollView className="page-video-detail__scroll" scrollY>
@@ -150,6 +132,9 @@ export default function VideoDetailPage() {
                     className="page-video-detail__video"
                     controls
                     autoplay={false}
+                    showFullscreenBtn
+                    showPlayBtn
+                    showCenterPlayBtn
                     onError={handleVideoError}
                   />
                 </View>
