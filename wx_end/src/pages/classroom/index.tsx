@@ -18,6 +18,7 @@ import { OrganicButton } from '@/components/ui/OrganicButton';
 import { OrganicChipButton } from '@/components/ui/OrganicButton';
 import { Input } from '@/components/ui/Input';
 import { useFeaturesStore } from '@/store/features';
+import Taro from '@tarojs/taro';
 
 import * as contentApi from '@/services/api/content';
 import type { ContentArticle, ContentPagination, ContentVideo } from '@/types/content';
@@ -65,6 +66,12 @@ const buildArticleMeta = (article: ContentArticle) => {
 export default function ClassroomPage() {
   // ── Features ──
   const { features } = useFeaturesStore();
+
+  // 功能全部关闭时，跳转回首页
+  if (!features.classroom_article && !features.classroom_video) {
+    Taro.switchTab({ url: '/pages/index/index' });
+    return null;
+  }
 
   // ── State ──
   const [searchText, setSearchText] = useState('');

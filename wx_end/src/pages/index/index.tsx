@@ -437,23 +437,27 @@ export default function Index() {
         )}
 
         {/* Content Classroom */}
-        <View className="index__section-header">
-          <Text className="index__section-title">内容课堂</Text>
-        </View>
-
-        <OrganicCard shadow>
-          <View
-            className="index__classroom-item"
-            onClick={() => Taro.switchTab({ url: '/pages/classroom/index' })}
-          >
-            <View className="index__classroom-tag">
-              <Text className="index__classroom-tag-text">课堂</Text>
+        {(features.classroom_article || features.classroom_video) && (
+          <>
+            <View className="index__section-header">
+              <Text className="index__section-title">内容课堂</Text>
             </View>
-            <Text className="index__classroom-title">
-              查看最新课堂内容与文章
-            </Text>
-          </View>
-        </OrganicCard>
+
+            <OrganicCard shadow>
+              <View
+                className="index__classroom-item"
+                onClick={() => Taro.switchTab({ url: '/pages/classroom/index' })}
+              >
+                <View className="index__classroom-tag">
+                  <Text className="index__classroom-tag-text">课堂</Text>
+                </View>
+                <Text className="index__classroom-title">
+                  查看最新课堂内容与文章
+                </Text>
+              </View>
+            </OrganicCard>
+          </>
+        )}
 
         <View className="index__bottom-spacer" />
         </View>

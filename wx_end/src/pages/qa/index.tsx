@@ -20,6 +20,7 @@ import { useAuthStore } from '@/store';
 import { useBabyStore } from '@/store/babyStore';
 import { useFeaturesStore } from '@/store/features';
 import { confirm, notify } from '@/utils/feedback';
+import Taro from '@tarojs/taro';
 
 import type { ChatHistoryItem, ChatMessage } from '@/types/chat';
 
@@ -94,8 +95,9 @@ export default function QAPage() {
   const { user } = useAuthStore();
   const { features } = useFeaturesStore();
 
-  // 功能开关检查 - 直接不显示
+  // 功能开关检查 - 跳转回首页
   if (!features.ai_qa) {
+    Taro.switchTab({ url: '/pages/index/index' });
     return null;
   }
 
