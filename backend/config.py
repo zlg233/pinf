@@ -62,5 +62,10 @@ class Config:
     # 通知/订阅调度（用于本地 demo 与后续推送接入）
     NOTIFICATIONS_ENABLED = os.environ.get("NOTIFICATIONS_ENABLED", "false").lower() in ("1", "true", "yes")
     NOTIFICATIONS_SCAN_INTERVAL_MINUTES = int(os.environ.get("NOTIFICATIONS_SCAN_INTERVAL_MINUTES", "60"))
+    # 功能开关配置（审核期间可隐藏敏感功能）
+    FEATURE_AI_QA = os.environ.get("FEATURE_AI_QA", "true").lower() in ("1", "true", "yes")
+    FEATURE_CLASSROOM_VIDEO = os.environ.get("FEATURE_CLASSROOM_VIDEO", "true").lower() in ("1", "true", "yes")
+    FEATURE_CLASSROOM_ARTICLE = os.environ.get("FEATURE_CLASSROOM_ARTICLE", "true").lower() in ("1", "true", "yes")
+
     # CORS 配置
     CORS_ORIGINS = ["*"]  # 生产环境需收紧

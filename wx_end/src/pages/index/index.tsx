@@ -16,6 +16,7 @@ import { useBabyStore } from '@/store/babyStore';
 import { useGrowthStore } from '@/store/growthStore';
 import { useAppointmentStore } from '@/store/appointmentStore';
 import { useAuthStore } from '@/store';
+import { useFeaturesStore } from '@/store/features';
 import { calculateBabyAge, formatDetailedAge } from '@/utils/ageCalculator';
 import { formatAppointmentDateBadge, getAppointmentEffectiveStatus } from '@/utils/appointment';
 import { notify } from '@/utils/feedback';
@@ -82,6 +83,7 @@ export default function Index() {
   } = useAppointmentStore();
 
   const { isAuthenticated } = useAuthStore();
+  const { features } = useFeaturesStore();
 
   // ========== Modal States ==========
   const [showBabyForm, setShowBabyForm] = useState(false);
@@ -204,26 +206,25 @@ export default function Index() {
       icon: '📈',
       onClick: () => Taro.navigateTo({ url: '/pages/growth/index' }),
     },
-    // AI 问答入口暂时隐藏（微信审核）
-    // {
-    //   id: 'qa',
-    //   title: 'AI 问答',
-    //   icon: '💬',
-    //   onClick: () => Taro.navigateTo({ url: '/pages/qa/index' }),
-    // },
+    features.ai_qa && {
+      id: 'qa',
+      title: 'AI 问答',
+      icon: '💬',
+      onClick: () => Taro.navigateTo({ url: '/pages/qa/index' }),
+    },
     {
       id: 'appointment',
       title: '添加预约',
       icon: '📅',
       onClick: () => setShowAppointmentModal(true),
     },
-    {
+    features.classroom_article && {
       id: 'classroom',
       title: '内容课堂',
       icon: '📚',
       onClick: () => Taro.switchTab({ url: '/pages/classroom/index' }),
     },
-  ];
+  ].filter(Boolean) as Array<{ id: string; title: string; icon: string; onClick: () => void }>;
 
   // ========== Render ==========
   return (

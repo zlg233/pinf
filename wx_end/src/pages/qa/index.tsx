@@ -18,6 +18,7 @@ import { OrganicBackground } from '@/components/ui/OrganicBackground';
 import { getChatHistory, sendChatMessage, clearChatHistory } from '@/services/api/chat';
 import { useAuthStore } from '@/store';
 import { useBabyStore } from '@/store/babyStore';
+import { useFeaturesStore } from '@/store/features';
 import { confirm, notify } from '@/utils/feedback';
 
 import type { ChatHistoryItem, ChatMessage } from '@/types/chat';
@@ -91,6 +92,12 @@ const formatTime = (timestamp: number) => {
 export default function QAPage() {
   const { currentBaby } = useBabyStore();
   const { user } = useAuthStore();
+  const { features } = useFeaturesStore();
+
+  // 功能开关检查 - 直接不显示
+  if (!features.ai_qa) {
+    return null;
+  }
 
   const [messages, setMessages] = useState<UiMessage[]>([createGreetingMessage()]);
   const [draft, setDraft] = useState('');

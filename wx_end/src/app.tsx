@@ -1,11 +1,13 @@
 import { Component, PropsWithChildren } from 'react';
 import Taro from '@tarojs/taro';
 import { useAuthStore } from './store';
+import { useFeaturesStore } from './store/features';
 import './app.scss';
 
 class App extends Component<PropsWithChildren> {
   componentDidMount() {
     this.checkAuth();
+    useFeaturesStore.getState().fetchFeatures();
   }
 
   async checkAuth() {

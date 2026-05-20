@@ -17,6 +17,7 @@ import { OrganicCard } from '@/components/ui/OrganicCard';
 import { OrganicButton } from '@/components/ui/OrganicButton';
 import { OrganicChipButton } from '@/components/ui/OrganicButton';
 import { Input } from '@/components/ui/Input';
+import { useFeaturesStore } from '@/store/features';
 
 import * as contentApi from '@/services/api/content';
 import type { ContentArticle, ContentPagination, ContentVideo } from '@/types/content';
@@ -62,10 +63,15 @@ const buildArticleMeta = (article: ContentArticle) => {
 // ── Page Component ──
 
 export default function ClassroomPage() {
+  // ── Features ──
+  const { features } = useFeaturesStore();
+
   // ── State ──
   const [searchText, setSearchText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'article' | 'video'>('article');
+  const [activeTab, setActiveTab] = useState<'article' | 'video'>(
+    features.classroom_article ? 'article' : 'video'
+  );
   const [articles, setArticles] = useState<ContentArticle[]>([]);
   const [articlePagination, setArticlePagination] = useState<ContentPagination | null>(null);
   const [videos, setVideos] = useState<ContentVideo[]>([]);
@@ -203,14 +209,24 @@ export default function ClassroomPage() {
       setSearching(true);
       setLoading(true);
       setError(null);
-      Promise.all([
-        contentApi.listArticles({ page: 1, per_page: ARTICLE_PAGE_SIZE, search: query }),
-        contentApi.listVideos({ page: 1, per_page: ARTICLE_PAGE_SIZE, search: query }),
-      ])
+
+      const promises: Promise<any>[] = [];
+      if (features.classroom_article) {
+        promises.push(contentApi.listArticles({ page: 1, per_page: ARTICLE_PAGE_SIZE, search: query }));
+      } else {
+        promises.push(Promise.resolve({ data: [], pagination: null }));
+      }
+      if (features.classroom_video) {
+        promises.push(contentApi.listVideos({ page: 1, per_page: ARTICLE_PAGE_SIZE, search: query }));
+      } else {
+        promises.push(Promise.resolve({ data: [], pagination: null }));
+      }
+
+      Promise.all(promises)
         .then(([articleRes, videoRes]) => {
           const items: ContentItem[] = [
-            ...articleRes.data.map((a) => ({ kind: 'article' as const, data: a })),
-            ...videoRes.data.map((v) => ({ kind: 'video' as const, data: v })),
+            ...articleRes.data.map((a: any) => ({ kind: 'article' as const, data: a })),
+            ...videoRes.data.map((v: any) => ({ kind: 'video' as const, data: v })),
           ];
           setMixedItems(items);
           setArticles(articleRes.data);
@@ -235,7 +251,7 @@ export default function ClassroomPage() {
         fetchVideos({ force: true });
       }
     }
-  }, [searchText, activeTab, fetchContent, fetchVideos]);
+  }, [searchText, activeTab, fetchContent, fetchVideos, features.classroom_article, features.classroom_video]);
 
   const handleTabChange = useCallback(
     (tab: 'article' | 'video') => {
@@ -313,17 +329,25 @@ export default function ClassroomPage() {
   // ── Bootstrap ──
 
   useEffect(() => {
-    fetchContent({ force: false });
+    if (features.classroom_article) {
+      fetchContent({ force: false });
+    } else if (features.classroom_video) {
+      fetchVideos({ force: false });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ── Derived state ──
 
   const displayItems: ContentItem[] = searching
-    ? mixedItems
+    ? mixedItems.filter((item) => {
+        if (item.kind === 'article') return features.classroom_article;
+        if (item.kind === 'video') return features.classroom_video;
+        return true;
+      })
     : activeTab === 'article'
-      ? articles.map((a) => ({ kind: 'article' as const, data: a }))
-      : videos.map((v) => ({ kind: 'video' as const, data: v }));
+      ? (features.classroom_article ? articles.map((a) => ({ kind: 'article' as const, data: a })) : [])
+      : (features.classroom_video ? videos.map((v) => ({ kind: 'video' as const, data: v })) : []);
 
   const isEmpty = !loading && displayItems.length === 0;
   const total =
@@ -377,16 +401,20 @@ export default function ClassroomPage() {
 
             {/* ──── Tab switches ──── */}
             <View className="page-classroom__category-row">
-              <OrganicChipButton
-                label="文章"
-                active={activeTab === 'article'}
-                onPress={() => handleTabChange('article')}
-              />
-              <OrganicChipButton
-                label="视频"
-                active={activeTab === 'video'}
-                onPress={() => handleTabChange('video')}
-              />
+              {features.classroom_article && (
+                <OrganicChipButton
+                  label="文章"
+                  active={activeTab === 'article'}
+                  onPress={() => handleTabChange('article')}
+                />
+              )}
+              {features.classroom_video && (
+                <OrganicChipButton
+                  label="视频"
+                  active={activeTab === 'video'}
+                  onPress={() => handleTabChange('video')}
+                />
+              )}
             </View>
 
             {/* ──── Error banner ──── */}

@@ -58,6 +58,7 @@ def create_app(config_class=Config):
     from routes.chat import chat_bp
     from routes.notifications import notifications_bp
     from routes.devices import devices_bp
+    from routes.settings import settings_bp
     from utils.notification_scheduler import start_notification_scheduler
     from utils.notification_listener import start_notification_listener
 
@@ -69,6 +70,7 @@ def create_app(config_class=Config):
     app.register_blueprint(chat_bp, url_prefix="/api")
     app.register_blueprint(notifications_bp, url_prefix="/api")
     app.register_blueprint(devices_bp, url_prefix="/api")
+    app.register_blueprint(settings_bp, url_prefix="/api")
 
     with app.app_context():
         db.create_all()
