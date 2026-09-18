@@ -18,7 +18,6 @@ import { OrganicButton } from '@/components/ui/OrganicButton';
 import { OrganicChipButton } from '@/components/ui/OrganicButton';
 import { Input } from '@/components/ui/Input';
 import { useFeaturesStore } from '@/store/features';
-import Taro from '@tarojs/taro';
 
 import * as contentApi from '@/services/api/content';
 import type { ContentArticle, ContentPagination, ContentVideo } from '@/types/content';

@@ -20,7 +20,6 @@ import { useAuthStore } from '@/store';
 import { useBabyStore } from '@/store/babyStore';
 import { useFeaturesStore } from '@/store/features';
 import { confirm, notify } from '@/utils/feedback';
-import Taro from '@tarojs/taro';
 
 import type { ChatHistoryItem, ChatMessage } from '@/types/chat';
 
