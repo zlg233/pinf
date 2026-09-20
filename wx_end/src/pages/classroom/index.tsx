@@ -8,7 +8,7 @@
  * RN IconSymbol → Unicode 文本符号
  */
 
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text, ScrollView, Image } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 
@@ -29,8 +29,20 @@ import './index.scss';
 const ARTICLE_PAGE_SIZE = 8;
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 const CACHE_STORAGE_KEY = 'content_cache';
+const ARTICLE_CATEGORIES = ['入院时', '住院期间', '出院当天', '出院后'] as const;
 
 // ── Types ──
+
+type ArticleCategory = (typeof ARTICLE_CATEGORIES)[number];
+type ArticleCategoryFilter = ArticleCategory | '';
+
+const ARTICLE_CATEGORY_OPTIONS: ReadonlyArray<{
+  label: string;
+  value: ArticleCategoryFilter;
+}> = [
+  { label: '全部', value: '' },
+  ...ARTICLE_CATEGORIES.map((category) => ({ label: category, value: category })),
+];
 
 type ContentCache = {
   key: string;
@@ -45,7 +57,8 @@ type ContentItem =
 
 // ── Helpers ──
 
-const buildCacheKey = (search: string, tab: string) => `${search.trim()}|${tab.trim()}`;
+const buildCacheKey = (search: string, tab: string, category: string) =>
+  `${search.trim()}|${tab.trim()}|${category.trim()}`;
 
 const formatDate = (value?: string | null) => {
   if (!value) return '';
@@ -78,6 +91,7 @@ export default function ClassroomPage() {
   const [activeTab, setActiveTab] = useState<'article' | 'video'>(
     features.classroom_article ? 'article' : 'video'
   );
+  const [activeCategory, setActiveCategory] = useState<ArticleCategoryFilter>('');
   const [articles, setArticles] = useState<ContentArticle[]>([]);
   const [articlePagination, setArticlePagination] = useState<ContentPagination | null>(null);
   const [videos, setVideos] = useState<ContentVideo[]>([]);
@@ -89,7 +103,11 @@ export default function ClassroomPage() {
   const [mixedItems, setMixedItems] = useState<ContentItem[]>([]);
   const [searching, setSearching] = useState(false);
 
-  const cacheKey = useMemo(() => buildCacheKey(searchQuery, activeTab), [searchQuery, activeTab]);
+  const previousCategoryRef = useRef<ArticleCategoryFilter>(activeCategory);
+  const cacheKey = useMemo(
+    () => buildCacheKey(searchQuery, activeTab, activeCategory),
+    [searchQuery, activeTab, activeCategory],
+  );
 
   // ── Cache ──
 
@@ -136,6 +154,7 @@ export default function ClassroomPage() {
           page: 1,
           per_page: ARTICLE_PAGE_SIZE,
           search: searchQuery || undefined,
+          category: activeCategory || undefined,
         });
 
         setArticles(articleRes.data);
@@ -155,7 +174,7 @@ export default function ClassroomPage() {
         setLoading(false);
       }
     },
-    [cacheKey, loadCache, saveCache, searchQuery],
+    [activeCategory, cacheKey, loadCache, saveCache, searchQuery],
   );
 
   const fetchVideos = useCallback(
@@ -218,7 +237,12 @@ export default function ClassroomPage() {
 
       const promises: Promise<any>[] = [];
       if (features.classroom_article) {
-        promises.push(contentApi.listArticles({ page: 1, per_page: ARTICLE_PAGE_SIZE, search: query }));
+        promises.push(contentApi.listArticles({
+          page: 1,
+          per_page: ARTICLE_PAGE_SIZE,
+          search: query,
+          category: activeCategory || undefined,
+        }));
       } else {
         promises.push(Promise.resolve({ data: [], pagination: null }));
       }
@@ -257,7 +281,21 @@ export default function ClassroomPage() {
         fetchVideos({ force: true });
       }
     }
-  }, [searchText, activeTab, fetchContent, fetchVideos, features.classroom_article, features.classroom_video]);
+  }, [activeCategory, searchText, activeTab, fetchContent, fetchVideos, features.classroom_article, features.classroom_video]);
+
+  const handleCategoryChange = useCallback(
+    (category: ArticleCategoryFilter) => {
+      if (category === activeCategory) return;
+      setSearching(false);
+      setMixedItems([]);
+      setSearchText('');
+      setSearchQuery('');
+      setArticles([]);
+      setArticlePagination(null);
+      setActiveCategory(category);
+    },
+    [activeCategory],
+  );
 
   const handleTabChange = useCallback(
     (tab: 'article' | 'video') => {
@@ -294,6 +332,7 @@ export default function ClassroomPage() {
           page: nextPage,
           per_page: ARTICLE_PAGE_SIZE,
           search: searchQuery || undefined,
+          category: activeCategory || undefined,
         });
         const merged = [...articles, ...articleRes.data];
         setArticles(merged);
@@ -322,6 +361,7 @@ export default function ClassroomPage() {
     }
   }, [
     activeTab,
+    activeCategory,
     articlePagination,
     articles,
     cacheKey,
@@ -342,6 +382,14 @@ export default function ClassroomPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (previousCategoryRef.current === activeCategory) return;
+    previousCategoryRef.current = activeCategory;
+    if (activeTab === 'article') {
+      fetchContent({ force: true });
+    }
+  }, [activeCategory, activeTab, fetchContent]);
 
   // ── Derived state ──
 
@@ -422,6 +470,19 @@ export default function ClassroomPage() {
                 />
               )}
             </View>
+
+            {activeTab === 'article' && features.classroom_article && (
+              <View className="page-classroom__category-row">
+                {ARTICLE_CATEGORY_OPTIONS.map((option) => (
+                  <OrganicChipButton
+                    key={option.value || 'all'}
+                    label={option.label}
+                    active={activeCategory === option.value}
+                    onPress={() => handleCategoryChange(option.value)}
+                  />
+                ))}
+              </View>
+            )}
 
             {/* ──── Error banner ──── */}
             {error && (
