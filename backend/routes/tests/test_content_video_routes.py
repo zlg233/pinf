@@ -110,7 +110,7 @@ class TestVideoRoutes:
         """小程序按需请求时返回 MP4，原始微信页面地址仍保留。"""
         _register_blueprint_once(app)
         uid = _ensure_user(app)
-        page = "https://mp.weixin.qq.com/mp/mp/video?vid=abc"
+        page = "http://mp.weixin.qq.com/mp/mp/video?vid=abc"
         media = "https://mpvideo.qpic.cn/video.mp4?auth_key=abc"
         with app.app_context():
             video = Video(title="微信素材", down_url=page)

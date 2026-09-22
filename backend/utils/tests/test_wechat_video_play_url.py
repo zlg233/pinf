@@ -24,6 +24,25 @@ def test_resolve_wechat_video_page_returns_mp4_url():
     assert parse_qs(request_url.query) == {"vid": ["abc"], "f": ["json"]}
 
 
+def test_resolve_http_wechat_material_page_over_https():
+    """素材库保存的 HTTP 页面地址应通过 HTTPS 取得播放直链。"""
+    from utils.wechat_video_play_url import resolve_video_play_url
+
+    page = "http://mp.weixin.qq.com/mp/mp/video?vid=wxv_123&idx=1#rd"
+    media = "https://mpvideo.qpic.cn/video.mp4?auth_key=abc"
+    response = Mock()
+    response.json.return_value = {
+        "video_page_info": {"mp_video_trans_info": [{"url": media}]}
+    }
+
+    with patch("utils.wechat_video_play_url.requests.get", return_value=response) as get:
+        assert resolve_video_play_url(page) == media
+
+    assert get.call_args.args[0] == (
+        "https://mp.weixin.qq.com/mp/mp/video?vid=wxv_123&idx=1&f=json"
+    )
+
+
 def test_resolve_wechat_video_page_without_query_adds_json_parameter():
     from utils.wechat_video_play_url import resolve_video_play_url
 
@@ -49,6 +68,9 @@ def test_resolve_rejects_untrusted_page_without_network_request():
     ):
         assert resolve_video_play_url("https://evil.example/mp/mp/video") is None
         assert resolve_video_play_url("https://mp.weixin.qq.com.evil.example/mp/mp/video") is None
+        assert resolve_video_play_url("http://mp.weixin.qq.com.evil.example/mp/mp/video") is None
+        assert resolve_video_play_url("http://mp.weixin.qq.com:80/mp/mp/video") is None
+        assert resolve_video_play_url("http://user@mp.weixin.qq.com/mp/mp/video") is None
         assert resolve_video_play_url("https://mp.weixin.qq.com/other") is None
 
 

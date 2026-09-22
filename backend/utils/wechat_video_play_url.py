@@ -34,6 +34,9 @@ def resolve_video_play_url(down_url):
         page = urlsplit(down_url)
     except ValueError:
         return None
+    if page.scheme == "http" and page.hostname == WECHAT_PAGE_HOST:
+        down_url = urlunsplit(("https", page.netloc, page.path, page.query, page.fragment))
+        page = urlsplit(down_url)
     if page.scheme != "https" or not page.hostname:
         return None
     if page.hostname != WECHAT_PAGE_HOST:
