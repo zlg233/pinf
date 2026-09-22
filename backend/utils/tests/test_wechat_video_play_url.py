@@ -43,6 +43,22 @@ def test_resolve_http_wechat_material_page_over_https():
     )
 
 
+def test_resolve_http_wechat_video_candidate_as_https():
+    """微信返回 HTTP 视频直链时保留签名参数并升级为 HTTPS。"""
+    from utils.wechat_video_play_url import resolve_video_play_url
+
+    media = "http://mpvideo.qpic.cn/video.mp4?auth_info=a%2Fb&auth_key=xyz"
+    response = Mock()
+    response.json.return_value = {
+        "video_page_info": {"mp_video_trans_info": [{"url": media}]}
+    }
+
+    with patch("utils.wechat_video_play_url.requests.get", return_value=response):
+        assert resolve_video_play_url("https://mp.weixin.qq.com/mp/mp/video?vid=abc") == (
+            "https://mpvideo.qpic.cn/video.mp4?auth_info=a%2Fb&auth_key=xyz"
+        )
+
+
 def test_resolve_wechat_video_page_without_query_adds_json_parameter():
     from utils.wechat_video_play_url import resolve_video_play_url
 
@@ -82,6 +98,9 @@ def test_resolve_skips_untrusted_media_candidate():
         "video_page_info": {
             "mp_video_trans_info": [
                 {"url": "https://evil.example/video.mp4"},
+                {"url": "http://evil.example/video.mp4"},
+                {"url": "http://user@mpvideo.qpic.cn/video.mp4"},
+                {"url": "http://mpvideo.qpic.cn:80/video.mp4"},
                 {"url": "https://mpvideo.qpic.cn/good.mp4?auth_key=abc"},
             ]
         }

@@ -11,6 +11,16 @@ WECHAT_PAGE_HOST = "mp.weixin.qq.com"
 WECHAT_VIDEO_HOST = "mpvideo.qpic.cn"
 
 
+def _upgrade_http_host(value, host):
+    try:
+        parsed = urlsplit(value)
+        if parsed.scheme == "http" and parsed.hostname == host:
+            return urlunsplit(("https", parsed.netloc, parsed.path, parsed.query, parsed.fragment))
+    except ValueError:
+        pass
+    return value
+
+
 def _is_https_host(value, host):
     try:
         parsed = urlsplit(value)
@@ -29,14 +39,11 @@ def resolve_video_play_url(down_url):
     """返回微信视频临时直链、已有 HTTPS 直链，或 None。"""
     if not down_url or not isinstance(down_url, str):
         return None
-    down_url = down_url.strip()
+    down_url = _upgrade_http_host(down_url.strip(), WECHAT_PAGE_HOST)
     try:
         page = urlsplit(down_url)
     except ValueError:
         return None
-    if page.scheme == "http" and page.hostname == WECHAT_PAGE_HOST:
-        down_url = urlunsplit(("https", page.netloc, page.path, page.query, page.fragment))
-        page = urlsplit(down_url)
     if page.scheme != "https" or not page.hostname:
         return None
     if page.hostname != WECHAT_PAGE_HOST:
@@ -66,6 +73,8 @@ def resolve_video_play_url(down_url):
     for candidate in candidates:
         if isinstance(candidate, dict):
             media_url = candidate.get("url")
-            if isinstance(media_url, str) and _is_https_host(media_url, WECHAT_VIDEO_HOST):
-                return media_url
+            if isinstance(media_url, str):
+                media_url = _upgrade_http_host(media_url, WECHAT_VIDEO_HOST)
+                if _is_https_host(media_url, WECHAT_VIDEO_HOST):
+                    return media_url
     return None

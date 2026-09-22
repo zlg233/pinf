@@ -111,7 +111,7 @@ class TestVideoRoutes:
         _register_blueprint_once(app)
         uid = _ensure_user(app)
         page = "http://mp.weixin.qq.com/mp/mp/video?vid=abc"
-        media = "https://mpvideo.qpic.cn/video.mp4?auth_key=abc"
+        media = "http://mpvideo.qpic.cn/video.mp4?auth_key=abc"
         with app.app_context():
             video = Video(title="微信素材", down_url=page)
             db.session.add(video)
@@ -130,7 +130,7 @@ class TestVideoRoutes:
 
         body = result.get_json()
         assert result.status_code == 200
-        assert body["data"]["playUrl"] == media
+        assert body["data"]["playUrl"] == "https://mpvideo.qpic.cn/video.mp4?auth_key=abc"
         assert body["data"]["downUrl"] == page
         assert result.headers["Cache-Control"] == "no-store"
 
