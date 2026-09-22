@@ -1,9 +1,7 @@
 /**
  * 视频详情页 (Taro/WeChat Mini-Program)
  *
- * 微信素材 API 返回的 down_url 为视频页面链接（mp.weixin.qq.com），非直链 .mp4。
- * → 微信视频页面使用原生 Video 组件播放（微信小程序支持直接播放微信视频链接）
- * → 其他直链 URL 也用原生 Video 组件播放
+ * 微信素材的 downUrl 是网页地址；详情接口按需返回可播放的 playUrl。
  */
 
 import React, { useCallback, useEffect, useState } from 'react';
@@ -14,19 +12,9 @@ import { OrganicBackground } from '@/components/ui/OrganicBackground';
 import { OrganicCard } from '@/components/ui/OrganicCard';
 import * as contentApi from '@/services/api/content';
 import type { ContentVideo } from '@/types/content';
+import { getPlayableVideoUrl, sanitizeUrl } from './video-url';
 
 import './index.scss';
-
-/** 清洗 URL + http → https */
-const sanitizeUrl = (url?: string | null): string => {
-  if (!url) return '';
-  return url
-    .trim()
-    .replace(/^["""]+|["""]+$/g, '')
-    .replace(/&quot;/g, '')
-    .replace(/&#34;/g, '')
-    .replace(/^http:\/\//, 'https://');
-};
 
 export default function VideoDetailPage() {
   // ── 路由参数 ──
@@ -72,7 +60,7 @@ export default function VideoDetailPage() {
     setError('视频加载失败，请检查网络连接');
   };
 
-  const videoUrl = sanitizeUrl(video?.downUrl);
+  const videoUrl = getPlayableVideoUrl(video);
 
   // ── 渲染 ──
   return (
@@ -142,8 +130,14 @@ export default function VideoDetailPage() {
                 <OrganicCard variant="soft" shadow={false} style={{ marginTop: '12px' }}>
                   <View className="page-video-detail__error-content">
                     <Text className="page-video-detail__error-text">
-                      暂无可播放的视频链接
+                      暂时无法播放视频，请重试
                     </Text>
+                    <View
+                      className="page-video-detail__retry-btn"
+                      onClick={fetchDetail}
+                    >
+                      <Text className="page-video-detail__retry-text">重试</Text>
+                    </View>
                   </View>
                 </OrganicCard>
               )}

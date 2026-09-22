@@ -44,6 +44,8 @@ export const listVideos = async (params?: ContentListParams) => {
 };
 
 export const getVideoDetail = async (id: number) => {
-  const res = await api.get<ApiResponse<ContentVideo>>(`/content/videos/${id}`);
+  const res = await api.get<ApiResponse<ContentVideo>>(`/content/videos/${id}`, {
+    include_play_url: 1,
+  });
   return res.data.data;
 };
