@@ -21,12 +21,12 @@ jobs:
       - name: Check deployment configuration
         env:
           DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
-          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
-          DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
+          DEPLOY_SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          DEPLOY_HOST_FINGERPRINT: ${{ vars.DEPLOY_HOST_FINGERPRINT }}
           BACKEND_PATH: ${{ vars.BACKEND_PATH }}
         run: |
           set -euo pipefail
-          for name in DEPLOY_HOST DEPLOY_USER DEPLOY_PASSWORD BACKEND_PATH; do
+          for name in DEPLOY_HOST DEPLOY_SSH_KEY DEPLOY_HOST_FINGERPRINT BACKEND_PATH; do
             if [ -z "${!name:-}" ]; then
               echo "::error::$name is not configured"
               exit 1
@@ -37,11 +37,15 @@ jobs:
         timeout-minutes: 30
         with:
           host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          password: ${{ secrets.DEPLOY_PASSWORD }}
+          port: ${{ vars.DEPLOY_SSH_PORT || '22' }}
+          username: root
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          passphrase: ${{ secrets.DEPLOY_SSH_PASSPHRASE }}
+          fingerprint: ${{ vars.DEPLOY_HOST_FINGERPRINT }}
           command_timeout: 30m
           script: |
             set -eu
+            test "$(id -u)" -eq 0
             cd "${{ vars.BACKEND_PATH }}"
             test "$(git branch --show-current)" = main
             git remote set-url origin https://github.com/zlg233/pinf.git

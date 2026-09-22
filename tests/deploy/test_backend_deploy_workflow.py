@@ -34,6 +34,13 @@ class BackendDeployWorkflowTests(unittest.TestCase):
     def test_deploys_the_commit_that_triggered_the_workflow(self) -> None:
         self.assertIn('git merge --ff-only "${{ github.sha }}"', self.workflow)
 
+    def test_root_deployment_requires_key_and_verified_host(self) -> None:
+        self.assertIn("username: root", self.workflow)
+        self.assertIn("key: ${{ secrets.DEPLOY_SSH_KEY }}", self.workflow)
+        self.assertIn("fingerprint: ${{ vars.DEPLOY_HOST_FINGERPRINT }}", self.workflow)
+        self.assertIn('test "$(id -u)" -eq 0', self.workflow)
+        self.assertNotIn("DEPLOY_PASSWORD", self.workflow)
+
 
 if __name__ == "__main__":
     unittest.main()
