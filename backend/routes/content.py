@@ -13,6 +13,7 @@ from utils.wechat_official import (
     get_publication_records,
 )
 from utils.wechat_content_sync import sync_wechat_articles
+from utils.wechat_video_play_url import resolve_video_play_url
 
 content_bp = Blueprint("content", __name__)
 logger = logging.getLogger(__name__)
@@ -324,6 +325,9 @@ def get_video_detail(current_user, video_id):
     if not video:
         return jsonify({"status": "error", "message": "视频不存在"}), 404
     data = video.to_dict()
+    include_play_url = request.args.get("include_play_url") == "1"
+    if include_play_url:
+        data["playUrl"] = resolve_video_play_url(video.down_url)
     logger.info(
         "视频详情请求: video_id=%s, media_id=%s, down_url=%s, url=%s",
         video_id,
@@ -331,4 +335,7 @@ def get_video_detail(current_user, video_id):
         video.down_url[:200] if video.down_url else None,
         video.url[:200] if video.url else None,
     )
-    return jsonify({"status": "success", "data": data})
+    response = jsonify({"status": "success", "data": data})
+    if include_play_url:
+        response.headers["Cache-Control"] = "no-store"
+    return response
