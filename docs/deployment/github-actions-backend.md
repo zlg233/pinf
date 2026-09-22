@@ -34,10 +34,13 @@ cat >> /root/.ssh/authorized_keys
 chown root:root /root/.ssh /root/.ssh/authorized_keys
 chmod 700 /root/.ssh
 chmod 600 /root/.ssh/authorized_keys
-ssh-keygen -l -E sha256 -f /etc/ssh/ssh_host_ed25519_key.pub
+for f in /etc/ssh/ssh_host_*_key.pub; do
+  [ -f "$f" ] && ssh-keygen -l -E sha256 -f "$f"
+done
+sshd -T | grep -i '^hostkey'
 ```
 
-最后一条输出里的 `SHA256:...` 是**服务器主机指纹**，用于 GitHub 变量 `DEPLOY_HOST_FINGERPRINT`。它与刚生成的个人密钥指纹不同。通过已登录的 1Panel 终端读取该值，不要直接信任网络扫描到的指纹。
+这些输出列出服务器的 ECDSA、ED25519 等**主机密钥指纹**和已启用的主机密钥文件。`appleboy/ssh-action@v1.0.3` 使用的 SSH 客户端在服务器同时提供 ECDSA 与 ED25519 时通常优先选择 ECDSA；`DEPLOY_HOST_FINGERPRINT` 必须填入**实际协商的那种主机密钥**对应的 `SHA256:...`，只填这一段，不要复制前后的位数、主机名或 `(ECDSA)`。它与刚生成的个人登录密钥指纹不同。以已登录的 1Panel 终端输出为可信依据；若用 `ssh-keyscan` 查看公网 SSH 端口提供的密钥，只能用来与该可信输出比对，不能直接照抄为信任值。
 
 如果服务器不允许 root 公钥登录，先在 1Panel 终端检查 `sshd -T | grep -i '^permitrootlogin'` 和 `sshd -T | grep -i '^pubkeyauthentication'`。`PermitRootLogin no` 会阻止 root 的任何 SSH 登录；在实际生效的 `/etc/ssh/sshd_config` 或已有的 `sshd_config.d` 配置中，将 `PermitRootLogin` 设置为 `prohibit-password`，确保 `PubkeyAuthentication yes`。避免在多个文件中留下相互冲突的设置。执行 `sshd -t` 检查语法，再用 `systemctl reload ssh`（部分发行版服务名为 `sshd`）重载，并重新运行 `sshd -T` 核对生效值。操作期间保持现有的 1Panel 终端打开。
 
