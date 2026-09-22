@@ -15,8 +15,23 @@ permissions:
 
 jobs:
   deploy-backend:
-    runs-on: ubuntu-local
+    if: github.repository == 'zlg233/pinf'
+    runs-on: ubuntu-latest
     steps:
+      - name: Check deployment configuration
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
+          BACKEND_PATH: ${{ vars.BACKEND_PATH }}
+        run: |
+          set -euo pipefail
+          for name in DEPLOY_HOST DEPLOY_USER DEPLOY_PASSWORD BACKEND_PATH; do
+            if [ -z "${!name:-}" ]; then
+              echo "::error::$name is not configured"
+              exit 1
+            fi
+          done
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         timeout-minutes: 30
@@ -26,8 +41,10 @@ jobs:
           password: ${{ secrets.DEPLOY_PASSWORD }}
           command_timeout: 30m
           script: |
-            set -euo pipefail
-            cd ${{ vars.BACKEND_PATH }}
-            git remote set-url origin git@git.unself.cn:Handy_Wote/pinf.git
-            git pull origin main
-            docker compose up -d --build
+            set -eu
+            cd "${{ vars.BACKEND_PATH }}"
+            test "$(git branch --show-current)" = main
+            git remote set-url origin https://github.com/zlg233/pinf.git
+            git fetch origin main
+            git merge --ff-only "${{ github.sha }}"
+            docker compose up -d --build --no-deps backend
