@@ -13,7 +13,7 @@ import re
 SENTENCE_END = "。！？；!?;"
 CLAUSE_END = "，、：,:"
 # 指纹里带上版本，改规则后旧缓存自动失效
-CHUNKER_VERSION = "sentence-v1"
+CHUNKER_VERSION = "sentence-v2"
 
 
 def split_sentences(text):
@@ -67,16 +67,26 @@ def _ends_sentence(piece):
 
 
 def chunk_text(text, count_tokens, max_tokens=110):
-    """返回 [(片段文本, 切分方式)]，切分方式为 sentence / clause / hard。"""
+    """返回 [(片段文本, 切分方式)]，方式为 sentence / clause / hard / whole。
+
+    hard 表示这段文字是被迫从句子中间硬切的，审核时优先看这类片段；
+    标题、表头这类整段不成句的内容标记为 whole，不算截断。
+    """
     if max_tokens < 1:
         raise ValueError("max_tokens must be positive")
     result = []
     current = ""
 
+    def kind_of(piece):
+        stripped = piece.rstrip()
+        if stripped and stripped[-1] in SENTENCE_END:
+            return "sentence"
+        return "clause"
+
     def flush():
         nonlocal current
         if current.strip():
-            result.append(current)
+            result.append((current, kind_of(current)))
             current = ""
 
     for sentence in split_sentences(text):
@@ -96,21 +106,12 @@ def chunk_text(text, count_tokens, max_tokens=110):
                 current = clause
                 continue
             for piece in hard_split(clause, count_tokens, max_tokens):
-                result.append(piece)
+                result.append((piece, "hard"))
     flush()
 
-    annotated = []
-    for piece in result:
-        if _ends_sentence(piece):
-            kind = "sentence"
-        elif piece.rstrip()[-1:] in CLAUSE_END:
-            kind = "clause"
-        elif len(split_sentences(piece)) > 1:
-            kind = "sentence"
-        else:
-            kind = "hard"
-        annotated.append((piece, kind))
-    return annotated
+    if len(result) == 1 and result[0][0] == text:
+        result[0] = (result[0][0], "whole")
+    return result
 
 
 def _chunk_id(unit_text, piece, index):
