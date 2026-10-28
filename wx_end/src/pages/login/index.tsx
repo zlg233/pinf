@@ -9,6 +9,7 @@ import { OrganicCard } from '@/components/ui/OrganicCard';
 import { OrganicButton } from '@/components/ui/OrganicButton';
 import { Input } from '@/components/ui/Input';
 import { notify } from '@/utils/feedback';
+import { CONSENT_REQUIRED_MESSAGE, ensureConsent } from '@/domain/legal/consent';
 import './index.scss';
 
 type LoginMode = 'code' | 'password';
@@ -61,6 +62,12 @@ export default function LoginPage() {
 
   // ---- Send Verification Code ----
   const handleSendCode = async () => {
+    // 未同意协议前不发起验证码请求
+    const consentError = ensureConsent(agreedToTerms);
+    if (consentError) {
+      setFormError(consentError);
+      return;
+    }
     if (!phone) {
       setFormError('请输入手机号');
       return;
@@ -92,8 +99,9 @@ export default function LoginPage() {
   // ---- Login ----
   const handleLogin = async () => {
     // Check terms agreement
-    if (!agreedToTerms) {
-      setFormError('请先阅读并同意《用户服务协议》和《隐私政策》');
+    const consentError = ensureConsent(agreedToTerms);
+    if (consentError) {
+      setFormError(consentError);
       return;
     }
 
@@ -157,8 +165,9 @@ export default function LoginPage() {
   // ---- WeChat Mini Program Login ----
   const handleWechatLogin = async (e: any) => {
     // Check terms agreement
-    if (!agreedToTerms) {
-      setFormError('请先阅读并同意《用户服务协议》和《隐私政策》');
+    const consentError = ensureConsent(agreedToTerms);
+    if (consentError) {
+      setFormError(consentError);
       return;
     }
 
@@ -210,6 +219,11 @@ export default function LoginPage() {
     setFormError('');
   };
 
+  // 未勾选同意时不渲染 getPhoneNumber 按钮，避免拉起微信手机号授权组件
+  const handleWechatWithoutConsent = () => {
+    setFormError(CONSENT_REQUIRED_MESSAGE);
+  };
+
   const isSendCodeDisabled = countdown > 0 || isSendingCode;
 
   // ---- Render ----
@@ -219,7 +233,7 @@ export default function LoginPage() {
         <View className="login__scroll-content">
           {/* ---- Logo Area ---- */}
           <View className="login__logo-area">
-            <Text className="login__app-name">早护通</Text>
+            <Text className="login__app-name">萌芽护航</Text>
             <Text className="login__slogan">新生儿/早产儿健康管理</Text>
           </View>
 
@@ -333,15 +347,25 @@ export default function LoginPage() {
                   <Text className="login__divider-text">微信授权</Text>
                   <View className="login__divider-line" />
                 </View>
-                <Button
-                  className="login__wechat-btn"
-                  openType="getPhoneNumber"
-                  onGetPhoneNumber={handleWechatLogin}
-                  loading={isWechatLoading}
-                  disabled={isWechatLoading || isLoading}
-                >
-                  微信一键登录
-                </Button>
+                {agreedToTerms ? (
+                  <Button
+                    className="login__wechat-btn"
+                    openType="getPhoneNumber"
+                    onGetPhoneNumber={handleWechatLogin}
+                    loading={isWechatLoading}
+                    disabled={isWechatLoading || isLoading}
+                  >
+                    微信一键登录
+                  </Button>
+                ) : (
+                  <Button
+                    className="login__wechat-btn"
+                    onClick={handleWechatWithoutConsent}
+                    disabled={isLoading}
+                  >
+                    微信一键登录
+                  </Button>
+                )}
               </View>
 
               {/* ---- Terms Agreement ---- */}

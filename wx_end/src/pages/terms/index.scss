@@ -1,0 +1,7 @@
+// 协议页页面级兜底样式。
+// 正文样式在 components/legal/LegalDocumentView.scss（打进 common.wxss），
+// 这里保留页面背景，同时保证构建产出 pages/terms/index.wxss。
+
+page {
+  background-color: #fff9f5;
+}

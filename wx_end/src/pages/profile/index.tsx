@@ -97,6 +97,26 @@ export default function Profile() {
             </View>
             <Text className="menu-arrow">›</Text>
           </View>
+          <View
+            className="menu-item"
+            onClick={() => Taro.navigateTo({ url: '/pages/terms/index' })}
+          >
+            <View className="menu-left">
+              <View className="menu-icon">📄</View>
+              <Text className="menu-text">用户服务协议</Text>
+            </View>
+            <Text className="menu-arrow">›</Text>
+          </View>
+          <View
+            className="menu-item"
+            onClick={() => Taro.navigateTo({ url: '/pages/privacy/index' })}
+          >
+            <View className="menu-left">
+              <View className="menu-icon">🔐</View>
+              <Text className="menu-text">隐私政策</Text>
+            </View>
+            <Text className="menu-arrow">›</Text>
+          </View>
           <View className="menu-item" onClick={handleAbout}>
             <View className="menu-left">
               <View className="menu-icon">ℹ️</View>
@@ -144,10 +164,10 @@ export default function Profile() {
       >
         <View className="about-modal-content">
           <View className="about-logo">👶</View>
-          <Text className="about-name">早护通</Text>
+          <Text className="about-name">萌芽护航</Text>
           <Text className="about-version">版本 1.0.0</Text>
           <Text className="about-desc">
-            早护通是一款专为新生儿及早产儿家庭设计的健康管理应用，提供成长记录、健康监测、喂养管理等功能，助力宝宝健康成长。
+            萌芽护航是一款专为新生儿及早产儿家庭设计的健康管理应用，提供成长记录、健康监测、喂养管理等功能，助力宝宝健康成长。
           </Text>
         </View>
       </Modal>

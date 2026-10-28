@@ -6,6 +6,8 @@ export default defineAppConfig({
     'pages/profile/index',
     'pages/login/index',
     'pages/set-password/index',
+    'pages/terms/index',
+    'pages/privacy/index',
     'pages/appointments/index',
     'pages/article-detail/index',
     'pages/video-detail/index',
@@ -25,7 +27,7 @@ export default defineAppConfig({
   window: {
     backgroundTextStyle: 'light',
     navigationBarBackgroundColor: '#fff',
-    navigationBarTitleText: '早护通',
+    navigationBarTitleText: '萌芽护航',
     navigationBarTextStyle: 'black',
     backgroundColor: '#f5f5f5',
   },
