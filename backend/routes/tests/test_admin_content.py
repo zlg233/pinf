@@ -117,6 +117,19 @@ class TestAdminUpdateArticle:
         with app.app_context():
             assert Article.query.get(article_id).category is None
 
+    def test_缺少category字段返回400且不改数据(self, app, client):
+        _register(app)
+        uid = _make_user(app, "13000000013", "admin")
+        article_id = _make_article(app, category="入院时")
+        resp = client.patch(
+            f"/api/admin/content/articles/{article_id}",
+            json={},
+            headers=_headers(app, uid),
+        )
+        assert resp.status_code == 400
+        with app.app_context():
+            assert Article.query.get(article_id).category == "入院时"
+
     def test_不存在的文章返回404(self, app, client):
         _register(app)
         uid = _make_user(app, "13000000005", "admin")

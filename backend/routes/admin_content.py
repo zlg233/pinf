@@ -107,6 +107,10 @@ def _update_category(model, item_id):
         return jsonify({"status": "error", "message": "内容不存在"}), 404
 
     data = request.get_json(silent=True) or {}
+    # 必须显式带 category 字段：漏传不能等同于"清空"，避免误伤
+    if "category" not in data:
+        return jsonify({"status": "error", "message": "缺少 category 字段"}), 400
+
     # 只认 category，其它字段一律忽略
     category, error = normalize_category(data.get("category"))
     if error:
