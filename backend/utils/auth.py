@@ -25,6 +25,27 @@ def token_required(f):
     return decorated
 
 
+def admin_required(f):
+    """管理员校验：先完成 JWT 验证，再检查 users.role == 'admin'。"""
+
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        try:
+            verify_jwt_in_request()
+            current_user_id = get_jwt_identity()
+            user = User.query.get(current_user_id)
+        except Exception as exc:  # pragma: no cover - 认证异常统一按未登录处理
+            return jsonify({"status": "error", "message": f"认证失败: {exc}"}), 401
+
+        if not user:
+            return jsonify({"status": "error", "message": "用户不存在"}), 401
+        if user.role != "admin":
+            return jsonify({"status": "error", "message": "无权限"}), 403
+        return f(current_user=user, *args, **kwargs)
+
+    return decorated
+
+
 def _check_field(field, data):
     if isinstance(field, str):
         name = field

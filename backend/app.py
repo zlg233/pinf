@@ -54,6 +54,7 @@ def create_app(config_class=Config):
     from routes.baby import baby_bp
     from routes.growth import growth_bp
     from routes.content import content_bp
+    from routes.admin_content import admin_content_bp
     from routes.appointment import appointment_bp
     from routes.chat import chat_bp
     from routes.notifications import notifications_bp
@@ -66,6 +67,7 @@ def create_app(config_class=Config):
     app.register_blueprint(baby_bp, url_prefix="/api")
     app.register_blueprint(growth_bp, url_prefix="/api")
     app.register_blueprint(content_bp, url_prefix="/api")
+    app.register_blueprint(admin_content_bp, url_prefix="/api")
     app.register_blueprint(appointment_bp, url_prefix="/api")
     app.register_blueprint(chat_bp, url_prefix="/api")
     app.register_blueprint(notifications_bp, url_prefix="/api")

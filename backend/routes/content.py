@@ -228,15 +228,17 @@ def get_videos(current_user):
     page = _normalize_page(request.args.get("page"), 1)
     per_page = _normalize_per_page(request.args.get("per_page"), 10)
     search = (request.args.get("search") or "").strip()
+    category = (request.args.get("category") or "").strip()
     logger.info(
-        "课堂视频列表请求: user_id=%s, page=%s, per_page=%s, search=%s",
+        "课堂视频列表请求: user_id=%s, page=%s, per_page=%s, search=%s, category=%s",
         getattr(current_user, "id", "unknown"),
         page,
         per_page,
         search or "-",
+        category or "-",
     )
 
-    cache_key = f"videos:{page}:{per_page}:{search}"
+    cache_key = f"videos:{page}:{per_page}:{search}:{category}"
     cached = _cache_get(cache_key)
     if cached:
         logger.info("课堂视频列表命中缓存: key=%s", cache_key)
@@ -247,6 +249,8 @@ def get_videos(current_user):
         query = query.filter(
             or_(Video.title.ilike(f"%{search}%"), Video.description.ilike(f"%{search}%"))
         )
+    if category:
+        query = query.filter(Video.category == category)
     query = query.order_by(Video.created_at.desc())
 
     result = _paginate(query, page, per_page)
