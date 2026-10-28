@@ -67,5 +67,12 @@ class Config:
     FEATURE_CLASSROOM_VIDEO = os.environ.get("FEATURE_CLASSROOM_VIDEO", "true").lower() in ("1", "true", "yes")
     FEATURE_CLASSROOM_ARTICLE = os.environ.get("FEATURE_CLASSROOM_ARTICLE", "true").lower() in ("1", "true", "yes")
 
+    # RAG 知识库检索（默认关闭；模型缺失或检索失败会自动降级为普通问答）
+    RAG_ENABLED = os.environ.get("RAG_ENABLED", "false").lower() in ("1", "true", "yes")
+    RAG_MODEL_DIR = os.environ.get("RAG_MODEL_DIR", "")
+    RAG_TOP_K = int(os.environ.get("RAG_TOP_K", "3"))
+    RAG_MIN_SCORE = float(os.environ.get("RAG_MIN_SCORE", "0.55"))
+    RAG_MAX_CONTEXT_CHARS = int(os.environ.get("RAG_MAX_CONTEXT_CHARS", "900"))
+
     # CORS 配置
     CORS_ORIGINS = ["*"]  # 生产环境需收紧

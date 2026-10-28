@@ -14,3 +14,4 @@ from .verification_code import VerificationCode
 from .sync_state import SyncState
 from .notification_subscription import NotificationSubscription
 from .device_token import DeviceToken
+from .rag_chunk import RagChunk

@@ -4,6 +4,23 @@ from sqlalchemy import text
 
 _MIGRATIONS = [
     {
+        "id": "2026_10_28_create_rag_chunks",
+        "sql": (
+            "CREATE TABLE IF NOT EXISTS rag_chunks ("
+            "id TEXT PRIMARY KEY,"
+            "content TEXT NOT NULL,"
+            "parent_content TEXT,"
+            "embedding BYTEA NOT NULL,"
+            "meta JSONB NOT NULL DEFAULT '{}'::jsonb,"
+            "model_id TEXT NOT NULL,"
+            "review_status TEXT NOT NULL DEFAULT 'approved' CHECK (review_status = 'approved'),"
+            "reviewed_by TEXT NOT NULL,"
+            "reviewed_at DATE NOT NULL,"
+            "imported_at TIMESTAMPTZ NOT NULL DEFAULT now()"
+            ")"
+        ),
+    },
+    {
         "id": "2024_11_02_add_password_hash_to_users",
         "sql": "ALTER TABLE users ADD COLUMN IF NOT EXISTS password_hash VARCHAR(255)",
     },

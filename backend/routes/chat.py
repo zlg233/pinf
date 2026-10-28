@@ -10,10 +10,20 @@ from utils.n8n_client import send_to_n8n
 chat_bp = Blueprint("chat", __name__)
 
 
-def _build_payload(user_id, content):
+def _build_payload(user_id, content, rag=None):
+    """把检索到的已审核资料拼进发给 n8n 的 message；失败时退回原话。
+
+    数据库里仍然只保存用户原话（见 send_message），资料不进聊天记录。
+    """
+    message = content
+    if rag is not None:
+        try:
+            message, _hits = rag.build_payload_message(content)
+        except Exception:  # noqa: BLE001 - 任何检索异常都不应影响聊天
+            message = content
     return {
         "user_id": user_id,
-        "message": content
+        "message": message
     }
 
 
@@ -43,7 +53,9 @@ def send_message(current_user, data):
     db.session.add(user_message)
     db.session.flush()
 
-    payload = _build_payload(current_user.id, data["content"])
+    from utils.rag import get_rag_service
+
+    payload = _build_payload(current_user.id, data["content"], rag=get_rag_service())
 
     n8n_response, error = send_to_n8n(payload)
     if error:
