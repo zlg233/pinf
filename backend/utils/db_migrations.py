@@ -4,6 +4,14 @@ from sqlalchemy import text
 
 _MIGRATIONS = [
     {
+        "id": "2026_10_28_add_category_to_videos",
+        "sql": "ALTER TABLE videos ADD COLUMN IF NOT EXISTS category VARCHAR(50)",
+    },
+    {
+        "id": "2026_10_28_index_videos_category",
+        "sql": "CREATE INDEX IF NOT EXISTS idx_videos_category ON videos(category)",
+    },
+    {
         "id": "2026_10_28_create_rag_chunks",
         "sql": (
             "CREATE TABLE IF NOT EXISTS rag_chunks ("
