@@ -290,8 +290,15 @@ def extract_text_units(text, filename=''):
 
 
 def _normalized_stem(stem):
-    """去掉浏览器重复下载后缀「 (1)」「 (2)」，便于人工文本与原 PDF 对上。"""
-    return re.sub(r'\s*\(\d+\)$', '', stem)
+    """归一化文件名，便于人工文本与原 PDF 对上。
+
+    去掉浏览器重复后缀「 (1)」、空格/下划线/连字符，以及「版/篇」这类版本后缀，
+    这样「早产临床防治指南_2024版.md」也能匹配「早产临床防治指南 2024.pdf」。
+    """
+    normalized = re.sub(r'\s*\(\d+\)$', '', stem)
+    normalized = re.sub(r'[\s_\-]+', '', normalized)
+    normalized = re.sub(r'[版篇]$', '', normalized)
+    return normalized
 
 
 def apply_text_replacements(rows):

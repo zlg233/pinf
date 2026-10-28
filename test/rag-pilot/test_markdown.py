@@ -91,6 +91,14 @@ class TextReplacementTest(unittest.TestCase):
         kept = documents.apply_text_replacements(rows)
         self.assertEqual([r["raw_path"] for r in kept], ["raw/z/指南.md"])
 
+    def test_空格下划线与版本后缀差异也能匹配(self):
+        rows = [
+            self._row("raw/a/早产临床防治指南 2024.pdf", ".pdf"),
+            self._row("raw/a/早产临床防治指南_2024版.md", ".md"),
+        ]
+        kept = documents.apply_text_replacements(rows)
+        self.assertEqual([r["raw_path"] for r in kept], ["raw/a/早产临床防治指南_2024版.md"])
+
 
 if __name__ == "__main__":
     unittest.main()
