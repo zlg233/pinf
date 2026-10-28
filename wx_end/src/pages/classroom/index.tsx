@@ -21,6 +21,7 @@ import { useFeaturesStore } from '@/store/features';
 
 import * as contentApi from '@/services/api/content';
 import type { ContentArticle, ContentPagination, ContentVideo } from '@/types/content';
+import { isVideoEntryEnabled, shouldLeaveClassroom } from '@/domain/features/switches';
 
 import './index.scss';
 
@@ -77,19 +78,25 @@ const buildArticleMeta = (article: ContentArticle) => {
 
 export default function ClassroomPage() {
   // ── Features ──
-  const { features } = useFeaturesStore();
+  const { features, loaded: featuresLoaded } = useFeaturesStore();
+  // 视频入口：必须开关已从后端加载完成且后端明确开启才可见（个人主体审核要求）
+  const videoEnabled = isVideoEntryEnabled(features, featuresLoaded);
+  const articleEnabled = features.classroom_article;
+  const shouldExit = shouldLeaveClassroom(features, featuresLoaded);
 
-  // 功能全部关闭时，跳转回首页
-  if (!features.classroom_article && !features.classroom_video) {
-    Taro.switchTab({ url: '/pages/index/index' });
-    return null;
-  }
+  // 文章与视频都被后端关闭时退回首页。
+  // 注意：不能写成 hooks 之前的条件 return，否则开关状态变化会改变 Hook 数量导致白屏。
+  useEffect(() => {
+    if (shouldExit) {
+      Taro.switchTab({ url: '/pages/index/index' });
+    }
+  }, [shouldExit]);
 
   // ── State ──
   const [searchText, setSearchText] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'article' | 'video'>(
-    features.classroom_article ? 'article' : 'video'
+    articleEnabled ? 'article' : 'video'
   );
   const [activeCategory, setActiveCategory] = useState<ArticleCategoryFilter>('');
   const [articles, setArticles] = useState<ContentArticle[]>([]);
@@ -104,6 +111,8 @@ export default function ClassroomPage() {
   const [searching, setSearching] = useState(false);
 
   const previousCategoryRef = useRef<ArticleCategoryFilter>(activeCategory);
+  // "只开视频"配置下只自动补拉一次，避免请求失败后 effect 反复重试
+  const autoVideoFetchRef = useRef(false);
   const cacheKey = useMemo(
     () => buildCacheKey(searchQuery, activeTab, activeCategory),
     [searchQuery, activeTab, activeCategory],
@@ -236,7 +245,7 @@ export default function ClassroomPage() {
       setError(null);
 
       const promises: Promise<any>[] = [];
-      if (features.classroom_article) {
+      if (articleEnabled) {
         promises.push(contentApi.listArticles({
           page: 1,
           per_page: ARTICLE_PAGE_SIZE,
@@ -246,7 +255,7 @@ export default function ClassroomPage() {
       } else {
         promises.push(Promise.resolve({ data: [], pagination: null }));
       }
-      if (features.classroom_video) {
+      if (videoEnabled) {
         promises.push(contentApi.listVideos({ page: 1, per_page: ARTICLE_PAGE_SIZE, search: query }));
       } else {
         promises.push(Promise.resolve({ data: [], pagination: null }));
@@ -281,7 +290,7 @@ export default function ClassroomPage() {
         fetchVideos({ force: true });
       }
     }
-  }, [activeCategory, searchText, activeTab, fetchContent, fetchVideos, features.classroom_article, features.classroom_video]);
+  }, [activeCategory, searchText, activeTab, fetchContent, fetchVideos, articleEnabled, videoEnabled]);
 
   const handleCategoryChange = useCallback(
     (category: ArticleCategoryFilter) => {
@@ -375,13 +384,27 @@ export default function ClassroomPage() {
   // ── Bootstrap ──
 
   useEffect(() => {
-    if (features.classroom_article) {
+    if (articleEnabled) {
       fetchContent({ force: false });
-    } else if (features.classroom_video) {
-      fetchVideos({ force: false });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // 文章被后端关闭、只开视频时：等开关加载完成后再切到视频 tab
+  useEffect(() => {
+    if (!featuresLoaded) return;
+    if (!articleEnabled && videoEnabled && activeTab !== 'video') {
+      setActiveTab('video');
+    }
+  }, [featuresLoaded, articleEnabled, videoEnabled, activeTab]);
+
+  // "只开视频"配置下补拉一次列表（切 tab 后 deps 变化会再进一次，用 ref 防重复）
+  useEffect(() => {
+    if (!featuresLoaded || articleEnabled || !videoEnabled) return;
+    if (activeTab !== 'video' || autoVideoFetchRef.current) return;
+    autoVideoFetchRef.current = true;
+    fetchVideos({ force: false });
+  }, [featuresLoaded, articleEnabled, videoEnabled, activeTab, fetchVideos]);
 
   useEffect(() => {
     if (previousCategoryRef.current === activeCategory) return;
@@ -395,13 +418,13 @@ export default function ClassroomPage() {
 
   const displayItems: ContentItem[] = searching
     ? mixedItems.filter((item) => {
-        if (item.kind === 'article') return features.classroom_article;
-        if (item.kind === 'video') return features.classroom_video;
+        if (item.kind === 'article') return articleEnabled;
+        if (item.kind === 'video') return videoEnabled;
         return true;
       })
     : activeTab === 'article'
-      ? (features.classroom_article ? articles.map((a) => ({ kind: 'article' as const, data: a })) : [])
-      : (features.classroom_video ? videos.map((v) => ({ kind: 'video' as const, data: v })) : []);
+      ? (articleEnabled ? articles.map((a) => ({ kind: 'article' as const, data: a })) : [])
+      : (videoEnabled ? videos.map((v) => ({ kind: 'video' as const, data: v })) : []);
 
   const isEmpty = !loading && displayItems.length === 0;
   const total =
@@ -415,6 +438,11 @@ export default function ClassroomPage() {
       : videoPagination?.hasNext);
 
   // ── Render ──
+
+  // 兜底：文章与视频都被关闭（放在所有 Hook 之后，保持 Hook 数量稳定）
+  if (shouldExit) {
+    return null;
+  }
 
   return (
     <OrganicBackground variant="morning">
@@ -455,14 +483,14 @@ export default function ClassroomPage() {
 
             {/* ──── Tab switches ──── */}
             <View className="page-classroom__category-row">
-              {features.classroom_article && (
+              {articleEnabled && (
                 <OrganicChipButton
                   label="文章"
                   active={activeTab === 'article'}
                   onPress={() => handleTabChange('article')}
                 />
               )}
-              {features.classroom_video && (
+              {videoEnabled && (
                 <OrganicChipButton
                   label="视频"
                   active={activeTab === 'video'}
@@ -471,7 +499,7 @@ export default function ClassroomPage() {
               )}
             </View>
 
-            {activeTab === 'article' && features.classroom_article && (
+            {activeTab === 'article' && articleEnabled && (
               <View className="page-classroom__category-row">
                 {ARTICLE_CATEGORY_OPTIONS.map((option) => (
                   <OrganicChipButton

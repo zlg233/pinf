@@ -93,12 +93,16 @@ export default function QAPage() {
   const { currentBaby } = useBabyStore();
   const { user } = useAuthStore();
   const { features } = useFeaturesStore();
+  const aiQaEnabled = features.ai_qa;
 
-  // 功能开关检查 - 跳转回首页
-  if (!features.ai_qa) {
-    Taro.switchTab({ url: '/pages/index/index' });
-    return null;
-  }
+  // 功能开关关闭时退回首页。
+  // 用 effect 跳转而不是 hooks 之前的条件 return：否则开关由 true 变 false 时
+  // Hook 数量变化，React 会抛错并清空页面（白屏）。
+  useEffect(() => {
+    if (!aiQaEnabled) {
+      Taro.switchTab({ url: '/pages/index/index' });
+    }
+  }, [aiQaEnabled]);
 
   const [messages, setMessages] = useState<UiMessage[]>([createGreetingMessage()]);
   const [draft, setDraft] = useState('');
@@ -141,8 +145,10 @@ export default function QAPage() {
   }, [babyId]);
 
   useEffect(() => {
+    // 开关关闭时不拉历史，避免已经跳走还在请求
+    if (!aiQaEnabled) return;
     loadHistory();
-  }, [loadHistory]);
+  }, [aiQaEnabled, loadHistory]);
 
   // ── 发送消息（乐观更新） ──
 
@@ -296,6 +302,11 @@ export default function QAPage() {
   };
 
   // ── 渲染 ──
+
+  // 开关关闭：已由 effect 跳回首页，这里只保证不再渲染内容（所有 Hook 已执行）
+  if (!aiQaEnabled) {
+    return null;
+  }
 
   return (
     <OrganicBackground variant="morning">

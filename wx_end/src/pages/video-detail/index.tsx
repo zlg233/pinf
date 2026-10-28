@@ -11,6 +11,8 @@ import Taro from '@tarojs/taro';
 import { OrganicBackground } from '@/components/ui/OrganicBackground';
 import { OrganicCard } from '@/components/ui/OrganicCard';
 import * as contentApi from '@/services/api/content';
+import { useFeaturesStore } from '@/store/features';
+import { isVideoDetailBlocked } from '@/domain/features/switches';
 import type { ContentVideo } from '@/types/content';
 import { getPlayableVideoUrl, sanitizeUrl } from './video-url';
 
@@ -21,6 +23,10 @@ export default function VideoDetailPage() {
   const router = Taro.useRouter();
   const videoId = Number(router.params?.id);
 
+  // ── 功能开关：视频入口关闭时，直接访问路径也要拦死（不依赖入口是否可见）──
+  const { features, loaded: featuresLoaded } = useFeaturesStore();
+  const blocked = isVideoDetailBlocked(features, featuresLoaded);
+
   // ── 状态 ──
   const [video, setVideo] = useState<ContentVideo | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,6 +34,10 @@ export default function VideoDetailPage() {
 
   // ── 拉取视频详情 ──
   const fetchDetail = useCallback(async () => {
+    // 开关关闭、或还没从后端拿到开关状态时，一律不请求播放地址
+    if (blocked) {
+      return;
+    }
     if (!videoId) {
       setError('视频 ID 无效');
       setLoading(false);
@@ -45,7 +55,7 @@ export default function VideoDetailPage() {
     } finally {
       setLoading(false);
     }
-  }, [videoId]);
+  }, [blocked, videoId]);
 
   useEffect(() => {
     fetchDetail();
@@ -80,7 +90,16 @@ export default function VideoDetailPage() {
           </View>
         </View>
 
-        {loading ? (
+        {blocked ? (
+            /* ── 开关关闭：不请求播放地址、不渲染播放器 ── */
+            <OrganicCard variant="soft" shadow={false} style={{ margin: '16px' }}>
+              <View className="page-video-detail__error-content">
+                <Text className="page-video-detail__error-text">
+                  视频内容暂未开放
+                </Text>
+              </View>
+            </OrganicCard>
+          ) : loading ? (
             /* ── 加载中 ── */
             <View className="page-video-detail__loading">
               <View className="page-video-detail__spinner" />
