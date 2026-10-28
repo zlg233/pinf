@@ -23,13 +23,15 @@
 前置：该手机号**已在小程序登录过**（否则数据库里没有账号）。
 
 ```bash
-docker exec -it pinf-backend-1 python -m utils.set_admin_role --phone 13425082508
+# 镜像的启动命令是 uv run，容器内的裸 python 没有依赖，必须用 uv run
+docker exec -it pinf-backend-1 uv run python -m utils.set_admin_role --phone 13425082508
 # 撤销
-docker exec -it pinf-backend-1 python -m utils.set_admin_role --phone 13425082508 --role user
+docker exec -it pinf-backend-1 uv run python -m utils.set_admin_role --phone 13425082508 --role user
 ```
 
 - 脚本会打印改前/改后角色，可重复执行
 - 改完需要管理员**重新登录**小程序，入口才会出现（登录响应里的 user.role 会被缓存）
+- 已确认：`13425082508` 于 2026-10-28 从 `user` 改为 `admin`
 
 ## 4. 接口
 
