@@ -10,7 +10,8 @@
   &__scroll-content {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    // 不用 center：否则卡片会被内容宽度挤窄，输入框跟着变短
+    align-items: stretch;
     padding: 40px 24px 48px;
     min-height: 100vh;
   }
@@ -36,6 +37,14 @@
     color: #7A7A7A;
     text-align: center;
     padding: 0 20px;
+  }
+
+  // ---- Card ----
+  // 父容器已改为 stretch：卡片自然撑满，再用 max-width 限制大屏宽度并居中
+  &__card {
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
   }
 
   // ---- Card Content ----

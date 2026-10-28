@@ -88,67 +88,69 @@ export default function SetPasswordPage() {
           </View>
 
           {/* ---- Set Password Card ---- */}
-          <OrganicCard>
-            <View className="set-password__card-content">
-              <Text className="set-password__card-title">创建密码</Text>
+          <View className="set-password__card">
+            <OrganicCard>
+              <View className="set-password__card-content">
+                <Text className="set-password__card-title">创建密码</Text>
 
-              {/* ---- Password Input ---- */}
-              <View className="set-password__field">
-                <Input
-                  type="text"
-                  password
-                  maxlength={16}
-                  placeholder="请输入密码（8-16位字母+数字）"
-                  value={password}
-                  onInput={handlePasswordInput}
-                />
-              </View>
-
-              {/* ---- Confirm Password Input ---- */}
-              <View className="set-password__field">
-                <Input
-                  type="text"
-                  password
-                  maxlength={16}
-                  placeholder="请再次输入密码"
-                  value={confirmPassword}
-                  onInput={handleConfirmInput}
-                />
-              </View>
-
-              {/* ---- Error Text ---- */}
-              {formError && (
-                <View className="set-password__error">
-                  <Text className="set-password__error-text">{formError}</Text>
-                </View>
-              )}
-
-              {/* ---- Submit Button ---- */}
-              <View className="set-password__submit-btn">
-                <OrganicButton
-                  title="确认设置"
-                  variant="primary"
-                  size="large"
-                  loading={isLoading}
-                  disabled={isLoading}
-                  onPress={handleSubmit}
-                />
-              </View>
-
-              {/* ---- Exit Button (non-forced) ---- */}
-              {!isForced && (
-                <View className="set-password__exit-btn">
-                  <OrganicButton
-                    title="暂不设置"
-                    variant="soft"
-                    size="medium"
-                    disabled={isLoading}
-                    onPress={handleExit}
+                {/* ---- Password Input ---- */}
+                <View className="set-password__field">
+                  <Input
+                    type="text"
+                    password
+                    maxlength={16}
+                    placeholder="请输入密码（8-16位字母+数字）"
+                    value={password}
+                    onInput={handlePasswordInput}
                   />
                 </View>
-              )}
-            </View>
-          </OrganicCard>
+
+                {/* ---- Confirm Password Input ---- */}
+                <View className="set-password__field">
+                  <Input
+                    type="text"
+                    password
+                    maxlength={16}
+                    placeholder="请再次输入密码"
+                    value={confirmPassword}
+                    onInput={handleConfirmInput}
+                  />
+                </View>
+
+                {/* ---- Error Text ---- */}
+                {formError && (
+                  <View className="set-password__error">
+                    <Text className="set-password__error-text">{formError}</Text>
+                  </View>
+                )}
+
+                {/* ---- Submit Button ---- */}
+                <View className="set-password__submit-btn">
+                  <OrganicButton
+                    title="确认设置"
+                    variant="primary"
+                    size="large"
+                    loading={isLoading}
+                    disabled={isLoading}
+                    onPress={handleSubmit}
+                  />
+                </View>
+
+                {/* ---- Exit Button (non-forced) ---- */}
+                {!isForced && (
+                  <View className="set-password__exit-btn">
+                    <OrganicButton
+                      title="暂不设置"
+                      variant="soft"
+                      size="medium"
+                      disabled={isLoading}
+                      onPress={handleExit}
+                    />
+                  </View>
+                )}
+              </View>
+            </OrganicCard>
+          </View>
         </View>
       </View>
     </OrganicBackground>
