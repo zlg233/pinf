@@ -107,6 +107,8 @@ quick_test.ps1
 [Dd]esktop.ini
 Thumbs.db
 $RECYCLE.BIN/
+updatedb/
+n8n/
 
 # macOS
 .DS_Store
@@ -156,3 +158,8 @@ wx_end/project.private.config.json
 
 # Business documents
 *.pdf
+
+# 交接包与本地生成的审核产物（不入库）
+test/deepseek-handoff-2026-10-27/
+test/Pinf-DeepSeek-Handoff-2026-10-27.zip
+test/rag-pilot/library/review/
