@@ -12,7 +12,7 @@ import uuid
 import xml.etree.ElementTree as ET
 import zipfile
 
-VERSION = 'conservative-layout-v4'
+VERSION = 'conservative-layout-v5'
 # 宽于整幅 45% 的词视为横跨两栏的标题/页眉
 WIDE_LINE_RATIO = 0.45
 # 单页图片数量超过该值，视为扫描件（文字层通常是 OCR 结果，字词错乱不可信）
@@ -274,9 +274,17 @@ def extract_text_units(text, filename=''):
         body = _strip_markdown(block)
         if len(re.sub(r'\s', '', body)) < 5:
             continue
+        if block.lstrip().startswith('|'):
+            # 表格按行成单元：整张表塞进一个片段既超长又容易被从中间切开
+            issues.append({'reason': 'table_in_markdown', 'locator': f'md:{counter + 1}'})
+            for line in block.splitlines():
+                row = line.strip()
+                if not row:
+                    continue
+                counter += 1
+                units.append(_unit(row, f'md:{counter}', None, section))
+            continue
         counter += 1
-        if re.search(r'^\s*\|', block, re.M):
-            issues.append({'reason': 'table_in_markdown', 'locator': f'md:{counter}'})
         units.append(_unit(body, f'md:{counter}', None, section))
     return units, issues
 
@@ -355,6 +363,52 @@ def page_lines_from_words(words, width, min_words=6, crossing_limit=0.2):
     return words_to_lines(words), False
 
 
+HEADING_PATTERN = r'^(?:[一二三四五六七八九十]+、|[（(][一二三四五六七八九十]+[）)]|\d+[.．、])'
+MAX_BLOCK_CHARS = 240
+
+
+def merge_blocks(entries, max_chars=MAX_BLOCK_CHARS):
+    """把 [(页, 行号, 文本)] 合并成段落块，跨页不再切断句子。
+
+    - 标题行开始新块；
+    - 句子结束且块已够长时才切块，因此一个句子不会因为翻页被劈开；
+    - 返回的块带起止页与行号，供追溯原文位置。
+    """
+    blocks, pending, size = [], [], 0
+
+    def flush():
+        nonlocal size
+        if pending:
+            page_start, line_start = pending[0][0], pending[0][1]
+            page_end, line_end = pending[-1][0], pending[-1][1]
+            blocks.append(
+                {
+                    'text': '\n'.join(item[2] for item in pending),
+                    'page_start': page_start,
+                    'page_end': page_end,
+                    'line_start': line_start,
+                    'line_end': line_end,
+                }
+            )
+            pending.clear()
+            size = 0
+
+    for page, line_no, text in entries:
+        pending.append((page, line_no, text))
+        size += len(text)
+        # 只在"句子结束 + 够长"时切块；不按编号行切，避免把（二）…这种条款从中间劈开
+        if size >= max_chars and re.search(r'[。！？；!?;][”）)]?$', text):
+            flush()
+    flush()
+    return blocks
+
+
+def block_locator(block):
+    if block['page_start'] == block['page_end']:
+        return f"pdf:{block['page_start']}:lines:{block['line_start']}-{block['line_end']}"
+    return f"pdf:{block['page_start']}-{block['page_end']}:lines:{block['line_start']}-{block['line_end']}"
+
+
 def paragraph_blocks(lines):
     """Keep wrapped conditions together; page boundaries still need human review."""
     blocks, pending = [], []
@@ -365,7 +419,7 @@ def paragraph_blocks(lines):
                            'line_start': pending[0][0], 'line_end': pending[-1][0]})
             pending.clear()
 
-    heading = r'^(?:[一二三四五六七八九十]+、|[（(][一二三四五六七八九十]+[）)]|\d+[.．、])'
+    heading = HEADING_PATTERN
     for number, raw in enumerate(lines, 1):
         text = clean_text(raw)
         if not text:
@@ -427,6 +481,7 @@ def extract_document(path):
             edges.update(set(lines[:2] + lines[-2:]))
         repeated = {s for s, n in edges.items() if n >= max(3, len(pdf.pages) * .6)}
 
+        entries = []
         for number, (page, lines) in enumerate(zip(pdf.pages, page_lines), 1):
             text = '\n'.join(lines)
             if page_is_scan(len(page.images)):
@@ -443,6 +498,9 @@ def extract_document(path):
                 # 表格仍保留文本，但行列关系可能错位；标记出来供人工判断，不再整页丢弃
                 issues.append({'reason': 'complex_table', 'pdf_page': number})
             cleaned = ['' if line in repeated or re.fullmatch(r'\s*[-—]?\s*\d+\s*[-—]?\s*', line) else line for line in lines]
-            for block in paragraph_blocks(cleaned):
-                units.append(_unit(block['text'], f"pdf:{number}:lines:{block['line_start']}-{block['line_end']}", number))
+            entries.extend((number, index, line) for index, line in enumerate(cleaned, 1) if line)
+
+        # 跨页合并：一句话不会因为翻页被劈成两半
+        for block in merge_blocks(entries):
+            units.append(_unit(block['text'], block_locator(block), block['page_start']))
     return units, issues

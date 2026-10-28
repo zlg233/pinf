@@ -33,10 +33,11 @@ class MarkdownExtractionTest(unittest.TestCase):
         self.assertNotIn("https://example.com", body)
         self.assertIn("2 mg/kg·d", body)
 
-    def test_表格行原样保留并标记(self):
+    def test_表格自动拆成逐行单元(self):
         text = "| 月龄 | 随访内容 |\n| --- | --- |\n| 1 月 | 体格测量 |\n"
         units, issues = documents.extract_text_units(text, "x.md")
-        self.assertIn("1 月", units[0]["text"])
+        self.assertGreaterEqual(len(units), 2)
+        self.assertTrue(any("1 月" in u["text"] for u in units))
         self.assertIn("table_in_markdown", [i["reason"] for i in issues])
 
     def test_空文件不产生单元(self):

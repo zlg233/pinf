@@ -11,6 +11,7 @@ import uuid
 import numpy as np
 
 import ingest_documents as docs
+import chunking
 from pilot import LocalEmbedder, VectorIndex, chunk_units
 
 ROOT = Path(__file__).resolve().parent
@@ -75,6 +76,7 @@ def run_library(root, embedder):
                 entry['status'] = 'excluded_product'
                 continue
             fingerprint = _key({'document': document, 'pipeline': VERSION, 'parser': docs.VERSION,
+                                'chunker': chunking.CHUNKER_VERSION,
                                 'model': embedder.model_id, 'dimension': embedder.dimension, 'max_tokens': 110})
             cache = root / 'processed' / fingerprint
             try:

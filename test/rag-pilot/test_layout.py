@@ -81,6 +81,30 @@ class ColumnLayoutTest(unittest.TestCase):
         self.assertEqual(lines[7:], [f"右{i}" for i in range(6)])
 
 
+class MergeBlocksTest(unittest.TestCase):
+    def test_跨页的同一句不会被切断(self):
+        entries = [
+            (5, 40, "重合并症或并发症、生后早期喂养困难、"),
+            (6, 1, "体重增长缓慢等情况应转诊。"),
+        ]
+        blocks = documents.merge_blocks(entries)
+        self.assertEqual(len(blocks), 1)
+        self.assertIn("体重增长缓慢", blocks[0]["text"])
+        self.assertEqual((blocks[0]["page_start"], blocks[0]["page_end"]), (5, 6))
+        self.assertEqual(documents.block_locator(blocks[0]), "pdf:5-6:lines:40-1")
+
+    def test_标题另起一块(self):
+        entries = [(1, 1, "一、定义"), (1, 2, "早产儿指出生胎龄小于 37 周。")]
+        blocks = documents.merge_blocks(entries)
+        self.assertEqual([b["text"] for b in blocks], ["一、定义", "早产儿指出生胎龄小于 37 周。"])
+
+    def test_块内不丢字(self):
+        entries = [(1, 1, "第一句。"), (1, 2, "第二句。"), (1, 3, "第三句。")]
+        blocks = documents.merge_blocks(entries)
+        joined = "".join(b["text"] for b in blocks).replace("\n", "")
+        self.assertEqual(joined, "第一句。第二句。第三句。")
+
+
 class QualityGateTest(unittest.TestCase):
     def test_字形乱码按中文字符占比识别(self):
         garbage = "CDEF /01!!;<=>?@ABC'DE='<FGH !!I=J%(KLJ%(;<=>?J%&'MG N#OP" * 4

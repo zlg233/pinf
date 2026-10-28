@@ -9,6 +9,8 @@ import sqlite3
 
 import numpy as np
 
+import chunking
+
 ROOT = Path(__file__).resolve().parent
 SOURCE_URL = 'https://www.nhc.gov.cn/ewebeditor/uploadfile/2017/07/20170711102129596.pdf'
 CANONICAL_ID = 'NHC-2017-009'
@@ -79,27 +81,8 @@ def extract_source(path):
 
 
 def chunk_units(units, count_tokens, max_tokens=110):
-    if max_tokens < 1:
-        raise ValueError('max_tokens must be positive')
-    result = []
-    for unit in units:
-        remaining = unit['text']
-        while remaining:
-            end = min(len(remaining), max_tokens * 4)
-            while end > 0 and count_tokens(remaining[:end]) > max_tokens:
-                end -= 1
-            if end == 0:
-                raise ValueError('One character exceeds token budget')
-            if end < len(remaining):
-                boundaries = [m.end() for m in re.finditer(r'[。；！？]', remaining[:end])]
-                if boundaries and boundaries[-1] >= end // 2:
-                    end = boundaries[-1]
-            piece = remaining[:end]
-            digest = hashlib.sha256((str(unit['pdf_page']) + unit['text'] + str(len(remaining))).encode()).hexdigest()[:24]
-            result.append({**unit, 'text': piece, 'parent_text': unit['text'], 'chunk_id': digest,
-                           'embedding_tokens': count_tokens(piece)})
-            remaining = remaining[end:]
-    return result
+    """兼容旧调用：实际实现已迁到 chunking.py（按句子装箱，不切断句子）。"""
+    return chunking.chunk_units(units, count_tokens, max_tokens=max_tokens)
 
 
 class VectorIndex:
