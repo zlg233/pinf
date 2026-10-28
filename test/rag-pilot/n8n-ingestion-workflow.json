@@ -1,0 +1,411 @@
+{
+  "name": "早护通｜资料清洗与本地待审核索引（配置后使用）",
+  "nodes": [
+    {
+      "id": "09c297f0-d8da-4991-a594-8e5c108c8ad0",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "dbc4ef05-990c-4477-b76f-0ae5f8292123",
+      "name": "Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        180
+      ],
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "9bb8828a-42da-4ba6-9d3f-e441a2a9a66c",
+      "name": "Configuration",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\"service_url\":\"http://rag-ingestion:18592\"}",
+        "options": {}
+      },
+      "notes": "本地调试可改为 http://127.0.0.1:18592；Docker 中应使用处理服务内网地址。"
+    },
+    {
+      "id": "ac0ddd71-b5b9-41a4-92d9-4db880ed968e",
+      "name": "Submit job",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        0
+      ],
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        },
+        "method": "POST",
+        "url": "={{ $('Configuration').first().json.service_url + '/v1/jobs' }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"action\":\"scan\"}"
+      },
+      "notes": "请在此节点选择 Header Auth 凭据：Authorization=Bearer <令牌>。提交失败不会自动重试，避免重复任务。"
+    },
+    {
+      "id": "d2f9a2f9-b29f-4af6-b6e8-f3e6b84ad324",
+      "name": "Wait",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        0
+      ],
+      "parameters": {
+        "resume": "timeInterval",
+        "amount": 5,
+        "unit": "seconds"
+      }
+    },
+    {
+      "id": "b9ab65b4-b35e-461b-8207-8e3923ba8c73",
+      "name": "Job status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        0
+      ],
+      "parameters": {
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 30000
+        },
+        "url": "={{ $('Configuration').first().json.service_url + '/v1/jobs/' + $('Submit job').first().json.job_id }}"
+      },
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 1000,
+      "notes": "请选择与 Submit job 相同的 Header Auth 凭据。"
+    },
+    {
+      "id": "27b4f341-ab0c-42a4-9c26-9504b1677358",
+      "name": "Poll counter",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1100,
+        0
+      ],
+      "parameters": {
+        "jsCode": "return [{json: {...$input.first().json, poll_attempt: $runIndex + 1}}];"
+      }
+    },
+    {
+      "id": "7b8cc9bc-448b-48c0-b6dd-c10234b5dd94",
+      "name": "Terminal status",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1320,
+        0
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4ed9486a-fb1a-415b-bf54-8d6c1347debc",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "succeeded",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "f1045561-ff28-4f9b-8d55-bd78ac04e0e9",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "failed",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "c2198348-89e4-483b-b27e-886ec8687b4f",
+      "name": "Succeeded",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1540,
+        -80
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "61c5e36c-76b8-49eb-b42f-26a46c9ef7d2",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "succeeded",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "eeea33df-1b5d-4e17-9260-0dceb4fde4a1",
+      "name": "Run summary",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        -160
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "3b93ae8e-e3bd-4b34-a9ef-4955f5d9fd8c",
+      "name": "Failure",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        0
+      ],
+      "parameters": {
+        "errorMessage": "={{ '资料处理任务失败：' + $json.error }}"
+      }
+    },
+    {
+      "id": "95f9b8c1-4be3-4fcd-b2c2-fdb757dd5433",
+      "name": "Poll budget",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1320,
+        200
+      ],
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "64ccba70-cd2b-421b-9c9d-5eda48ba970a",
+              "leftValue": "={{ $json.poll_attempt }}",
+              "rightValue": 120,
+              "operator": {
+                "type": "number",
+                "operation": "lt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "a488ba90-630b-4173-9688-2b537c5ce675",
+      "name": "Timeout",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        280
+      ],
+      "parameters": {
+        "errorMessage": "等待资料处理超过120次轮询，请通过 job_id 查看服务状态；后台任务不会因工作流超时而被删除。"
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Configuration",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configuration": {
+      "main": [
+        [
+          {
+            "node": "Submit job",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Submit job": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Job status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Job status": {
+      "main": [
+        [
+          {
+            "node": "Poll counter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poll counter": {
+      "main": [
+        [
+          {
+            "node": "Terminal status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Terminal status": {
+      "main": [
+        [
+          {
+            "node": "Succeeded",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Poll budget",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Succeeded": {
+      "main": [
+        [
+          {
+            "node": "Run summary",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Poll budget": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Timeout",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Singapore",
+    "executionTimeout": 900
+  },
+  "pinData": {},
+  "tags": []
+}

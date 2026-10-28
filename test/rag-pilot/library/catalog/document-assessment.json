@@ -1,0 +1,218 @@
+{
+  "purpose": "read-only format assessment, not ingestion approval",
+  "documents": [
+    {
+      "document_id": "DOC-d1bf705bc12712f5",
+      "name": "NICU出院高危儿0～3岁生长发育随访管理技术的专家共识 (1).pdf",
+      "category": "clinical_reference_candidate",
+      "raw_path": "raw/2026-10-24-fd24a5b17130/早产儿资料/参考文献/NICU出院高危儿0～3岁生长发育随访管理技术的专家共识 (1).pdf",
+      "review_status": "pending",
+      "page_count": 6,
+      "pages_with_under_80_chars": [],
+      "extracted_characters": 58381,
+      "first_text_sample": "书\n书\n书\n/G21/G22/G23/G24\n/G21\n/G21/G22/G23/G24/G25/G26/G27/G28/G29/G2A/G2B/G2C/G25/G27/G2D/G2E/G2F/G30/G31/G32/G33\n/G21\n/G21/G22/G23/G24/G21/G25/G26/G27/G28/G26/G26\n/G22\n/G25/G26/G27/G28\n/G21\n/G34/G35/G36\n/G23\n/G29/G2A/G2B/G2C/G2D/G2E\n/G24\n/G2F/G30/G31/G32\n/G21\n/G33/G34/G35/G34/G2D/G2E/G36/G37/G38/G39/G3A/G35/G3B/G2B/G3A/G35/G39\n/G29/G2A/G2B/G2C/G2D/G2E\n/G21\n/G34/G3C/G3C/G3D/G33\n/G24/G25/G25\n/G3E/G39/G33/G3F/G35/G39/G3E/G2D/G3F/G39/G38/G3C\n/G25\n/G3E/G35/G2B/G33\n/G25\n/G36/G38/G3C/G2C/G2D/G2E\n/G25\n/G40/G21/G3F/G21/G27/G25/G40/G3F/G41/G3F/G28/G26/G28/G21/G26/G40/G26/G25/G3F/G21/G42/G26/G40/G3F/G26/G42/G40/G3F/G34/G3C/G2B/G2E\n/G26\n/G37/G38/G39/G3A\n/G26\n/G43/G44/G45/G46\n/G21/G22/G23/G24/G25\n/G26\n/G",
+      "layout_review": "required; text density does not validate columns or table ordering",
+      "quality_flags": [
+        "font_mapping_garbage"
+      ],
+      "assessment_status": "format_inspection_only_not_ingested"
+    },
+    {
+      "document_id": "DOC-2a6fa77ec89c77cb",
+      "name": "关于印发早产儿保健工作规范的通知.pdf",
+      "category": "clinical_reference_candidate",
+      "raw_path": "raw/2026-10-24-fd24a5b17130/早产儿资料/参考文献/关于印发早产儿保健工作规范的通知.pdf",
+      "review_status": "pending",
+      "page_count": 21,
+      "pages_with_under_80_chars": [
+        21
+      ],
+      "extracted_characters": 10077,
+      "first_text_sample": "关于印发早产儿保健工作规范的通知 \n国卫办妇幼发〔2017〕9 号 \n \n各省、自治区、直辖市卫生计生委，新疆生产建设兵团卫生局： \n为进一步规范早产儿保健工作， 提高早产儿医疗保健水平， 改善\n早产儿生存质量， 根据 《中华人民共和国母婴保健法》 及其实施办法，\n我们组织制定了 《早产儿保健工作规范》 （可从国家卫生计生委网站\n下载）。现印发给你们，请遵照执行。 \n \n \n国家卫生计生委办公厅 \n2017 年2 月22 日 \n  ",
+      "layout_review": "required; text density does not validate columns or table ordering",
+      "quality_flags": [
+        "sparse_text_pages"
+      ],
+      "assessment_status": "format_inspection_only_not_ingested"
+    },
+    {
+      "document_id": "DOC-3bdbc156dbeda5b1",
+      "name": "国卫办妇幼发〔2017〕9号-早产儿保健工作规范 (1).doc",
+      "category": "clinical_reference_candidate",
+      "raw_path": "raw/2026-10-24-fd24a5b17130/早产儿资料/参考文献/国卫办妇幼发〔2017〕9号-早产儿保健工作规范 (1).doc",
+      "review_status": "pending",
+      "file_header_hex": "d0cf11e0a1b11ae10000000000000000",
+      "status": "legacy_doc_needs_conversion",
+      "auto_ingestion": "blocked_until_supported_conversion; do not treat as plain text",
+      "quality_flags": [
+        "legacy_doc_conversion_required"
+      ],
+      "assessment_status": "format_inspection_only_not_ingested"
+    },
+    {
+      "document_id": "DOC-b2a0c320c3c431de",
+      "name": "新生儿常见呼吸道病毒感染预防的专家建议.pdf",
+      "category": "clinical_reference_candidate",
+      "raw_path": "raw/2026-10-24-fd24a5b17130/早产儿资料/参考文献/新生儿常见呼吸道病毒感染预防的专家建议.pdf",
+      "review_status": "pending",
+      "page_count": 6,
+      "pages_with_under_80_chars": [],
+      "extracted_characters": 19126,
+      "first_text_sample": "第 26 卷 第 8 期\n2024 年 8 月\n中国当代儿科杂志\nChin J Contemp Pediatr\nVol.26 No.8\nAug. 2024\n新生儿常见呼吸道病毒感染预防的专家建议\n中国妇幼保健协会新生儿保健专业委员会\n［摘要］ 新生儿，特别是早产儿，是呼吸道病毒感染的易感人群。目前，除流行性感冒外，尚未有专门适用\n于新生儿的抗病毒药物用于治疗呼吸道病毒感染 。因此，对于新生儿而言 ，预防这些病毒感染显得尤为重要 。\n中国妇幼保健协会新生儿保健专业委员会基于国内外临床证据 ，结合临床实践经验 ，并经相关专家充分讨论 ，\n形成了 8 条专家建议，包含了对流行性感冒病毒、呼吸道合胞病毒、新型冠状病毒感染的预防策略，供同行在临\n床工作中参考。 ［中国当代儿科杂志，2024，26 （8） ：789-794］\n［关键词］ 呼吸道病毒感染；预防；专家建议；新生儿\nExpert recommendations for the prevention of common respiratory viral infections \nin neonates\nNeonatal Health Care Committee of Chinese Maternal and Child Health Association (Zhang X-F , Email : \ndoctor1966@sina.com; Shi Y, Email: shiyuan@hospital.cqmu.edu.cn)\nAbstract: Neonates, particularly preterm infants , ",
+      "layout_review": "required; text density does not validate columns or table ordering",
+      "quality_flags": [],
+      "assessment_status": "format_inspection_only_not_ingested"
+    },
+    {
+      "document_id": "DOC-3b9c8b096953f426",
+      "name": "新生儿早期基本保健技术的临床实施建议.pdf",
+      "category": "clinical_reference_candidate",
+      "raw_path": "raw/2026-10-24-fd24a5b17130/早产儿资料/参考文献/新生儿早期基本保健技术的临床实施建议.pdf",
+      "review_status": "pending",
+      "page_count": 5,
+      "pages_with_under_80_chars": [],
+      "extracted_characters": 9025,
+      "first_text_sample": "主堡旦兰垦兰苤查!!坚生!星笙!!鲞笙!塑竺!坐!!型!堂竺!!：!!E!：!!!!!塑!：!!!塑!：!\n新生儿早期基本保健技术的临床实施建议\n(2\n0 1 7年，’北京) 中华医学会围产医学分会\n中华护理学会妇产科专业委员会\n中国疾病预防控制中心妇幼保健中心\n当前，我国在降低5岁以下儿童死亡率方面已\n经取得了令人瞩目的成绩，但新生儿死亡所占的\n比例仍较高。我国新生儿死亡的主要原因是早产、\n产时窒息及并发症、先天畸形、感染等…。世界卫\n生组织(World\nHealth 0rganization，WHO)指 出，新生儿早期的保健措施，如生后即刻母婴皮\n肤接触、延迟脐带结扎、新生儿复苏、袋鼠式护\n理等干预措施，可以显著改善新生儿的健康水平。\nWHO预测，如果在分娩过程中和生后立即采取这\n些基本的、低成本的新生儿保健措施，可以降低\n约22％的新生儿死亡率，降低新生儿低体温、新\n生儿窒息、新生儿感染、新生儿坏死性小肠结肠炎、\n颅内出血等的发生率，提高纯母乳喂养率，降低\n新生儿住院率忙J。\n2013年WHO制定和发布了“新生儿早期基本\n保健(Early\nEssential Newborn Care，EENC)”指南， 内容涵盖了新生儿从出生时刻开始的基本临床保\n健技术【3】。为了提高医务人员在新生儿早期保健工\n作中的技能，国家卫生和计划生育委员会妇幼健康\n服务司(简称国家卫生计生委妇幼司)与联合国儿\n童基金会(United\nNations International Children’S Emergency\nFund，UNICEF)合作，于2016年引入 EENC指南开展试点工作，并结",
+      "layout_review": "required; text density does not validate columns or table ordering",
+      "quality_flags": [],
+      "assessment_status": "format_inspection_only_not_ingested"
+    },
+    {
+      "document_id": "DOC-d6f55c035aae3944",
+      "name": "早产临床防治指南 2024.pdf",
+      "category": "clinical_reference_candidate",
+      "raw_path": "raw/2026-10-24-fd24a5b17130/早产儿资料/参考文献/早产临床防治指南 2024.pdf",
+      "review_status": "pending",
+      "page_count": 13,
+      "pages_with_under_80_chars": [],
+      "extracted_characters": 48076,
+      "first_text_sample": "fmx_T3RoZXJNaXJyb3Jz\n中华妇产科杂志  2024 年 4 月第 59 卷第 4 期　Chin J Obstet Gynecol , April 2024, Vol. 59, No. 4 · 257 ·\n早产临床防治指南（2024 版）\n中华医学会妇产科学分会产科学组\n通信作者 ：胡娅莉 ， 南京大学医学院附属鼓楼医院产科 ， 南京 210008， Email： yalihu@  \nnju.edu.cn； 杨慧霞， 北京大学第一医院产科， 北京 100034， Email： yanghuixia@bjmu.edu.cn\n【摘要】　早产是常见的妊娠并发症 ，是围产儿及 5 岁以下婴幼儿死亡和残疾的重要原因 。随着\n我国传统生活方式的改变 ，生育政策调整后高龄孕妇增加 ，妊娠间隔改变 ，妊娠合并内外科疾病发生\n率增高等因素的影响 ，我国早产率呈上升趋势 。为降低我国早产率 ，提高早产儿存活率 ，减少早产相\n关严重并发症 ，中华医学会妇产科学分会产科学组对上一版 《早产的临床诊断与治疗指南（2014） 》进\n行了更新。本次更新基于早产防治证据的研究进展 ，首先列出相关问题 ，经过两轮产科学组专家参与\n的 Delphi 问卷调查 、临床一线工作者的问卷调查以及会议讨论 ，最终形成 18 条推荐意见 ，以期为临床\n实践提供参考 。本指南适用范围 ：单胎妊娠、胎膜完整的自发性早产的防治 。\n实践指南注册 ：国际实践指南注册与透明化平台 ，PREPARE‑2022CN734\n早产是常见的妊娠并发症 ，是围产儿 、5 岁以\n下婴幼儿死亡和残疾的重要原因\n［1‑3］\n，中华医学",
+      "layout_review": "required; text density does not validate columns or table ordering",
+      "quality_flags": [],
+      "assessment_status": "format_inspection_only_not_ingested"
+    },
+    {
+      "document_id": "DOC-290278e5dd34373d",
+      "name": "早产儿与足月儿1岁内生长速度的比较.pdf",
+      "category": "clinical_reference_candidate",
+      "raw_path": "raw/2026-10-24-fd24a5b17130/早产儿资料/参考文献/早产儿与足月儿1岁内生长速度的比较.pdf",
+      "review_status": "pending",
+      "page_count": 3,
+      "pages_with_under_80_chars": [],
+      "extracted_characters": 13081,
+      "first_text_sample": "fmx_T3RoZXJNaXJyb3Jz\nCopyright © 1986-2022 Chinese Journal of Applied Clinical Pediatrics,All Rights Reserved\n• 1810 • \n套用b刽1悔革幸i占第 25 在摇 23 明 2010 年 12 月 J Appl Clin Pediat. \n• J L\" 窒T呆在主· . ~仑若·\n旱产儿与足月 nl 岁内生快速度的比较\n张敏，池霞，蒋宁南，张挺秀，窦 j叔娟，童格玲\n(南京医科大学附属妇幼保健院儿童保健科，南京 210004)\n摘要目的 琛讨 1 1 1. f-'儿 Lj 足 )J 儿体降生 [:d则卡的异 ]'iJ 。方法对 96 名 1 1 1. f-'儿上~ 94 名足川儿 )1\\ 生弟 I 订的体 J.JL_;:和身 l二进\nh冠且 l 测量，比较小同月龄段 (1 -3 月龄l盐、 >3 -fi 月龄 ßt 、 >6 -9 月龄段、 >9 - 12 月龄 p):) 2 组婴儿的体质量)}身长的 '1 长速 j 址\n及相划生长地度，;K时问叭队 15.0 软件世行 mn 半分析 F 结果 1 在 >3 - 6 月龄段，早产儿协历且利 I-q 氏的生民边度均以昔快十\n足)J儿; >6-9 门龄段， 111. f-'儿以身长的 I1 长理民明显快丁足 J J 儿。 2 在 1 - 3 )J 龄段> 3 -6 门龄段时， 111. f-'儿体质旱和身长的斗H\nx,J '1 长速度均明思快 l 足月儿，而 (1:>6-9 月龄段，早产儿仅县长的相开J '1 长速度明、♀",
+      "layout_review": "required; text density does not validate columns or table ordering",
+      "quality_flags": [],
+      "assessment_status": "format_inspection_only_not_ingested"
+    },
+    {
+      "document_id": "DOC-a75f38ecc1c0a152",
+      "name": "早产儿保健服务指南.docx",
+      "category": "clinical_reference_candidate",
+      "raw_path": "raw/2026-10-24-fd24a5b17130/早产儿资料/参考文献/早产儿保健服务指南.docx",
+      "review_status": "pending",
+      "paragraph_count": 139,
+      "table_count": 1,
+      "extracted_characters": 5960,
+      "first_text_sample": "附件1                                            早产儿保健服务指南\n\n一、住院前管理\n（一）产前\n1.产科：及时处理孕期并发症/合并症，预测早产的发生，完成产前促胎肺成熟；及时与儿科沟通，开展围产讨论，评估母婴风险，确定处理方式和分娩地点。\n2.儿科：鼓励分娩前新生儿科医生与早产高风险孕妇及家属沟通，介绍可能出现的合并症及处理。\n（二）早产儿复苏\n所有早产儿出生时应有具备早产儿复苏能力的人员参与现场复苏和评估。按照《中国新生儿复苏指南》进行复苏，特别注意保暖、用氧和呼吸支持。\n（三）早产儿住院指征\n    1.出生体重小于2000g或胎龄<34周。\n2.虽然出生体重或胎龄超过以上标准，但存在以下任何一种情况：\n（1）新生儿窒息，产伤；\n（2）体温：异常；\n（3）皮肤：发绀、苍白、多血质貌、黄染、出血、水肿表现；\n（4）呼吸：呼吸暂停或呼吸困难（呼吸急促、呻吟、三凹征）；\n（5）循环：心率/心律异常、血压异常、末梢循环不良；\n（6）消化：喂养困难、呕吐、腹胀、大便异常、肝脾肿大；\n（7）神经：前囟饱满，意识、反应和肌张力异常，惊厥；\n（8）需进一步排除或治疗的先天畸形；\n（9）监测发现的其他异常，如血糖、胆红素、血常规等异常；\n（10）母亲为高危孕产妇：胎膜早破>18小时、产前或产时感染、药物滥用等。\n（四）危重早产儿转诊\n1.宫内转诊：不具备救治早产儿条件的医疗机构应及时将早产高危孕妇转至具有母婴救治条件的医疗机构分娩。\n2.出生后转运：包括院内转运和院间转运。\n（1）转运前：评估，积极救治并维持生命体征稳定，完成病历资料的交接；\n（2）转运中：密切监护，持续保暖及生命支持治疗，做好监护及抢救记录；\n（3）转运后：与新生儿重症监护病房（NICU）接诊医生交接患儿情况、转运经过和主要治疗情况。\n二、住院期间管理\n（一）护理及发育促进\n1.保暖：出生体重<2000g的早产儿应置于婴儿培养箱保暖，根据早产儿胎龄、日龄、体重和病情调节暖箱的温度及湿度，维持恒定的中性温度。\n2.生命体征监测：密切监测体温、心率、呼吸、血压、脉搏、血氧饱和度。\n3.发育支持性护理：注意新生儿病房的环境、早产儿体位，减少疼痛等不良刺激，集中操作护理，减少不必要的接触。采取适当的发育护理措施，如：新生儿抚触、视觉与听觉刺激等。生命体征稳定的早产儿推荐使用“袋鼠式护理”方法，即早产儿与妈妈进行皮肤接触，利于保暖，促进母乳喂养。\n（二）预防医院内感染\n严格执行手卫生要求，严格遵守消毒隔离制度，做好病房环境细菌学监测，减少侵袭性操作，合理使用抗生素。\n（三）呼吸支持\n1.安全氧疗：呼吸支持期间保持早产儿动脉血氧分压50-80mmHg；脉搏血氧饱和度90%-95%，不宜超过95%。鼻导管吸氧时建议使用空氧混合仪控制吸氧浓度。\n2.生后早期呼吸支持：对有新生儿呼吸窘迫综合征（RDS）风险的早产儿，有自主呼吸时尽早采用无创正压通气支持，罹患RDS的早产儿有指征地使用肺表面活性物质及恰当的呼吸支持，视病情调节呼吸支持方式。\n3.机械通气：采用小潮气量和允许性高碳酸血症的肺保护性通气策略，尽可能缩短机械通气时间。\n（四）营养支持\n1.母乳喂养：首选母乳喂养，生后尽早开奶，充分利用初乳。\n2.肠内营养：无先天性消化道畸形及其他严重疾患、血流动力学相对稳定",
+      "has_tracked_changes": false,
+      "layout_review": "paragraph/table structure must be preserved; paragraph ordinal is locator, not guessed page number",
+      "quality_flags": [],
+      "assessment_status": "format_inspection_only_not_ingested"
+    },
+    {
+      "document_id": "DOC-74d860e84e931b40",
+      "name": "特殊状态儿童预防接种(广东)专家共识.pdf",
+      "category": "clinical_reference_candidate",
+      "raw_path": "raw/2026-10-24-fd24a5b17130/早产儿资料/参考文献/特殊状态儿童预防接种(广东)专家共识.pdf",
+      "review_status": "pending",
+      "page_count": 10,
+      "pages_with_under_80_chars": [],
+      "extracted_characters": 49015,
+      "first_text_sample": "书书书\n·标准·方案·指南·\n扫码阅读电子版\n特殊状态儿童预防接种（ 广东） 专家共识\n广东省医师协会儿科医师分会\n通信作者： 陈运彬，Ｅ ｍ ａ ｉ ｌ：１ ２ ２ ５ ９ ９ ０ ０ ８ ２ ＠ｑ ｑ ． ｃ ｏ ｍ\nＤ Ｏ Ｉ：１ ０ ． ３ ７ ６ ０ ／ ｃ ｍ ａ ． ｊ ． ｃ ｎ １ ０ １ ０ ７ ０  ２ ０ ２ ０ ０ ３ ０ ９  ０ ０ ３ ５ １\nＥ ｘ ｐ ｅ ｒ ｔ ｃ ｏ ｎ ｓ ｅ ｎ ｓ ｕ ｓ ｏ ｎｉ ｍ ｍ ｕ ｎ ｉ ｚ ａ ｔ ｉ ｏ ｎｉ ｎｃ ｈ ｉ ｌ ｄ ｒ ｅ ｎｗ ｉ ｔ ｈｓ ｐ ｅ ｃ ｉ ａ ｌ ｓ ｔ ａ ｔ ｅ（Ｇ ｕ ａ ｎ ｇ ｄ ｏ ｎ ｇ）\nＰ ｅ ｄ ｉ ａ ｔ ｒ ｉ ｃ ｓ Ｂ ｒ ａ ｎ ｃ ｈ ｏ ｆ Ｇ ｕ ａ ｎ ｇ ｄ ｏ ｎ ｇ Ｍ ｅ ｄ ｉ ｃ ａ ｌ Ｄ ｏ ｃ ｔ ｏ ｒ Ａ ｓ ｓ ｏ ｃ ｉ ａ ｔ ｉ ｏ ｎ\nＣ ｏ ｒ ｒ ｅ ｓ ｐ ｏ ｎ ｄ ｉ ｎ ｇ ａ ｕ ｔ ｈ ｏ ｒ：Ｃ ｈ ｅ ｎ Ｙ ｕ ｎ ｂ ｉ ｎ，Ｅ ｍ ａ ｉ ｌ：１ ２ ２ ５ ９ ９ ０ ０ ８ ２ ＠ｑ ｑ ． ｃ ｏ ｍ\n　　预防接种是预防、 控制乃至消除疫苗可预防传染疾\n病最经济有效的手段， 也是政府为群众提供的最基本公\n共卫生服务项目之一。儿童预防接种的普及使全国疫\n苗可预防疾病发病率降至历史最低水平。我国免疫规\n划仍面临诸多挑战， 其中提高特殊健康状态儿童的预防\n接种率， 仍需要全社会的共同努力。基于此， 广东省医\n师协会儿科医师分会召集专家撰写《 特殊状态儿童预防\n接种（",
+      "layout_review": "required; text density does not validate columns or table ordering",
+      "quality_flags": [],
+      "assessment_status": "format_inspection_only_not_ingested"
+    },
+    {
+      "document_id": "DOC-3bc09df11259610a",
+      "name": "高危新生儿行为神经发育早期干预专家共识.pdf",
+      "category": "clinical_reference_candidate",
+      "raw_path": "raw/2026-10-24-fd24a5b17130/早产儿资料/参考文献/高危新生儿行为神经发育早期干预专家共识.pdf",
+      "review_status": "pending",
+      "page_count": 4,
+      "pages_with_under_80_chars": [],
+      "extracted_characters": 39683,
+      "first_text_sample": "书\n书\n书\n/G21/G22/G23/G24\n/G21\n/G21\n/G21/G22/G23/G24/G25/G26/G27\n/G22\n/G28/G29/G2A/G2B/G2C/G2D/G2E/G2F/G30/G31/G32/G33/G34\n/G23\n/G21/G22/G21/G23\n/G24\n/G25/G26/G27/G28\n/G21\n/G35/G36\n/G23\n/G23/G24/G25/G26/G27\n/G24/G25\n/G37\n/G25\n/G38/G39/G3A\n/G25\n/G3B/G3C/G3D/G3E\n/G25\n/G3F/G40/G41/G42/G43\n/G25\n/G3B/G44/G41/G42/G45/G46/G47/G28/G29/G48/G49/G4A/G4B/G4C/G4D/G4E/G4F/G50/G4D\n/G26\n/G29/G2A/G25/G26\n/G21\n/G51/G52/G53\n/G25\n/G28/G27/G29/G2A/G2B/G2C\n/G27\n/G2C/G2D/G29/G2E/G2F\n/G21\n/G23/G30/G31/G32/G33/G34/G29\n/G2B/G2C/G2D/G2E/G2F/G30\n/G21\n/G35/G36/G36/G37/G38\n/G27/G28/G28\n/G39/G3A/G38/G3B/G33/G3A/G39/G2B/G3B/G3A/G3C/G36\n/G28\n/G39/G33/G29/G38\n/G28\n/G3D/G3C/G36/G2A/G2B/G2C\n/G28\n/G30/G23/G3B/G23/G31/G26/G30/G3B/G",
+      "layout_review": "required; text density does not validate columns or table ordering",
+      "quality_flags": [
+        "font_mapping_garbage"
+      ],
+      "assessment_status": "format_inspection_only_not_ingested"
+    },
+    {
+      "document_id": "DOC-704f45be15907ea8",
+      "name": "小程序(1).pdf",
+      "category": "product_reference",
+      "raw_path": "raw/2026-10-24-fd24a5b17130/早产儿资料/小程序(1).pdf",
+      "review_status": "pending",
+      "page_count": 17,
+      "pages_with_under_80_chars": [
+        1,
+        2,
+        3,
+        5,
+        6,
+        7,
+        8,
+        11,
+        12,
+        14,
+        15,
+        16,
+        17
+      ],
+      "extracted_characters": 1047,
+      "first_text_sample": "普通用户\nlogo\n医护人员\n请选择您进入小程序的身份",
+      "layout_review": "required; text density does not validate columns or table ordering",
+      "quality_flags": [
+        "sparse_text_pages",
+        "exclude_from_clinical_rag"
+      ],
+      "assessment_status": "format_inspection_only_not_ingested"
+    },
+    {
+      "document_id": "DOC-02d61d067e9be11d",
+      "name": "核心功能架构.pdf",
+      "category": "product_reference",
+      "raw_path": "raw/2026-10-24-fd24a5b17130/早产儿资料/核心功能架构.pdf",
+      "review_status": "pending",
+      "page_count": 1,
+      "pages_with_under_80_chars": [],
+      "extracted_characters": 682,
+      "first_text_sample": " 核心功能架构\n 发育监测模块\n 智能答疑模块\n 随访提醒模块\n 个体化护理计划模块\n 自动生成生长曲线，并显示是否达标\n 及建议\n 基于月龄、体重、身高、头围等关键发育指标。\n 融合 LSTM/Transformer + Z-score 模型进行动\n 态时序预测，预测未来数周至数月的发育趋势。\n 实现由静态阈值判断升级为动态偏离\n 识别，并构建多级智能预警机制  AI 触发三级风险等级 \n 系统具备预测未来身高值功能  可通过父母身高数据推算成年后发育潜力，提升 干预的科学性与前瞻性。\n 结合 RAG 智能问答架构，即时答疑\n 提供涵盖喂养（如奶量计算、母乳替代方案）、\n 心理支持（如父母焦虑识别）、常见护理（如脐\n 带护理、疫苗接种）等方面\n 系统具备 “ 理解  + 推理  + 生成 ” 能力，\n 支持多轮语义记忆\n 能动态判断家长问题背后的潜在风险（如 “ 喂养不\n 足 ” 提示），并推送个性化建议。\n 自动发送时间节点提醒（如生长评\n 估、体检、疫苗接种等）\n 系统根据患儿出院时间、诊疗计划和阶段目标设\n 定。\n 推送形式包括：系统内弹窗提醒、短\n 信 / 微信服务号通知、日历同步接口\n 等，提升随访依从性。\n 根据需求自动生成个性化居家护理照\n 护计划\n 依托本地护理知识库与 AI 问答引擎构建「任务清\n 单  + 知识推荐  + 阶段目标」三位一体的家庭护理\n 指导系统。\n 护理知识库包括营养喂养、疾病预\n 警、情绪调节等模块，系统自动根据\n 婴儿发育情况与家长行为画像，生成\n 可执行的护理任务列表，支持进度追\n 踪与打卡反馈。",
+      "layout_review": "required; text density does not validate columns or table ordering",
+      "quality_flags": [
+        "exclude_from_clinical_rag"
+      ],
+      "assessment_status": "format_inspection_only_not_ingested"
+    },
+    {
+      "document_id": "DOC-97febf3cb13aab9d",
+      "name": "语料库（终版）.docx",
+      "category": "compiled_corpus",
+      "raw_path": "raw/2026-10-24-fd24a5b17130/早产儿资料/语料库（终版）.docx",
+      "review_status": "pending",
+      "paragraph_count": 1303,
+      "table_count": 0,
+      "extracted_characters": 98124,
+      "first_text_sample": "一、基础护理知识（共30个小点）\n如何正确抱早产儿，减少不适感\n舒适安全的方式抱早产儿的方式一般有飞机式、竖抱式、摇篮式（横抱）[]\n飞机式：前臂承托宝宝胸腹部，头部略高于臀部，另一手轻拍背部，每次不超过10分钟\n竖抱式：宝宝胸腹紧贴父母身体，头部靠于肩膀，一手托住臀部，另一手扶住颈背部，保持脊柱自然弯曲\n摇篮式（横抱）： 左臂弯曲托住头颈部，右手支撑背臀部，双下肢夹于父母腋下，身体呈15°-30°倾斜，避免头部后仰。注意早产儿颈部肌肉弱，需全程用手掌而非仅前臂支撑头部。\n袋鼠式护理\n对于低张力或体重较轻的早产儿，建议采用袋鼠式护理，将宝宝直立或稍倾斜地趴于家长胸前，头部位于两个乳房之间，头偏向一侧，保持头、颈、脊柱成直线，确保呼吸道通畅。宝宝的颈部、背部和臀部由家长用手臂支撑，，背部用另一手固定，腿部自然弯曲呈蛙状。使用毯子或包巾覆盖宝宝背部，防止滑落并保持温暖[]\n早产儿换尿布的注意事项[]\n防止感染：在换尿布前后，护理人员要洗净双手，避免交叉感染。\n安全防护：选择平坦、稳定的尿布台或垫有毛巾的平面，手一分钟都不能离开避免宝宝跌落。所有用品（尿布、湿巾、护臀霜等）需提前备齐并触手可及\n体位选择：侧卧位交替更换法，避免直接抬高双腿导致脊椎压力。具体操作是让宝宝先侧身更换一侧尿布，再转向另一侧完成操作。若需抬起双腿，应将手部支撑点置于臀部而非腰部，抬升角度不超过45°\n尿布选择：尿布宜选择吸水性强，透气性好，柔软干净，浅颜色纯旧棉布。\n卫生处理：使用温水或无酒精、无香料的婴儿湿巾，轻柔清洁\n脐带护理：如果宝宝的脐部尚未愈合，换尿布时要注意尿布边缘应低于脐部，避免尿布覆盖脐部，保持干燥，防止脐部感染。\n维持体温：在换尿布时要维持宝宝体温恒定（皮肤温度36-37℃，肛温36.5-37.5℃），可使用空调保持室温24-26℃，并且尽量缩短时间，避免暴露时间长，降低体温\n更换频率：每2-3小时检查一次尿布，排便后立即更换，喂奶后避免立即换尿布，防止吐奶\n皮肤护理（预防红臀和湿疹的方法）\n预防红臀[]\n保持干燥清洁：及时更换尿布，每1-2小时检查一次，大便后立即更换，避免排泄物长时间接触皮肤；使用温水或无酒精、无香料的婴儿湿巾，轻柔清洁，擦干（注意皮肤褶皱处）后再穿尿布\n尿布选择与使用：选择柔软、吸水性好、气性好的尿布，固定好后，保证尿布与宝宝腰之间能放进两个指头\n使用隔离产品：每次清洁后涂抹含氧化锌或凡士林的护臀膏，形成物理屏障，减少排泄物刺激。注意避免使用痱子粉\n预防湿疹[]\n避免接触过敏原：注意食物过敏，避免过早添加高蛋白食物（如牛奶、鸡蛋）;注意接触性过敏，注意室内环境清洁，减少尘螨、霉菌等过敏原的存在\n衣物选择：给早产儿穿柔软、宽松、纯棉材质的衣物，避免穿羊毛或化纤等刺激性材质。\n皮肤清洁与保湿：避免过度清洁皮肤，不要使用刺激性强的肥皂或沐浴露，可选择温和、无刺激的婴儿专用沐浴产品，避免过度洗澡和使用热水。使用温和的保湿霜保持皮肤湿润, 尤其是在干燥的冬季。\n早产儿的沐浴方式与注意事项[]\n沐浴方式[]\n襁褓浴（推荐）：将早产儿包裹在襁褓（柔软毯子）中，只露出头部和颈部，然后进行沐浴，按上肢→下肢→颈→胸腹→背→会阴顺序清洗。全程保持中线屈曲体位，时间不超过5分钟。这种方式可以减少早产儿的热量散失，维持体温稳定。 \n盆浴：将早产儿放入温水中进行沐浴，",
+      "has_tracked_changes": false,
+      "layout_review": "paragraph/table structure must be preserved; paragraph ordinal is locator, not guessed page number",
+      "quality_flags": [
+        "needs_primary_source_alignment"
+      ],
+      "assessment_status": "format_inspection_only_not_ingested"
+    }
+  ]
+}

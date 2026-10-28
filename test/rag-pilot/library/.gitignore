@@ -1,0 +1,8 @@
+inbox/
+archives/
+raw/
+processed/
+indexes/
+runs/
+__pycache__/
+.ingestion.lock
