@@ -22,6 +22,7 @@ import { useFeaturesStore } from '@/store/features';
 import * as contentApi from '@/services/api/content';
 import type { ContentArticle, ContentPagination, ContentVideo } from '@/types/content';
 import { isVideoEntryEnabled, shouldLeaveClassroom } from '@/domain/features/switches';
+import { CONTENT_CATEGORIES } from '@/constants/content-categories';
 
 import './index.scss';
 
@@ -30,7 +31,7 @@ import './index.scss';
 const ARTICLE_PAGE_SIZE = 8;
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 hour
 const CACHE_STORAGE_KEY = 'content_cache';
-const ARTICLE_CATEGORIES = ['入院时', '住院期间', '出院当天', '出院后'] as const;
+const ARTICLE_CATEGORIES = CONTENT_CATEGORIES;
 
 // ── Types ──
 
@@ -200,6 +201,7 @@ export default function ClassroomPage() {
           page: 1,
           per_page: ARTICLE_PAGE_SIZE,
           search: searchQuery || undefined,
+          category: activeCategory || undefined,
         });
         setVideos(videoRes.data);
         setVideoPagination(videoRes.pagination);
@@ -256,7 +258,14 @@ export default function ClassroomPage() {
         promises.push(Promise.resolve({ data: [], pagination: null }));
       }
       if (videoEnabled) {
-        promises.push(contentApi.listVideos({ page: 1, per_page: ARTICLE_PAGE_SIZE, search: query }));
+        promises.push(
+          contentApi.listVideos({
+            page: 1,
+            per_page: ARTICLE_PAGE_SIZE,
+            search: query,
+            category: activeCategory || undefined,
+          }),
+        );
       } else {
         promises.push(Promise.resolve({ data: [], pagination: null }));
       }
@@ -357,6 +366,7 @@ export default function ClassroomPage() {
           page: nextPage,
           per_page: ARTICLE_PAGE_SIZE,
           search: searchQuery || undefined,
+          category: activeCategory || undefined,
         });
         setVideos([...videos, ...videoRes.data]);
         setVideoPagination(videoRes.pagination);
@@ -411,8 +421,10 @@ export default function ClassroomPage() {
     previousCategoryRef.current = activeCategory;
     if (activeTab === 'article') {
       fetchContent({ force: true });
+    } else if (activeTab === 'video') {
+      fetchVideos({ force: true });
     }
-  }, [activeCategory, activeTab, fetchContent]);
+  }, [activeCategory, activeTab, fetchContent, fetchVideos]);
 
   // ── Derived state ──
 
@@ -499,7 +511,8 @@ export default function ClassroomPage() {
               )}
             </View>
 
-            {activeTab === 'article' && articleEnabled && (
+            {/* 文章与视频共用同一套出院状态分类 */}
+            {((activeTab === 'article' && articleEnabled) || (activeTab === 'video' && videoEnabled)) && (
               <View className="page-classroom__category-row">
                 {ARTICLE_CATEGORY_OPTIONS.map((option) => (
                   <OrganicChipButton

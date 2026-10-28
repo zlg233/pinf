@@ -27,5 +27,7 @@ export interface ContentVideo {
   downUrl?: string | null;
   playUrl?: string | null;
   name?: string | null;
+  // 出院状态分类：入院时 / 住院期间 / 出院当天 / 出院后；null 表示未分类
+  category?: string | null;
   createdAt?: string | null;
 }

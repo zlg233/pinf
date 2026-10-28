@@ -97,6 +97,18 @@ export default function Profile() {
             </View>
             <Text className="menu-arrow">›</Text>
           </View>
+          {user?.role === 'admin' && (
+            <View
+              className="menu-item"
+              onClick={() => Taro.navigateTo({ url: '/pages/admin-content/index' })}
+            >
+              <View className="menu-left">
+                <View className="menu-icon">📚</View>
+                <Text className="menu-text">内容管理</Text>
+              </View>
+              <Text className="menu-arrow">›</Text>
+            </View>
+          )}
           <View
             className="menu-item"
             onClick={() => Taro.navigateTo({ url: '/pages/terms/index' })}

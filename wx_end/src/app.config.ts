@@ -11,6 +11,7 @@ export default defineAppConfig({
     'pages/appointments/index',
     'pages/article-detail/index',
     'pages/video-detail/index',
+    'pages/admin-content/index',
   ],
   subpackages: [
     {

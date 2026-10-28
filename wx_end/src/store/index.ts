@@ -7,6 +7,8 @@ export interface User {
   phone: string;
   name?: string;
   avatar?: string;
+  // 后端 users.role：user / admin；仅 admin 显示内容管理入口
+  role?: string;
   needSetPassword?: boolean;
 }
 
