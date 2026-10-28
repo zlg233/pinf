@@ -2,7 +2,7 @@
 
 import unittest
 
-from merge_prescreen import build_suggestion_rows, collect_entries, coverage
+from merge_prescreen import build_suggestion_rows, collect_entries, coverage, filter_to_sheet
 
 
 def entry(chunk_id, doc="文档A", suggestion="通过", reason="ok"):
@@ -48,6 +48,11 @@ class CoverageTest(unittest.TestCase):
         self.assertEqual(report["covered"], 2)
         self.assertEqual(report["missing"], ["c3"])
         self.assertEqual(report["by_doc"]["B"]["missing"], 1)
+
+    def test_丢弃不在当前清单里的历史记录(self):
+        entries = {"c1": entry("c1"), "old": entry("old")}
+        kept = filter_to_sheet(entries, {"c1": "A"})
+        self.assertEqual(list(kept), ["c1"])
 
 
 class SuggestionRowsTest(unittest.TestCase):

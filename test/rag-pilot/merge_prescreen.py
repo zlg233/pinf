@@ -92,6 +92,11 @@ def load_entries(review_dir, seq_map=None):
     return collect_entries(items, seq_map)
 
 
+def filter_to_sheet(entries, sheet_ids):
+    """只保留当前清单里的片段；历史轮次遗留的 chunk_id 直接丢弃。"""
+    return {cid: item for cid, item in entries.items() if cid in sheet_ids}
+
+
 def coverage(entries, sheet_ids):
     """sheet_ids: {chunk_id: doc}。返回总数、已覆盖、缺失与逐文档统计。"""
     by_doc = {}
@@ -219,6 +224,10 @@ def main(argv=None):
     seq_map = {row["seq"]: row["chunk_id"] for row in sheet_rows}
     entries = load_entries(review_dir, seq_map)
     sheet_ids = {row["chunk_id"]: row["doc"] for row in sheet_rows}
+    before = len(entries)
+    entries = filter_to_sheet(entries, sheet_ids)
+    if before != len(entries):
+        print(f"忽略 {before - len(entries)} 条历史轮次遗留的预审记录")
     report = coverage(entries, sheet_ids)
 
     print(f"预审记录 {len(entries)} 条，清单 {report['total']} 行，已覆盖 {report['covered']}，缺 {len(report['missing'])}")
