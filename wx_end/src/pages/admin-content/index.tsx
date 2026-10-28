@@ -92,6 +92,9 @@ export default function AdminContentPage() {
   const handleTabChange = useCallback((next: Tab) => {
     setTab(next);
     setPagination(null);
+    // 切 Tab 时关掉编辑弹窗，避免用当前 Tab 的接口去改另一类内容
+    setEditing(null);
+    setDraftCategory('');
   }, []);
 
   const handleLoadMore = useCallback(async () => {

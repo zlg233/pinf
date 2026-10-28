@@ -213,7 +213,7 @@ export default function ClassroomPage() {
         setLoading(false);
       }
     },
-    [searchQuery],
+    [activeCategory, searchQuery],
   );
 
   // ── Event handlers ──
