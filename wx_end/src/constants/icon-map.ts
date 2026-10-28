@@ -107,7 +107,7 @@ export const ICON_MAP = {
   'bandage': '🩹',
   'pills': '💊',
 
-  // === 早护通特有 ===
+  // === 萌芽护航特有 ===
   'calendar.badge.plus': '📅',
 } as const;
 

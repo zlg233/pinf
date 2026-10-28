@@ -2,7 +2,7 @@
   "name": "wx_end",
   "version": "1.0.0",
   "private": true,
-  "description": "早护通微信小程序",
+  "description": "萌芽护航微信小程序",
   "templateInfo": {
     "name": "default",
     "typescript": true,

@@ -1,6 +1,6 @@
 /**
  * 温暖有机 (Warm Organic) 设计 Token
- * 为早护通应用定制的柔和、自然美学
+ * 为萌芽护航应用定制的柔和、自然美学
  */
 
 export const OrganicColors = {
