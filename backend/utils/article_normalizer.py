@@ -32,6 +32,7 @@ VOID_TAGS = {"img", "br", "hr", "input", "source"}
 BLOCK_TAGS = {"p", "section", "div", "li", "ul", "ol", "td", "th", "blockquote"}
 HEADING_LEVELS = {"h1": "title", "h2": "subtitle", "h3": "subtitle", "h4": "body", "h5": "body", "h6": "body"}
 WORD_WRAPPER_TAGS = {"o:p"}
+OFFICE_PREFIXES = ("o:", "w:", "v:")
 INLINE_TAGS = {"span", "font"}
 
 IMG_STYLE = "display:block;width:100%;height:auto;border-radius:8px;margin:8px 0"
@@ -188,8 +189,8 @@ def _clean_tag(name, attrs, self_closing):
     if name == "hr":
         return '<hr style="%s">' % PALETTE["hr"]
 
-    # Word 导出的 <o:p> 只是包裹层，直接去掉
-    if name in WORD_WRAPPER_TAGS:
+    # Word 导出的 <o:p> / <o:page> 只是包裹层，直接去掉
+    if name in WORD_WRAPPER_TAGS or name.startswith(OFFICE_PREFIXES):
         return ""
 
     if name in HEADING_LEVELS:
@@ -237,7 +238,7 @@ def normalize_article_html(content):
     def replace(match):
         closing, name, raw_attrs, self_closing = match.groups()
         name = name.lower()
-        if name in WORD_WRAPPER_TAGS:
+        if name in WORD_WRAPPER_TAGS or name.startswith(OFFICE_PREFIXES):
             return ""
         if closing:
             return f"</{name}>"

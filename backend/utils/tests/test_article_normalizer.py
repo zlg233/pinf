@@ -179,3 +179,11 @@ class TestWordExport:
     def test_行内大字号span保留标题档(self):
         html = normalize_article_html(SPAN_TITLE)
         assert "font-size:20px" in html
+
+
+class TestOfficeArtifacts:
+    def test_去掉o_page等Office命名空间标签(self):
+        html = normalize_article_html("<p>正文<o:page></o:page></p><p>下一段</p>")
+        assert "o:page" not in html
+        assert "正文" in html
+        assert "下一段" in html
