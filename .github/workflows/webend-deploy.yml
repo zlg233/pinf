@@ -2,9 +2,11 @@ name: Webend Deploy
 
 on:
   workflow_dispatch:
-  release:
-    types:
-      - published
+  # 暂停 Webend（Vue 站）的自动发布（SFTP_* 凭据未配置，触发必然失败）。
+  # 恢复自动发布时：取消下面 release 块注释，并补齐 SFTP_HOST / SFTP_USER / SFTP_PASSWORD。
+  # release:
+  #   types:
+  #     - published
 
 permissions:
   contents: read
