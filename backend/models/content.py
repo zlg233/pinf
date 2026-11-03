@@ -18,6 +18,8 @@ class Article(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text, nullable=False)
+    # 归一化后的正文（图片自适应、剥掉公众号内联排版）；为空时回退 content
+    content_normalized = db.Column(db.Text)
     wechat_article_id = db.Column(db.String(128), index=True)
     source_url = db.Column(db.String(1000))
     cover_url = db.Column(db.String(500))
@@ -31,7 +33,7 @@ class Article(db.Model):
         return {
             "id": self.id,
             "title": self.title,
-            "content": self.content,
+            "content": self.content_normalized or self.content,
             "wechatArticleId": self.wechat_article_id,
             "sourceUrl": self.source_url,
             "coverUrl": self.cover_url,

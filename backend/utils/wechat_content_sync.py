@@ -7,6 +7,7 @@ from models import db
 from models.content import Article
 from models.sync_state import SyncState
 from utils.wechat_official import WechatOfficialError, get_article_by_id, get_publication_records
+from utils.article_normalizer import normalize_article_html
 
 WECHAT_SYNC_CURSOR_KEY = "wechat_sync.last_update_ts"
 logger = logging.getLogger(__name__)
@@ -151,6 +152,7 @@ def _upsert_article_from_news(news_item):
     if article:
         article.title = title
         article.content = digest
+        article.content_normalized = normalize_article_html(digest)
         article.cover_url = cover_url or article.cover_url
         article.author = author
         article.wechat_article_id = wechat_article_id or article.wechat_article_id
@@ -163,6 +165,7 @@ def _upsert_article_from_news(news_item):
     article = Article(
         title=title,
         content=digest,
+        content_normalized=normalize_article_html(digest),
         wechat_article_id=wechat_article_id,
         source_url=source_url,
         cover_url=cover_url or None,

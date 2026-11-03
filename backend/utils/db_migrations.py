@@ -4,6 +4,10 @@ from sqlalchemy import text
 
 _MIGRATIONS = [
     {
+        "id": "2026_11_03_add_content_normalized_to_articles",
+        "sql": "ALTER TABLE articles ADD COLUMN IF NOT EXISTS content_normalized TEXT",
+    },
+    {
         "id": "2026_10_28_add_category_to_videos",
         "sql": "ALTER TABLE videos ADD COLUMN IF NOT EXISTS category VARCHAR(50)",
     },

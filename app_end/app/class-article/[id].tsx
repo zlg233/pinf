@@ -37,12 +37,23 @@ const buildArticleHtml = (content: string) => {
     word-wrap: break-word;
     -webkit-text-size-adjust: 100%;
   }
+  /* 公众号图片常带内联 width:1080px，普通声明压不住，必须 !important */
   img {
-    max-width: 100%;
-    height: auto;
+    max-width: 100% !important;
+    width: auto !important;
+    height: auto !important;
     display: block;
     margin: 8px 0;
     border-radius: 8px;
+  }
+  section, p, span, div {
+    max-width: 100% !important;
+    word-break: break-word;
+  }
+  table {
+    max-width: 100% !important;
+    table-layout: fixed;
+    word-break: break-all;
   }
   p { margin: 0 0 12px; }
   a { color: #5B9A8B; text-decoration: none; }

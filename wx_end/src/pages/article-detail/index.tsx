@@ -34,21 +34,30 @@ const formatDate = (value?: string | null): string => {
 /**
  * 清洗 HTML 内容，使其可在 RichText 中正常渲染。
  *
- * 微信公众号文章 HTML 有两个常见问题：
+ * 微信公众号文章 HTML 有三个常见问题：
  * 1. 图片使用 data-src 懒加载，RichText 只认 src → 需将 data-src 转为 src
  * 2. 部分 HTML 实体可能二次编码（&quot; / &#34; 等）→ 需解码
+ * 3. 图片内联宽高是固定像素（如 width:1080px），RichText 无法用外部 CSS 覆盖
+ *    → 服务端已统一归一化，这里再做一层兜底重写
  */
 const cleanHtml = (content: string): string => {
-  return content
-    // data-src → src（微信文章懒加载图片）
-    .replace(/\bdata-src\b/g, 'src')
-    // 解码常见 HTML 实体
+  const decoded = content
     .replace(/&amp;/g, '&')
     .replace(/&quot;/g, '"')
     .replace(/&#34;/g, '"')
     .replace(/&lt;/g, '<')
     .replace(/&gt;/g, '>')
     .replace(/&#39;/g, "'");
+
+  return decoded
+    // data-src → src（微信文章懒加载图片）
+    .replace(/\bdata-src\b/g, 'src')
+    // 兜底：图片强制自适应宽度，去掉固定像素宽高
+    .replace(/<img\b[^>]*>/gi, (tag) => {
+      const match = tag.match(/\bsrc\s*=\s*"([^"]+)"/i) || tag.match(/\bsrc\s*=\s*'([^']+)'/i);
+      if (!match) return '';
+      return `<img src="${match[1]}" style="display:block;width:100%;height:auto;margin:8px 0;border-radius:8px">`;
+    });
 };
 
 export default function ArticleDetailPage() {
