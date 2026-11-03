@@ -187,3 +187,25 @@ class TestOfficeArtifacts:
         assert "o:page" not in html
         assert "正文" in html
         assert "下一段" in html
+
+
+BIG_BODY = (
+    '<p><span style="font-size:21.5pt">这是正文一段很长的文字</span></p>'
+    '<p><span style="font-size:21.5pt">这是正文第二段</span></p>'
+    '<h2><span style="font-size:28.0pt">大标题</span></h2>'
+)
+
+
+class TestRelativeScaling:
+    def test_主字号偏大的文档按相对比例分档(self):
+        html = normalize_article_html(BIG_BODY)
+        assert "font-size:22px" in html, "28pt 应判为标题"
+        assert html.count("font-size:15px") >= 2, "21.5pt 正文应归一为正文档"
+
+    def test_相同字号文档仍用绝对阈值(self):
+        html = normalize_article_html('<p><span style="font-size:26px">唯一标题</span></p>')
+        assert "font-size:22px" in html
+
+    def test_相对分档后仍然幂等(self):
+        once = normalize_article_html(BIG_BODY)
+        assert normalize_article_html(once) == once

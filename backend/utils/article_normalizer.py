@@ -63,6 +63,7 @@ DANGEROUS_BLOCK_RE = re.compile(
 )
 DANGEROUS_VOID_RE = re.compile(r"<(%s)\b[^>]*/?>" % "|".join(DANGEROUS_TAGS), re.I | re.S)
 PX_RE = re.compile(r"(\d+(?:\.\d+)?)\s*(px|pt|em|rem)", re.I)
+STYLE_ATTR_RE = re.compile(r"style=\"([^\"]*)\"", re.I)
 EMPTY_BLOCK_RE = re.compile(r"<p\b[^>]*>(?:\s|<[^>]+>|&nbsp;)*</p>", re.I)
 
 
@@ -106,11 +107,26 @@ def _font_px(props):
     return None
 
 
-def _level_of(props):
-    """字号档位。阈值和我们输出的档位对齐，保证二次归一化结果不变。"""
+def _level_of(props, base_size=None):
+    """字号档位。
+
+    base_size 为本文档正文主字号：按相对比例分档，避免不同文档
+    （12pt 正文 vs 21.5pt 正文）用同一套绝对阈值导致全部变标题。
+    没有可参考的主字号时退回绝对阈值。
+    """
     size = _font_px(props)
     if size is None:
         return "body"
+
+    if base_size:
+        if size >= base_size * 1.25:
+            return "title"
+        if size >= base_size * 1.12:
+            return "subtitle"
+        if size <= base_size * 0.85 and "center" in (props.get("text-align") or ""):
+            return "caption"
+        return "body"
+
     if size >= 22:
         return "title"
     if size >= 18:
@@ -134,6 +150,26 @@ def _block_kind(props, tag):
     return None
 
 
+def _base_font_size(content):
+    """本文档的正文主字号（出现次数最多的字号）。
+
+    只有一个字号时返回 None，退回绝对阈值，避免整篇被归成同一档。
+    """
+    sizes = []
+    for match in STYLE_ATTR_RE.finditer(content):
+        size = _font_px(_parse_style(match.group(1)))
+        if size:
+            sizes.append(round(size, 1))
+    if not sizes:
+        return None
+    counted = {}
+    for size in sizes:
+        counted[size] = counted.get(size, 0) + 1
+    if len(counted) < 2:
+        return None
+    return max(counted, key=counted.get)
+
+
 def _render_tag(name, attrs, self_closing):
     rendered = "".join(
         ' {0}="{1}"'.format(key, value.replace('"', "&quot;")) for key, value in attrs
@@ -142,7 +178,7 @@ def _render_tag(name, attrs, self_closing):
     return f"<{name}{rendered}{closing}>"
 
 
-def _clean_tag(name, attrs, self_closing):
+def _clean_tag(name, attrs, self_closing, base_size=None):
     props = {}
     kept = []
     image_src = None
@@ -199,10 +235,10 @@ def _clean_tag(name, attrs, self_closing):
 
     # 行内 span/font 只在它本身是大字号时才带样式，避免盖住外层标题档位
     if name in INLINE_TAGS:
-        size = _font_px(props)
-        if size is not None and size >= 22:
+        level = _level_of(props, base_size)
+        if level == "title":
             kept.append(("style", PALETTE["title"]))
-        elif size is not None and size >= 18:
+        elif level == "subtitle":
             kept.append(("style", PALETTE["subtitle"]))
         return _render_tag(name, kept, self_closing)
 
@@ -212,7 +248,7 @@ def _clean_tag(name, attrs, self_closing):
             kept.append(("style", PALETTE[kind]))
             return _render_tag(name, kept, self_closing)
 
-        level = _level_of(props)
+        level = _level_of(props, base_size)
         style = PALETTE[level]
         align = (props.get("text-align") or "").strip().lower()
         if align in ("center", "right") and level != "caption":
@@ -235,6 +271,8 @@ def normalize_article_html(content):
     text = DANGEROUS_BLOCK_RE.sub("", content)
     text = DANGEROUS_VOID_RE.sub("", text)
 
+    base_size = _base_font_size(content)
+
     def replace(match):
         closing, name, raw_attrs, self_closing = match.groups()
         name = name.lower()
@@ -242,7 +280,7 @@ def normalize_article_html(content):
             return ""
         if closing:
             return f"</{name}>"
-        return _clean_tag(name, _parse_attrs(raw_attrs), bool(self_closing))
+        return _clean_tag(name, _parse_attrs(raw_attrs), bool(self_closing), base_size)
 
     text = TAG_RE.sub(replace, text)
     # 清掉只剩空格的空段落（Word 导出常见）
