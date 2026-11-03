@@ -1,4 +1,4 @@
-﻿"""文章 HTML 归一化的测试（用真实公众号片段做 fixture）。
+"""文章 HTML 归一化的测试（用真实公众号片段做 fixture）。
 
 归一化不是"删样式"，而是把公众号版式**翻译**成我们自己的排版：
 字号档位、引用块、卡片块、图注、列表、分割线。
@@ -140,3 +140,42 @@ class TestEdgeCases:
         for sample in (MESSY, TITLE, SUBTITLE, BODY, CAPTION, QUOTE, CARD):
             once = normalize_article_html(sample)
             assert normalize_article_html(once) == once, sample
+
+
+PORT = '<h1><span style="font-size:22.0pt;font-family:微软雅黑">Word 导出的标题</span></h1>'
+WORD_BODY = '<p style="margin-top:0.0pt;line-height:0.0pt"><span style="font-size:10.5pt">Word 正文</span></p>'
+WORD_EMPTY = '<p><span style="font-size:1.0pt"><o:p><span>&nbsp;</span></o:p></span></p>'
+SPAN_TITLE = '<p><span style="font-size:20px">行内大字号标题</span></p>'
+
+
+class TestWordExport:
+    def test_pt字号能映射到标题(self):
+        html = normalize_article_html(PORT)
+        assert "font-size:20px" in html
+        assert "22.0pt" not in html
+
+    def test_h1标题自带档位(self):
+        html = normalize_article_html("<h1>标题文字</h1>")
+        assert "font-size:20px" in html
+        assert "font-weight:600" in html
+
+    def test_h3映射为小标题(self):
+        html = normalize_article_html("<h3>小节</h3>")
+        assert "font-size:17px" in html
+
+    def test_pt正文字号归一(self):
+        html = normalize_article_html(WORD_BODY)
+        assert "font-size:15px" in html
+
+    def test_去掉o_p标签(self):
+        html = normalize_article_html(WORD_EMPTY)
+        assert "o:p" not in html
+
+    def test_纯空白段落被清理(self):
+        html = normalize_article_html(WORD_EMPTY + "<p>有内容</p>")
+        assert "&nbsp;" not in html
+        assert "有内容" in html
+
+    def test_行内大字号span保留标题档(self):
+        html = normalize_article_html(SPAN_TITLE)
+        assert "font-size:20px" in html

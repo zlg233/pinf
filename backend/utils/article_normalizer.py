@@ -29,7 +29,10 @@ DROP_ATTRS = {
     "nodeleaf",
 }
 VOID_TAGS = {"img", "br", "hr", "input", "source"}
-BLOCK_TAGS = {"p", "section", "div", "li", "ul", "ol", "td", "th", "span", "blockquote"}
+BLOCK_TAGS = {"p", "section", "div", "li", "ul", "ol", "td", "th", "blockquote"}
+HEADING_LEVELS = {"h1": "title", "h2": "subtitle", "h3": "subtitle", "h4": "body", "h5": "body", "h6": "body"}
+WORD_WRAPPER_TAGS = {"o:p"}
+INLINE_TAGS = {"span", "font"}
 
 IMG_STYLE = "display:block;width:100%;height:auto;border-radius:8px;margin:8px 0"
 
@@ -58,7 +61,8 @@ DANGEROUS_BLOCK_RE = re.compile(
     r"<(%s)\b[^>]*>.*?</\1\s*>" % "|".join(DANGEROUS_TAGS), re.I | re.S
 )
 DANGEROUS_VOID_RE = re.compile(r"<(%s)\b[^>]*/?>" % "|".join(DANGEROUS_TAGS), re.I | re.S)
-PX_RE = re.compile(r"(\d+(?:\.\d+)?)\s*px", re.I)
+PX_RE = re.compile(r"(\d+(?:\.\d+)?)\s*(px|pt|em|rem)", re.I)
+EMPTY_BLOCK_RE = re.compile(r"<p\b[^>]*>(?:\s|<[^>]+>|&nbsp;)*</p>", re.I)
 
 
 def _parse_attrs(raw):
@@ -87,13 +91,17 @@ def _parse_style(value):
     return props
 
 
+UNIT_TO_PX = {"px": 1.0, "pt": 4.0 / 3.0, "em": 16.0, "rem": 16.0}
+
+
 def _font_px(props):
+    """把 px / pt / em / rem 统一换算成逻辑像素。"""
     for key in ("font-size", "font_size"):
         raw = props.get(key)
         if raw:
             match = PX_RE.search(raw)
             if match:
-                return float(match.group(1))
+                return float(match.group(1)) * UNIT_TO_PX.get(match.group(2).lower(), 1.0)
     return None
 
 
@@ -180,6 +188,23 @@ def _clean_tag(name, attrs, self_closing):
     if name == "hr":
         return '<hr style="%s">' % PALETTE["hr"]
 
+    # Word 导出的 <o:p> 只是包裹层，直接去掉
+    if name in WORD_WRAPPER_TAGS:
+        return ""
+
+    if name in HEADING_LEVELS:
+        kept.append(("style", PALETTE[HEADING_LEVELS[name]]))
+        return _render_tag(name, kept, self_closing)
+
+    # 行内 span/font 只在它本身是大字号时才带样式，避免盖住外层标题档位
+    if name in INLINE_TAGS:
+        size = _font_px(props)
+        if size is not None and size >= 20:
+            kept.append(("style", PALETTE["title"]))
+        elif size is not None and size >= 16:
+            kept.append(("style", PALETTE["subtitle"]))
+        return _render_tag(name, kept, self_closing)
+
     if name in BLOCK_TAGS:
         kind = _block_kind(props, name)
         if kind:
@@ -212,8 +237,12 @@ def normalize_article_html(content):
     def replace(match):
         closing, name, raw_attrs, self_closing = match.groups()
         name = name.lower()
+        if name in WORD_WRAPPER_TAGS:
+            return ""
         if closing:
             return f"</{name}>"
         return _clean_tag(name, _parse_attrs(raw_attrs), bool(self_closing))
 
-    return TAG_RE.sub(replace, text)
+    text = TAG_RE.sub(replace, text)
+    # 清掉只剩空格的空段落（Word 导出常见）
+    return EMPTY_BLOCK_RE.sub("", text)
