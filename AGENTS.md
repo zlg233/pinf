@@ -79,6 +79,27 @@ docker compose up -d
 5. **后端三件套**: 字段变更必须同步修改 `model` + `db_migrations` + `to_dict`
 6. **最小验收**: 前端 `bun run lint` + `npx tsc --noEmit`；后端做目标模块语法检查
 
+## 文章内容维护（公众号同步）
+
+公众号文章在同步入库时自动归一化，三端（小程序 / App / web）共用同一份干净 HTML：
+
+- `articles.content` 保存**原始 HTML**（不回写、可回溯）
+- `articles.content_normalized` 保存归一化结果（图片自适应、剥掉公众号内联排版）
+- 接口 `to_dict` 优先返回归一化版，为空时回退原文
+- 规则实现：`backend/utils/article_normalizer.py`（纯函数、幂等）
+
+规则调整或历史数据需要重刷时：
+
+```bash
+# 先看影响范围（只读）
+docker exec pinf-backend-1 uv run python -m utils.normalize_articles --dry-run
+
+# 全量重刷（规则升级后使用）
+docker exec pinf-backend-1 uv run python -m utils.normalize_articles --force
+```
+
+本地/测试环境把 `docker exec ...` 换成 `uv run python -m utils.normalize_articles` 即可。
+
 ## 关键配置
 
 - 前端: `app_end/app.json`, `app_end/app.config.ts`, `app_end/eas.json`
