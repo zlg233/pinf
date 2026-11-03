@@ -53,7 +53,11 @@ PALETTE = {
     "strong": "font-weight:600;color:#2F2F2F",
     "list": "padding-left:20px;margin:0 0 12px;color:#4A4A4A;line-height:1.8",
     "hr": "border:none;border-top:1px solid #EADFD5;margin:20px 0",
-    "table": "width:100%;table-layout:fixed;word-break:break-all;border-collapse:collapse",
+    "cell": (
+        "border:1px solid #EADFD5;padding:8px 6px;vertical-align:middle;"
+        "font-size:14px;line-height:1.6;color:#4A4A4A;word-break:break-word"
+    ),
+    "table": "width:100%;table-layout:auto;border-collapse:collapse;margin:12px 0;word-break:break-word",
 }
 
 TAG_RE = re.compile(r"<(/?)([a-zA-Z][\w:-]*)((?:[^<>\"']|\"[^\"]*\"|'[^']*')*?)(/?)>", re.S)
@@ -63,6 +67,7 @@ DANGEROUS_BLOCK_RE = re.compile(
 )
 DANGEROUS_VOID_RE = re.compile(r"<(%s)\b[^>]*/?>" % "|".join(DANGEROUS_TAGS), re.I | re.S)
 PX_RE = re.compile(r"(\d+(?:\.\d+)?)\s*(px|pt|em|rem)", re.I)
+CELL_RE = re.compile(r"<td\b[^>]*>.*?</td>", re.I | re.S)
 STYLE_ATTR_RE = re.compile(r"style=\"([^\"]*)\"", re.I)
 EMPTY_BLOCK_RE = re.compile(r"<p\b[^>]*>(?:\s|<[^>]+>|&nbsp;)*</p>", re.I)
 
@@ -229,6 +234,14 @@ def _clean_tag(name, attrs, self_closing, base_size=None):
     if name in WORD_WRAPPER_TAGS or name.startswith(OFFICE_PREFIXES):
         return ""
 
+    if name in ("td", "th"):
+        style = PALETTE["cell"]
+        background = props.get("background-color") or props.get("background")
+        if background:
+            style = f"{style};background:{background}"
+        kept.append(("style", style))
+        return _render_tag(name, kept, self_closing)
+
     if name in HEADING_LEVELS:
         kept.append(("style", PALETTE[HEADING_LEVELS[name]]))
         return _render_tag(name, kept, self_closing)
@@ -283,5 +296,7 @@ def normalize_article_html(content):
         return _clean_tag(name, _parse_attrs(raw_attrs), bool(self_closing), base_size)
 
     text = TAG_RE.sub(replace, text)
+    # 表格单元格里的段落不要再带外边距，否则行高被撑爆
+    text = CELL_RE.sub(lambda m: m.group(0).replace("margin:0 0 12px", "margin:0"), text)
     # 清掉只剩空格的空段落（Word 导出常见）
     return EMPTY_BLOCK_RE.sub("", text)
