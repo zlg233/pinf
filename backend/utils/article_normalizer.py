@@ -38,7 +38,7 @@ INLINE_TAGS = {"span", "font"}
 IMG_STYLE = "display:block;width:100%;height:auto;border-radius:8px;margin:8px 0"
 
 PALETTE = {
-    "title": "font-size:20px;font-weight:600;color:#2F2F2F;line-height:1.5;margin:24px 0 12px",
+    "title": "font-size:22px;font-weight:600;color:#2F2F2F;line-height:1.5;margin:24px 0 12px",
     "subtitle": "font-size:18px;font-weight:600;color:#2F2F2F;line-height:1.6;margin:20px 0 10px",
     "body": "font-size:15px;color:#4A4A4A;line-height:1.8;margin:0 0 12px",
     "caption": "font-size:12px;color:#999999;line-height:1.6;text-align:center;margin:8px 0 16px",
@@ -111,7 +111,7 @@ def _level_of(props):
     size = _font_px(props)
     if size is None:
         return "body"
-    if size >= 20:
+    if size >= 22:
         return "title"
     if size >= 18:
         return "subtitle"
@@ -200,7 +200,7 @@ def _clean_tag(name, attrs, self_closing):
     # 行内 span/font 只在它本身是大字号时才带样式，避免盖住外层标题档位
     if name in INLINE_TAGS:
         size = _font_px(props)
-        if size is not None and size >= 20:
+        if size is not None and size >= 22:
             kept.append(("style", PALETTE["title"]))
         elif size is not None and size >= 18:
             kept.append(("style", PALETTE["subtitle"]))

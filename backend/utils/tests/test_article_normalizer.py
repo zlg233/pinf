@@ -18,7 +18,7 @@ MESSY = (
     '<iframe src="https://evil"></iframe>'
 )
 
-TITLE = '<section style="font-size:24px;font-weight:700">大标题</section>'
+TITLE = '<section style="font-size:26px;font-weight:700">大标题</section>'
 SUBTITLE = '<section style="font-size:19px">小标题</section>'
 BODY = '<section style="font-size:15px">正文文字</section>'
 CAPTION = '<p style="font-size:12px;text-align:center">图 1 早产儿随访流程</p>'
@@ -48,9 +48,9 @@ class TestImageNormalization:
 class TestFontSizeMapping:
     def test_大字号映射为标题(self):
         html = normalize_article_html(TITLE)
-        assert "font-size:20px" in html
+        assert "font-size:22px" in html
         assert "font-weight:600" in html
-        assert "font-size:24px" not in html
+        assert "font-size:26px" not in html
 
     def test_中字号映射为小标题(self):
         html = normalize_article_html(SUBTITLE)
@@ -142,21 +142,21 @@ class TestEdgeCases:
             assert normalize_article_html(once) == once, sample
 
 
-PORT = '<h1><span style="font-size:22.0pt;font-family:微软雅黑">Word 导出的标题</span></h1>'
+PORT = '<h1><span style="font-size:24.0pt;font-family:微软雅黑">Word 导出的标题</span></h1>'
 WORD_BODY = '<p style="margin-top:0.0pt;line-height:0.0pt"><span style="font-size:10.5pt">Word 正文</span></p>'
 WORD_EMPTY = '<p><span style="font-size:1.0pt"><o:p><span>&nbsp;</span></o:p></span></p>'
-SPAN_TITLE = '<p><span style="font-size:20px">行内大字号标题</span></p>'
+SPAN_TITLE = '<p><span style="font-size:24px">行内大字号标题</span></p>'
 
 
 class TestWordExport:
     def test_pt字号能映射到标题(self):
         html = normalize_article_html(PORT)
-        assert "font-size:20px" in html
+        assert "font-size:22px" in html
         assert "22.0pt" not in html
 
     def test_h1标题自带档位(self):
         html = normalize_article_html("<h1>标题文字</h1>")
-        assert "font-size:20px" in html
+        assert "font-size:22px" in html
         assert "font-weight:600" in html
 
     def test_h3映射为小标题(self):
@@ -178,7 +178,7 @@ class TestWordExport:
 
     def test_行内大字号span保留标题档(self):
         html = normalize_article_html(SPAN_TITLE)
-        assert "font-size:20px" in html
+        assert "font-size:22px" in html
 
 
 class TestOfficeArtifacts:
