@@ -2,12 +2,14 @@ name: Web Deploy
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - "app_end/**"
-      - ".github/workflows/web-deploy.yml"
+  # 暂停 app_end 网页版的自动发布（SFTP_* 凭据未配置，push 必然失败）。
+  # 恢复自动发布时：取消下面 push 块注释，并补齐 SFTP_HOST / SFTP_USER / SFTP_PASSWORD。
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - "app_end/**"
+  #     - ".github/workflows/web-deploy.yml"
 
 permissions:
   contents: read
