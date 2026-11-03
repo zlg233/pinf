@@ -1,4 +1,4 @@
-"""文章 HTML 归一化的测试（用真实公众号片段做 fixture）。
+﻿"""文章 HTML 归一化的测试（用真实公众号片段做 fixture）。
 
 归一化不是"删样式"，而是把公众号版式**翻译**成我们自己的排版：
 字号档位、引用块、卡片块、图注、列表、分割线。
@@ -19,7 +19,7 @@ MESSY = (
 )
 
 TITLE = '<section style="font-size:24px;font-weight:700">大标题</section>'
-SUBTITLE = '<section style="font-size:18px">小标题</section>'
+SUBTITLE = '<section style="font-size:19px">小标题</section>'
 BODY = '<section style="font-size:15px">正文文字</section>'
 CAPTION = '<p style="font-size:12px;text-align:center">图 1 早产儿随访流程</p>'
 QUOTE = '<section style="background-color:#F2F2F2;font-size:15px">这是引用的一段话</section>'
@@ -54,7 +54,7 @@ class TestFontSizeMapping:
 
     def test_中字号映射为小标题(self):
         html = normalize_article_html(SUBTITLE)
-        assert "font-size:17px" in html
+        assert "font-size:18px" in html
         assert "font-weight:600" in html
 
     def test_正文字号归一(self):
@@ -161,7 +161,7 @@ class TestWordExport:
 
     def test_h3映射为小标题(self):
         html = normalize_article_html("<h3>小节</h3>")
-        assert "font-size:17px" in html
+        assert "font-size:18px" in html
 
     def test_pt正文字号归一(self):
         html = normalize_article_html(WORD_BODY)

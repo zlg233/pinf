@@ -1,4 +1,4 @@
-"""把公众号 HTML 归一化成三端（小程序 / App / web）都能直接渲染的版本。
+﻿"""把公众号 HTML 归一化成三端（小程序 / App / web）都能直接渲染的版本。
 
 公众号原文其实有很强的版式（字号、背景块、flex 卡片），但直接搬进小程序
 的 rich-text 会字号失控、卡片溢出。所以这里做的是**翻译**而不是删除：
@@ -38,7 +38,7 @@ IMG_STYLE = "display:block;width:100%;height:auto;border-radius:8px;margin:8px 0
 
 PALETTE = {
     "title": "font-size:20px;font-weight:600;color:#2F2F2F;line-height:1.5;margin:24px 0 12px",
-    "subtitle": "font-size:17px;font-weight:600;color:#2F2F2F;line-height:1.6;margin:20px 0 10px",
+    "subtitle": "font-size:18px;font-weight:600;color:#2F2F2F;line-height:1.6;margin:20px 0 10px",
     "body": "font-size:15px;color:#4A4A4A;line-height:1.8;margin:0 0 12px",
     "caption": "font-size:12px;color:#999999;line-height:1.6;text-align:center;margin:8px 0 16px",
     "quote": (
@@ -112,7 +112,7 @@ def _level_of(props):
         return "body"
     if size >= 20:
         return "title"
-    if size >= 16:
+    if size >= 18:
         return "subtitle"
     if size >= 13:
         return "body"
@@ -201,7 +201,7 @@ def _clean_tag(name, attrs, self_closing):
         size = _font_px(props)
         if size is not None and size >= 20:
             kept.append(("style", PALETTE["title"]))
-        elif size is not None and size >= 16:
+        elif size is not None and size >= 18:
             kept.append(("style", PALETTE["subtitle"]))
         return _render_tag(name, kept, self_closing)
 
