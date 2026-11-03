@@ -15,6 +15,7 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description="归一化历史文章正文")
     parser.add_argument("--dry-run", action="store_true", help="只统计不写库")
     parser.add_argument("--force", action="store_true", help="忽略已有结果，全量重算")
+    parser.add_argument("--id", type=int, action="append", help="只处理指定文章 id，可重复")
     args = parser.parse_args(argv)
 
     from app import create_app
@@ -25,6 +26,8 @@ def main(argv=None):
     app = create_app()
     with app.app_context():
         query = Article.query.order_by(Article.id)
+        if args.id:
+            query = query.filter(Article.id.in_(args.id))
         articles = query.all()
 
         changed = 0

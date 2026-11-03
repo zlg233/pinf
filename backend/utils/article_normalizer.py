@@ -1,32 +1,56 @@
 """把公众号 HTML 归一化成三端（小程序 / App / web）都能直接渲染的版本。
 
-背景：公众号文章由编辑器生成，图片带固定像素宽高、段落层层套 `<section>`
-并写死字号字距，直接丢给小程序的 rich-text 会溢出屏幕、排版失真。
-这里在**入库前**统一清洗一次，客户端只做兜底。
+公众号原文其实有很强的版式（字号、背景块、flex 卡片），但直接搬进小程序
+的 rich-text 会字号失控、卡片溢出。所以这里做的是**翻译**而不是删除：
 
-规则（保守）：
-- 图片：`data-src` → `src`，去掉 width/height 属性与内联宽高，强制 `width:100%;height:auto`
-- 排版：只保留 `text-align` 与 `color`，其余内联样式剥掉
-- 表格：改成 `width:100%;table-layout:fixed;word-break:break-all`
-- 安全：删除 script/style/iframe/video/object/embed，去掉 `class`、`id`、`data-*`
-- 幂等：同一份 HTML 反复归一化结果不变
+- 字号 → 我们的档位（标题 20 / 小标题 17 / 正文 15 / 图注 12）
+- 带背景的块 → 引用块（浅底 + 左侧竖线）
+- 带边框或圆角的块 → 卡片块（圆角 + 内边距）
+- 图片 → 宽度自适应，去掉固定像素宽高
+- 颜色统一到 Organic 调色板，避免和 App 风格打架
+
+规则纯函数、幂等；原文保存在 articles.content，本结果存 content_normalized。
 """
 
 import html
 import re
 
 DANGEROUS_TAGS = ("script", "style", "iframe", "video", "object", "embed", "noscript", "svg")
-ALLOWED_STYLE_PROPS = {"text-align", "color"}
 DROP_ATTR_PREFIXES = ("data-", "on")
-DROP_ATTRS = {"class", "id", "width", "height", "style", "visibility", "loading", "data-src"}
-
-IMG_STYLE = "display:block;width:100%;height:auto;border-radius:8px;margin:8px 0"
-TABLE_REQUIRED = {
-    "width": "100%",
-    "table-layout": "fixed",
-    "word-break": "break-all",
+DROP_ATTRS = {
+    "class",
+    "id",
+    "width",
+    "height",
+    "style",
+    "visibility",
+    "loading",
+    "leaf",
+    "nodeleaf",
 }
 VOID_TAGS = {"img", "br", "hr", "input", "source"}
+BLOCK_TAGS = {"p", "section", "div", "li", "ul", "ol", "td", "th", "span", "blockquote"}
+
+IMG_STYLE = "display:block;width:100%;height:auto;border-radius:8px;margin:8px 0"
+
+PALETTE = {
+    "title": "font-size:20px;font-weight:600;color:#2F2F2F;line-height:1.5;margin:24px 0 12px",
+    "subtitle": "font-size:17px;font-weight:600;color:#2F2F2F;line-height:1.6;margin:20px 0 10px",
+    "body": "font-size:15px;color:#4A4A4A;line-height:1.8;margin:0 0 12px",
+    "caption": "font-size:12px;color:#999999;line-height:1.6;text-align:center;margin:8px 0 16px",
+    "quote": (
+        "font-size:15px;color:#5A5A5A;line-height:1.8;background:#FFF9F5;"
+        "border-left:3px solid #5B9A8B;padding:12px 14px;margin:16px 0"
+    ),
+    "card": (
+        "font-size:14px;color:#4A4A4A;line-height:1.7;background:#FFFFFF;"
+        "border:1px solid #EADFD5;border-radius:12px;padding:16px;margin:16px 0"
+    ),
+    "strong": "font-weight:600;color:#2F2F2F",
+    "list": "padding-left:20px;margin:0 0 12px;color:#4A4A4A;line-height:1.8",
+    "hr": "border:none;border-top:1px solid #EADFD5;margin:20px 0",
+    "table": "width:100%;table-layout:fixed;word-break:break-all;border-collapse:collapse",
+}
 
 TAG_RE = re.compile(r"<(/?)([a-zA-Z][\w:-]*)((?:[^<>\"']|\"[^\"]*\"|'[^']*')*?)(/?)>", re.S)
 ATTR_RE = re.compile(r"([\w:.-]+)(?:\s*=\s*(?:\"([^\"]*)\"|'([^']*)'|([^\s\"'>]+)))?", re.S)
@@ -34,6 +58,7 @@ DANGEROUS_BLOCK_RE = re.compile(
     r"<(%s)\b[^>]*>.*?</\1\s*>" % "|".join(DANGEROUS_TAGS), re.I | re.S
 )
 DANGEROUS_VOID_RE = re.compile(r"<(%s)\b[^>]*/?>" % "|".join(DANGEROUS_TAGS), re.I | re.S)
+PX_RE = re.compile(r"(\d+(?:\.\d+)?)\s*px", re.I)
 
 
 def _parse_attrs(raw):
@@ -62,11 +87,42 @@ def _parse_style(value):
     return props
 
 
-def _compose_style(keep_props, required=None):
-    parts = [f"{key}:{value}" for key, value in keep_props.items()]
-    for key, value in (required or {}).items():
-        parts.append(f"{key}:{value}")
-    return ";".join(parts)
+def _font_px(props):
+    for key in ("font-size", "font_size"):
+        raw = props.get(key)
+        if raw:
+            match = PX_RE.search(raw)
+            if match:
+                return float(match.group(1))
+    return None
+
+
+def _level_of(props):
+    """字号档位。阈值和我们输出的档位对齐，保证二次归一化结果不变。"""
+    size = _font_px(props)
+    if size is None:
+        return "body"
+    if size >= 20:
+        return "title"
+    if size >= 16:
+        return "subtitle"
+    if size >= 13:
+        return "body"
+    if "center" in (props.get("text-align") or ""):
+        return "caption"
+    return "body"
+
+
+def _block_kind(props, tag):
+    """引用块 / 卡片块的识别；只对 section、div 生效，避免误伤行内元素。"""
+    if tag not in ("section", "div"):
+        return None
+    # 先判卡片：卡片自带白底，若先判背景会被误认成引用块（破坏幂等）
+    if props.get("border") or props.get("border-radius") or props.get("box-shadow"):
+        return "card"
+    if props.get("background") or props.get("background-color"):
+        return "quote"
+    return None
 
 
 def _render_tag(name, attrs, self_closing):
@@ -78,18 +134,14 @@ def _render_tag(name, attrs, self_closing):
 
 
 def _clean_tag(name, attrs, self_closing):
+    props = {}
     kept = []
-    style_props = {}
     image_src = None
     image_alt = ""
 
     for key, value in attrs:
         if key == "style":
-            style_props = {
-                prop: val
-                for prop, val in _parse_style(value).items()
-                if prop in ALLOWED_STYLE_PROPS
-            }
+            props = _parse_style(value)
             continue
         if key == "data-src":
             image_src = value
@@ -97,27 +149,54 @@ def _clean_tag(name, attrs, self_closing):
         if key == "src" and name == "img":
             image_src = image_src or value
             continue
-        if key in DROP_ATTRS or key.startswith(DROP_ATTR_PREFIXES):
-            continue
         if name == "img" and key == "alt":
             image_alt = value
+            continue
+        if key in DROP_ATTRS or key.startswith(DROP_ATTR_PREFIXES):
             continue
         kept.append((key, value))
 
     if name == "img":
         if not image_src:
             return ""
-        rendered = [("alt", image_alt)] if image_alt else []
-        rendered.insert(0, ("src", image_src))
+        rendered = [("src", image_src)]
+        if image_alt:
+            rendered.append(("alt", image_alt))
         rendered.append(("style", IMG_STYLE))
         return _render_tag("img", rendered, True)
 
-    if name == "table":
-        for key, value in TABLE_REQUIRED.items():
-            style_props[key] = value
+    if name in ("strong", "b"):
+        kept.append(("style", PALETTE["strong"]))
+        return _render_tag(name, kept, self_closing)
 
-    if style_props:
-        kept.append(("style", _compose_style(style_props)))
+    if name in ("ul", "ol"):
+        kept.append(("style", PALETTE["list"]))
+        return _render_tag(name, kept, self_closing)
+
+    if name == "table":
+        kept.append(("style", PALETTE["table"]))
+        return _render_tag(name, kept, self_closing)
+
+    if name == "hr":
+        return '<hr style="%s">' % PALETTE["hr"]
+
+    if name in BLOCK_TAGS:
+        kind = _block_kind(props, name)
+        if kind:
+            kept.append(("style", PALETTE[kind]))
+            return _render_tag(name, kept, self_closing)
+
+        level = _level_of(props)
+        style = PALETTE[level]
+        align = (props.get("text-align") or "").strip().lower()
+        if align in ("center", "right") and level != "caption":
+            style = f"{style};text-align:{align}"
+        kept.append(("style", style))
+        return _render_tag(name, kept, self_closing)
+
+    align = (props.get("text-align") or "").strip().lower()
+    if align in ("center", "right"):
+        kept.append(("style", f"text-align:{align}"))
 
     return _render_tag(name, kept, self_closing)
 
