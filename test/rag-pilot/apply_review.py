@@ -60,7 +60,7 @@ def _normalize_date(value) -> tuple[str, bool]:
     text = _clean(value)
     if not text:
         return "", True
-    for fmt in ("%Y-%m-%d", "%Y/%m/%d"):
+    for fmt in ("%Y-%m-%d", "%Y/%m/%d", "%Y.%m.%d"):
         try:
             return datetime.strptime(text, fmt).strftime("%Y-%m-%d"), True
         except ValueError:
@@ -82,7 +82,12 @@ def _header_map(ws) -> dict[str, int]:
 
 def parse_review_workbook(workbook) -> list[dict]:
     """按表头名字取列，避免列顺序变化导致错位。"""
-    ws = workbook["待审核清单"]
+    for sheet_name in ("预审建议", "待审核清单"):
+        if sheet_name in workbook.sheetnames:
+            ws = workbook[sheet_name]
+            break
+    else:
+        raise ValueError("审核表缺少预期工作表（预审建议/待审核清单）")
     headers = _header_map(ws)
 
     def get(row_cells, name):

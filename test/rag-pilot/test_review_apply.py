@@ -21,10 +21,10 @@ from apply_review import (
 )
 
 
-def make_workbook(rows):
+def make_workbook(rows, sheet_title="待审核清单"):
     wb = Workbook()
     ws = wb.active
-    ws.title = "待审核清单"
+    ws.title = sheet_title
     ws.append(list(HEADERS))
     for row in rows:
         ws.append([row.get(h, "") for h in HEADERS])
@@ -72,6 +72,18 @@ class ParseTest(unittest.TestCase):
         self.assertEqual(parsed[0]["decision"], "")
         self.assertIsNone(DECISION_TO_STATUS.get(parsed[0]["decision"]))
 
+    def test_预审建议工作表名也能解析_兼容回传文件(self):
+        """回传文件的工作表叫「预审建议」，不应因名字不同而拒绝。"""
+        wb = make_workbook([row(judgement="通过")], sheet_title="预审建议")
+        parsed = parse_review_workbook(wb)
+        self.assertEqual(len(parsed), 1)
+        self.assertEqual(parsed[0]["decision"], "通过")
+
+    def test_工作表名完全对不上时报错(self):
+        wb = make_workbook([row(judgement="通过")], sheet_title="随便什么")
+        with self.assertRaises(ValueError):
+            parse_review_workbook(wb)
+
     def test_逐行读取单元格并去掉首尾空白(self):
         wb = make_workbook([row(chunk_id=" c1 ", judgement=" 通过 ", population="早产儿", stage="随访", reviewer="张护士")])
         parsed = parse_review_workbook(wb)[0]
@@ -117,6 +129,12 @@ class ValidateTest(unittest.TestCase):
         rows = [{"row": 2, "chunk_id": "c1", "decision": "驳回", "population": "", "care_stage": "", "reviewer": "张", "reviewed_date": "十月二十八"}]
         errors = self._validate(rows)
         self.assertIn("bad_date", [e["code"] for e in errors])
+
+    def test_点分日期格式被接受_兼容回传文件(self):
+        """回传文件里 Excel 把日期显示成 2026.11.8，不应判为 bad_date。"""
+        rows = [{"row": 2, "chunk_id": "c1", "decision": "驳回", "population": "", "care_stage": "", "reviewer": "黎子滢", "reviewed_date": "2026.11.8"}]
+        errors = self._validate(rows)
+        self.assertEqual([e["code"] for e in errors], [])
 
     def test_拒绝把机器预审当成人工签字(self):
         rows = [
