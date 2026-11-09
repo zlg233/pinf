@@ -401,10 +401,16 @@ def merge_blocks(entries, max_chars=MAX_BLOCK_CHARS):
             size = 0
 
     for page, line_no, text in entries:
+        # 标题行既结束上一块，也独占一块：检索要能单独命中标题，正文不该和标题混在一个块里
+        is_heading = bool(re.match(HEADING_PATTERN, text))
+        if pending and is_heading:
+            flush()
         pending.append((page, line_no, text))
         size += len(text)
-        # 只在"句子结束 + 够长"时切块；不按编号行切，避免把（二）…这种条款从中间劈开
-        if size >= max_chars and re.search(r'[。！？；!?;][”）)]?$', text):
+        if is_heading:
+            flush()
+        # 其余只在"句子结束 + 够长"时切块；不按编号行切，避免把（二）…这种条款从中间劈开
+        elif size >= max_chars and re.search(r'[。！？；!?;][”）)]?$', text):
             flush()
     flush()
     return blocks
