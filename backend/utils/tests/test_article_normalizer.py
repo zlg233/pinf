@@ -273,3 +273,17 @@ class TestRealArticleTable:
         once = normalize_article_html(REAL_TABLE_CELL)
         assert normalize_article_html(once) == once
 
+
+
+class TestFontFace:
+    def test_去掉font标签的face属性(self):
+        html = normalize_article_html('<p><font face="宋体">中文段落</font></p>')
+        assert "face=" not in html
+        assert "中文段落" in html
+
+    def test_去掉Arial与Times字体声明(self):
+        html = normalize_article_html(
+            '<p><font face="Arial">A</font><font face="Times New Roman">B</font></p>'
+        )
+        assert "Arial" not in html
+        assert "Times New Roman" not in html

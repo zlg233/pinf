@@ -1,4 +1,4 @@
-﻿"""把公众号 HTML 归一化成三端（小程序 / App / web）都能直接渲染的版本。
+"""把公众号 HTML 归一化成三端（小程序 / App / web）都能直接渲染的版本。
 
 公众号原文其实有很强的版式（字号、背景块、flex 卡片），但直接搬进小程序
 的 rich-text 会字号失控、卡片溢出。所以这里做的是**翻译**而不是删除：
@@ -27,6 +27,9 @@ DROP_ATTRS = {
     "loading",
     "leaf",
     "nodeleaf",
+    # Word 导出的 <font face="宋体|Arial|Times New Roman">，保留会在设备上触发字体回退，
+    # 中文段落出现方块/错字形，统一交给我们的调色板
+    "face",
 }
 VOID_TAGS = {"img", "br", "hr", "input", "source"}
 BLOCK_TAGS = {"p", "section", "div", "li", "ul", "ol", "td", "th", "blockquote"}

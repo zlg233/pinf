@@ -1,5 +1,6 @@
 from datetime import datetime
 from . import db
+from utils.article_normalizer import normalize_article_html
 import json
 
 
@@ -33,7 +34,8 @@ class Article(db.Model):
         return {
             "id": self.id,
             "title": self.title,
-            "content": self.content_normalized or self.content,
+            # 归一化结果为空时按读取时归一化，保证新同步进来的文章立即正确渲染
+            "content": self.content_normalized or normalize_article_html(self.content),
             "wechatArticleId": self.wechat_article_id,
             "sourceUrl": self.source_url,
             "coverUrl": self.cover_url,

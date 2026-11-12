@@ -36,12 +36,16 @@ def _headers(app, user_id):
 
 
 class TestModelFallback:
-    def test_没有归一化结果时回退原文(self, app):
+    def test_没有归一化结果时读取时归一化(self, app):
         with app.app_context():
             article = Article(title="t", content=MESSY_HTML)
             db.session.add(article)
             db.session.commit()
-            assert article.to_dict()["content"] == MESSY_HTML
+            rendered = article.to_dict()["content"]
+            assert "width:100%" in rendered
+            assert "1080" not in rendered
+            # 原文必须保持不变，便于回溯与重刷
+            assert article.content == MESSY_HTML
 
     def test_有归一化结果时优先返回(self, app):
         with app.app_context():
