@@ -66,6 +66,11 @@ _SPACES = re.compile(r"\s+")
 _NAV_PREFIX = re.compile(r"^\s*当前位置[:：][^【\n]{0,120}?\s*(?=【)")
 _NAV_PREFIX_PLAIN = re.compile(r"^\s*当前位置[:：][^\n]{0,80}?\s{2,}")
 _UI_NOISE = re.compile(r"(文字变小|文字变大|恢复文字大小|打印本页|分享到|字号)[;；]?\)?\s*")
+_META_LEAD = re.compile(
+    r"^\s*(?:-?\s*发布日期[:：][^\s]{0,40}\s*)?"
+    r"(?:-?\s*(?:来源|作者)[:：][^\s]{0,40}\s*)?"
+    r"(?:-?\s*分享[:：]?\s*[Xx]?\s*)?"
+)
 
 
 class WebSearchClient:
@@ -120,6 +125,7 @@ class WebSearchClient:
         cleaned = _NAV_PREFIX.sub("", cleaned)
         cleaned = _NAV_PREFIX_PLAIN.sub("", cleaned)
         cleaned = _UI_NOISE.sub(" ", cleaned)
+        cleaned = _META_LEAD.sub("", cleaned)
         cleaned = _READ_MORE.sub("", cleaned)
         cleaned = _BACKSLASHES.sub("", cleaned)
         return _SPACES.sub(" ", cleaned).strip(" -—")
@@ -130,12 +136,20 @@ class WebSearchClient:
             return False
         return not any(hint in text for hint in PEDIATRIC_HINTS)
 
+    def _strip_leading_title(self, title, content):
+        """正文开头重复标题时剥掉，避免《标题》标题 的重复观感。"""
+        if title and title != "未命名资料" and content.startswith(title):
+            return content[len(title):].lstrip(" -—:：")
+        return content
+
     def normalize(self, body):
         results = (body or {}).get("results") or []
         hits = []
         for item in results:
             title = self._clean(item.get("title") or "") or "未命名资料"
             content = self._clean(item.get("content") or "")
+            content = self._strip_leading_title(title, content)
+            content = _META_LEAD.sub("", content).strip(" -—")
             if not content or self._is_adult_only(title, content):
                 continue
             hits.append(

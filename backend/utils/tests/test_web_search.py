@@ -135,6 +135,41 @@ def test_清洗导航与界面残片():
     assert "当前位置" not in cleaned
 
 
+def test_正文开头的重复标题会被剥离():
+    client = web_search.WebSearchClient(provider="tavily", api_key="k")
+    hits = client.normalize(
+        {
+            "results": [
+                {
+                    "title": "孩子头大不一定都好",
+                    "url": "https://www.crrc.com.cn/a.html",
+                    "content": "孩子头大不一定都好 头围正常值在平均数加减两个标准差以内。",
+                    "score": 0.8,
+                }
+            ]
+        }
+    )
+    assert hits and hits[0]["content"].startswith("头围正常值")
+    assert "孩子头大不一定都好 头围" not in hits[0]["content"]
+
+
+def test_正文开头的发布日期与来源会被清洗():
+    client = web_search.WebSearchClient(provider="tavily", api_key="k")
+    hits = client.normalize(
+        {
+            "results": [
+                {
+                    "title": "头围测量",
+                    "url": "https://wjw.beijing.gov.cn/a.html",
+                    "content": "发布日期：2026-05-06 来源：首都儿科研究所 - 分享： X 头围出生时平均34cm。",
+                    "score": 0.9,
+                }
+            ]
+        }
+    )
+    assert hits and hits[0]["content"].startswith("头围出生时平均34cm")
+
+
 def test_过滤成人内容():
     client = web_search.WebSearchClient(provider="tavily", api_key="k")
     hits = client.normalize(
