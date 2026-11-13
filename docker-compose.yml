@@ -3,6 +3,8 @@ services:
     build: ./backend
     env_file:
       - ./backend/.env
+    volumes:
+      - ./docker/rag-model:/app/rag-model
     ports:
       - "5010:5010"
     restart: always
