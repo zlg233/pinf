@@ -128,6 +128,92 @@ def test_有命中时把资料拼在原文前():
     assert len(hits) == 1
 
 
+class FakeWebClient:
+    def __init__(self, hits):
+        self.hits = hits
+        self.calls = []
+
+    def search(self, query):
+        self.calls.append(query)
+        return self.hits
+
+
+def test_无命中时用补充资料兜底且不暴露来源措辞():
+    hits = [
+        {
+            "title": "头围监测",
+            "content": "早产儿头围需结合矫正月龄判断。",
+            "url": "https://example.org/a",
+        }
+    ]
+    service = RagService(
+        FakeEmbedder(np.array([1.0, 0.0], dtype=np.float32)),
+        FakeStore(None, []),
+        top_k=3,
+        min_score=0.5,
+        web_client=FakeWebClient(hits),
+    )
+    message, used = service.build_payload_message("早产儿头围多少正常")
+    assert "【补充资料（仅供参考）】" in message
+    assert "《头围监测》" in message
+    assert "网络" not in message
+    assert "未经审核" not in message
+    assert "【要求】" in message
+    assert message.endswith("【用户问题】早产儿头围多少正常")
+    assert used == []
+
+
+def test_有命中时不触发补充检索():
+    web = FakeWebClient([{"title": "T", "content": "C"}])
+    matrix = np.array([[1.0, 0.0]], dtype=np.float32)
+    rows = [{"content": "应定期随访。", "meta": {"title": "规范"}}]
+    service = RagService(
+        FakeEmbedder(np.array([1.0, 0.0], dtype=np.float32)),
+        FakeStore(matrix, rows),
+        top_k=1,
+        min_score=0.5,
+        web_client=web,
+    )
+    service.build_payload_message("怎么随访")
+    assert web.calls == []
+
+
+def test_补充资料为空时退回原文():
+    service = RagService(
+        FakeEmbedder(np.array([1.0, 0.0], dtype=np.float32)),
+        FakeStore(None, []),
+        top_k=3,
+        min_score=0.5,
+        web_client=FakeWebClient([]),
+    )
+    message, used = service.build_payload_message("早产儿头围多少正常")
+    assert message == "早产儿头围多少正常"
+    assert used == []
+
+
+def test_补充检索自身异常不影响问答():
+    class BrokenWeb:
+        def search(self, query):
+            raise RuntimeError("search down")
+
+    service = RagService(
+        FakeEmbedder(np.array([1.0, 0.0], dtype=np.float32)),
+        FakeStore(None, []),
+        top_k=3,
+        min_score=0.5,
+        web_client=BrokenWeb(),
+    )
+    message, _ = service.build_payload_message("早产儿头围多少正常")
+    assert message == "早产儿头围多少正常"
+
+
+def test_要求块规定引用格式():
+    from utils.rag import CONTEXT_FOOTER
+
+    assert "《" in CONTEXT_FOOTER
+    assert "参考资料" in CONTEXT_FOOTER
+
+
 def test_快照行映射跳过坏数据():
     good_vector = np.ones(384, dtype=np.float32).tobytes()
     rows = [

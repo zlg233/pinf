@@ -73,6 +73,13 @@ class Config:
     RAG_TOP_K = int(os.environ.get("RAG_TOP_K", "3"))
     RAG_MIN_SCORE = float(os.environ.get("RAG_MIN_SCORE", "0.55"))
     RAG_MAX_CONTEXT_CHARS = int(os.environ.get("RAG_MAX_CONTEXT_CHARS", "900"))
+    # 知识库无命中时的补充检索（默认关闭；缺少密钥时自动跳过）
+    RAG_WEB_FALLBACK_ENABLED = os.environ.get("RAG_WEB_FALLBACK_ENABLED", "false").lower() in ("1", "true", "yes")
+    RAG_WEB_PROVIDER = os.environ.get("RAG_WEB_PROVIDER", "tavily")
+    RAG_WEB_API_KEY = os.environ.get("RAG_WEB_API_KEY", "")
+    RAG_WEB_TIMEOUT = int(os.environ.get("RAG_WEB_TIMEOUT", "6"))
+    RAG_WEB_MAX_RESULTS = int(os.environ.get("RAG_WEB_MAX_RESULTS", "3"))
+    RAG_WEB_MAX_CHARS = int(os.environ.get("RAG_WEB_MAX_CHARS", "1200"))
 
     # CORS 配置
     CORS_ORIGINS = ["*"]  # 生产环境需收紧
