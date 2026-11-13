@@ -104,3 +104,56 @@ def test_结果条数与摘要长度受限():
     )
     assert len(hits) == 1
     assert len(hits[0]["content"]) <= client.content_limit
+
+
+def test_非儿科问题补上儿科限定词():
+    client = web_search.WebSearchClient(provider="tavily", api_key="k")
+    query = client._payload("头围多少算正常")["query"]
+    assert "婴儿" in query and "儿童" in query
+
+
+def test_已含儿科词不重复追加():
+    client = web_search.WebSearchClient(provider="tavily", api_key="k")
+    assert client._payload("早产儿头围多少正常")["query"] == "早产儿头围多少正常"
+
+
+def test_清洗抓取残留():
+    client = web_search.WebSearchClient(provider="tavily", api_key="k")
+    assert client._clean("头围正常值&nbsp;在2SD内  ...Read more") == "头围正常值 在2SD内"
+    assert client._clean("眉弓上缘\\\\\\突出处") == "眉弓上缘突出处"
+
+
+def test_清洗导航与界面残片():
+    client = web_search.WebSearchClient(provider="tavily", api_key="k")
+    raw = (
+        "当前位置：便民服务>健康知识>健康生活 【儿研所儿医说】“头大”就是聪明吗？ "
+        "文字变小;) 恢复文字大小;) 文字变大;) -"
+    )
+    cleaned = client._clean(raw)
+    assert cleaned.startswith("【儿研所儿医说】")
+    assert "文字变小" not in cleaned
+    assert "当前位置" not in cleaned
+
+
+def test_过滤成人内容():
+    client = web_search.WebSearchClient(provider="tavily", api_key="k")
+    hits = client.normalize(
+        {
+            "results": [
+                {"title": "亞洲成年人頭圍尺寸參考", "content": "如何正確測量頭圍？", "url": "https://x.example"},
+                {"title": "婴儿头围标准", "content": "3个月约40cm", "url": "https://y.example"},
+            ]
+        }
+    )
+    assert [hit["title"] for hit in hits] == ["婴儿头围标准"]
+
+
+def test_低质站点排在后面():
+    client = web_search.WebSearchClient(provider="tavily", api_key="k")
+    ranked = client.rank(
+        [
+            {"title": "美赞臣", "content": "a", "url": "https://www.meadjohnson.com.cn/x", "score": 0.9},
+            {"title": "科普", "content": "b", "url": "https://health.example/x", "score": 0.5},
+        ]
+    )
+    assert ranked[0]["title"] == "科普"
