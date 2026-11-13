@@ -9,6 +9,12 @@ use TDD to guide programing(RED: red-eddit-green)
 always reuse existing components in the project; refuse to reinvent the wheel.
 always provide many solutions to help me brain-storming and also need to give me one with the least technical debt in the future
 
+### 部署纪律（硬规则）
+- 所有代码只在本地编辑与测试，测试通过后**只能通过 CI（push → GitHub Actions → docker compose build）部署**。
+- **不得在服务器上创建、修改、删除任何文件**，包括 `scp`、`docker cp`、`git checkout`、`docker compose up` 等写操作。
+- 服务器仅用于**只读取信息**：`git log/status`、`docker ps/inspect/logs`、`printenv`、`cat` 等查询命令。
+- 服务器工作区必须保持干净；任何"线上手改"都会挡住 CI 的 `git merge --ff-only`。配置一律走仓库文件（`*.example`）或 1Panel 面板，代码一律走 git。
+
 ## 项目概述
 
 早护通 (pinf) - 新生儿/早产儿健康管理移动应用，包含 React Native + Expo 前端和 Flask 后端 API。
