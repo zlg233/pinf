@@ -1,0 +1,186 @@
+name: PR CI
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-ci-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  changes:
+    name: PR branch and changed paths
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      app: ${{ steps.paths.outputs.app }}
+      miniapp: ${{ steps.paths.outputs.miniapp }}
+      webend: ${{ steps.paths.outputs.webend }}
+      backend: ${{ steps.paths.outputs.backend }}
+    steps:
+      - name: Check branch name
+        env:
+          PR_HEAD_REF: ${{ github.head_ref }}
+        run: |
+          case "$PR_HEAD_REF" in
+            feat/?*|fix/?*) ;;
+            *) echo '::error::Use a feat/ or fix/ branch with a task name.'; exit 1 ;;
+          esac
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Detect changed projects
+        id: paths
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          report_changes() {
+            local project="$1"
+            shift
+            if git diff --quiet "$BASE_SHA" "$GITHUB_SHA" -- "$@" .github/workflows/pr-ci.yml; then
+              echo "$project=false" >> "$GITHUB_OUTPUT"
+            else
+              local result=$?
+              if [[ "$result" != 1 ]]; then
+                return "$result"
+              fi
+              echo "$project=true" >> "$GITHUB_OUTPUT"
+            fi
+          }
+          report_changes app app_end/
+          report_changes miniapp wx_end/
+          report_changes webend webend/
+          report_changes backend backend/ docker-compose.yml tests/deploy/ .github/workflows/backend-deploy.yml
+
+  app:
+    name: App lint and type check
+    needs: changes
+    if: needs.changes.outputs.app == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: app_end
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.2'
+      - run: bun install --frozen-lockfile
+      - run: bun run lint
+      - run: bun x expo customize tsconfig.json
+      - run: bun x tsc --noEmit
+
+  miniapp:
+    name: WeChat mini program build
+    needs: changes
+    if: needs.changes.outputs.miniapp == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: wx_end
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.2'
+      - run: bun install --frozen-lockfile
+      - run: bun run build:weapp
+
+  webend:
+    name: Vue website build
+    needs: changes
+    if: needs.changes.outputs.webend == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: webend
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: '1.4.2'
+      - run: bun install --frozen-lockfile
+      - run: bun run build
+
+  backend:
+    name: Backend tests and Compose validation
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - uses: astral-sh/setup-uv@v6
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - name: Run backend tests
+        working-directory: backend
+        run: uv run --locked --with pytest==9.1.1 --with pytest-cov==7.1.0 pytest
+      - run: python -m unittest discover -s tests/deploy
+      - run: docker compose config --quiet --no-env-resolution
+
+  gate:
+    name: PR Gate
+    needs: [changes, app, miniapp, webend, backend]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Require all applicable checks to pass
+        env:
+          CHANGES_RESULT: ${{ needs.changes.result }}
+          APP_REQUIRED: ${{ needs.changes.outputs.app }}
+          APP_RESULT: ${{ needs.app.result }}
+          MINIAPP_REQUIRED: ${{ needs.changes.outputs.miniapp }}
+          MINIAPP_RESULT: ${{ needs.miniapp.result }}
+          WEBEND_REQUIRED: ${{ needs.changes.outputs.webend }}
+          WEBEND_RESULT: ${{ needs.webend.result }}
+          BACKEND_REQUIRED: ${{ needs.changes.outputs.backend }}
+          BACKEND_RESULT: ${{ needs.backend.result }}
+        run: |
+          set -euo pipefail
+          if [[ "$CHANGES_RESULT" != success ]]; then
+            echo "::error::Branch and changed-path checks ended with $CHANGES_RESULT."
+            exit 1
+          fi
+          verify_result() {
+            local project="$1" required="$2" result="$3"
+            case "$required:$result" in
+              true:success|false:skipped) ;;
+              *) echo "::error::$project check ended with $result (required: $required)."; return 1 ;;
+            esac
+          }
+          verify_result App "$APP_REQUIRED" "$APP_RESULT"
+          verify_result Miniapp "$MINIAPP_REQUIRED" "$MINIAPP_RESULT"
+          verify_result Webend "$WEBEND_REQUIRED" "$WEBEND_RESULT"
+          verify_result Backend "$BACKEND_REQUIRED" "$BACKEND_RESULT"
