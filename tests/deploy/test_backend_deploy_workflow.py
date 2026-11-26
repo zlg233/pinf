@@ -19,7 +19,10 @@ class BackendDeployWorkflowTests(unittest.TestCase):
         cls.workflow = WORKFLOW.read_text(encoding="utf-8")
 
     def test_deploys_only_from_owned_github_repository(self) -> None:
-        self.assertIn("github.repository == 'zlg233/pinf'", self.workflow)
+        self.assertIn(
+            "github.repository == 'zlg233/pinf' && github.ref == 'refs/heads/main'",
+            self.workflow,
+        )
         self.assertIn("https://github.com/zlg233/pinf.git", self.workflow)
         self.assertNotIn("git.unself.cn:Handy_Wote/pinf.git", self.workflow)
 
@@ -27,7 +30,10 @@ class BackendDeployWorkflowTests(unittest.TestCase):
         self.assertIn("runs-on: ubuntu-latest", self.workflow)
         self.assertRegex(
             self.workflow,
-            re.compile(r"docker compose up -d --build --no-deps backend"),
+            re.compile(
+                r"docker compose up -d --build --no-deps backend "
+                r"--wait --wait-timeout [1-9][0-9]*"
+            ),
         )
         self.assertNotIn("docker compose up -d --build\n", self.workflow)
 

@@ -15,7 +15,11 @@ permissions:
 
 jobs:
   deploy-backend:
-    if: github.repository == 'zlg233/pinf'
+    if: github.repository == 'zlg233/pinf' && github.ref == 'refs/heads/main'
+    concurrency:
+      group: backend-production
+      cancel-in-progress: false
+      queue: max
     runs-on: ubuntu-latest
     steps:
       - name: Check deployment configuration
@@ -50,5 +54,9 @@ jobs:
             test "$(git branch --show-current)" = main
             git remote set-url origin https://github.com/zlg233/pinf.git
             git fetch origin main
+            if [ "$(git rev-parse HEAD)" != "${{ github.sha }}" ] && git merge-base --is-ancestor "${{ github.sha }}" HEAD; then
+              echo 'Skipping deployment because the checkout already contains a newer commit.'
+              exit 0
+            fi
             git merge --ff-only "${{ github.sha }}"
-            docker compose up -d --build --no-deps backend
+            docker compose up -d --build --no-deps backend --wait --wait-timeout 180
