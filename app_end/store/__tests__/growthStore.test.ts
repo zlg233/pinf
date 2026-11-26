@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { useGrowthStore } from '../growthStore';
+import type { GrowthRecord } from '@/types/growth';
 
 // Mock the growth API
 vi.mock('@/services/api/growth', () => ({
@@ -10,6 +11,14 @@ vi.mock('@/services/api/growth', () => ({
 }));
 
 import * as growthApi from '@/services/api/growth';
+
+const weightRecord: GrowthRecord = {
+  id: 1,
+  metric: 'weight',
+  value: 5.5,
+  unit: 'kg',
+  recordedAt: '2024-01-15',
+};
 
 describe('growthStore', () => {
   beforeEach(() => {
@@ -45,9 +54,9 @@ describe('growthStore', () => {
 
     it('should load records and sort by date', async () => {
       const mockRecords = [
-        { id: 1, babyId: 1, metric: 'weight', value: '5.5', recordedAt: '2024-03-15' },
-        { id: 2, babyId: 1, metric: 'weight', value: '6.0', recordedAt: '2024-01-15' },
-        { id: 3, babyId: 1, metric: 'weight', value: '5.8', recordedAt: '2024-02-15' },
+        { ...weightRecord, recordedAt: '2024-03-15' },
+        { ...weightRecord, id: 2, value: 6 },
+        { ...weightRecord, id: 3, value: 5.8, recordedAt: '2024-02-15' },
       ];
 
       vi.mocked(growthApi.listGrowth).mockResolvedValue(mockRecords);
@@ -74,10 +83,10 @@ describe('growthStore', () => {
 
   describe('add', () => {
     it('should call createGrowth API and refetch', async () => {
-      vi.mocked(growthApi.createGrowth).mockResolvedValue({ id: 1 } as any);
+      vi.mocked(growthApi.createGrowth).mockResolvedValue(weightRecord);
       vi.mocked(growthApi.listGrowth).mockResolvedValue([]);
 
-      await useGrowthStore.getState().add(1, [{ metric: 'weight', value: '5.5', recordedAt: '2024-01-01' }]);
+      await useGrowthStore.getState().add(1, [{ metric: 'weight', value: 5.5, unit: 'kg', recordedAt: '2024-01-01' }]);
 
       expect(growthApi.createGrowth).toHaveBeenCalledTimes(1);
       expect(growthApi.listGrowth).toHaveBeenCalledTimes(1);
@@ -86,31 +95,28 @@ describe('growthStore', () => {
 
   describe('update', () => {
     it('should update record in place without refetch', async () => {
-      const mockRecord = { id: 1, babyId: 1, metric: 'weight', value: '5.5', recordedAt: '2024-01-15' };
-      const updatedRecord = { ...mockRecord, value: '6.0' };
+      const updatedRecord = { ...weightRecord, value: 6 };
 
       // Pre-populate store
       useGrowthStore.setState({
-        records: { 1: [mockRecord] },
+        records: { 1: [weightRecord] },
       });
 
-      vi.mocked(growthApi.updateGrowth).mockResolvedValue(updatedRecord as any);
+      vi.mocked(growthApi.updateGrowth).mockResolvedValue(updatedRecord);
 
-      await useGrowthStore.getState().update(1, { value: '6.0' });
+      await useGrowthStore.getState().update(1, { value: 6 });
 
       expect(growthApi.updateGrowth).toHaveBeenCalledTimes(1);
       const records = useGrowthStore.getState().records[1];
-      expect(records[0].value).toBe('6.0');
+      expect(records[0].value).toBe(6);
     });
   });
 
   describe('remove', () => {
     it('should remove record from store', async () => {
-      const mockRecord = { id: 1, babyId: 1, metric: 'weight', value: '5.5', recordedAt: '2024-01-15' };
-
       // Pre-populate store
       useGrowthStore.setState({
-        records: { 1: [mockRecord] },
+        records: { 1: [weightRecord] },
       });
 
       vi.mocked(growthApi.deleteGrowth).mockResolvedValue(undefined);
@@ -125,7 +131,7 @@ describe('growthStore', () => {
   describe('clear', () => {
     it('should reset state to initial', async () => {
       useGrowthStore.setState({
-        records: { 1: [{ id: 1, babyId: 1, metric: 'weight', value: '5.5', recordedAt: '2024-01-15' }] },
+        records: { 1: [weightRecord] },
         loading: true,
         error: 'Some error',
       });

@@ -8,7 +8,8 @@ import { OrganicButton } from '@/components/ui';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { organicTheme } from '@/constants/theme';
 import { getAppointmentSummary } from '@/services/api/appointment';
-import { useAuthStore, useBabyStore } from '@/store';
+import { useAuthStore } from '@/store';
+import { useBabyStore } from '@/store/babyStore';
 import type { AppointmentSummary } from '@/types/appointment';
 import { formatAppointmentDateTime } from '@/utils/appointment';
 

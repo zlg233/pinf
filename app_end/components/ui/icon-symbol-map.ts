@@ -8,6 +8,8 @@ export const ICON_SYMBOL_MAP = {
   'paperplane.fill': 'send',
   'message.fill': 'chatbubble',
   'play.circle.fill': 'play-circle',
+  'play.circle': 'play-circle-outline',
+  'doc.text': 'document-text-outline',
   'bell.fill': 'notifications',
   'person.circle.fill': 'person-circle',
   'person.crop.circle': 'person-circle-outline',

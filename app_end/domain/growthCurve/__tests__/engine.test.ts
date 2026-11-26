@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { buildGrowthCurveModel } from '../engine';
 import type { GrowthCurveInput } from '../types';
 import type { Baby } from '@/types/baby';
-import type { GrowthRecord, GrowthMetric } from '@/types/growth';
+import type { GrowthRecord } from '@/types/growth';
 
 describe('engine', () => {
   const createBaby = (overrides: Partial<Baby> = {}): Baby => ({
@@ -16,9 +16,9 @@ describe('engine', () => {
 
   const createGrowthRecord = (overrides: Partial<GrowthRecord> = {}): GrowthRecord => ({
     id: 1,
-    babyId: 1,
-    metric: 'weight' as GrowthMetric,
-    value: '5.5',
+    metric: 'weight',
+    value: 5.5,
+    unit: 'kg',
     recordedAt: '2024-03-15',
     ...overrides,
   });
@@ -69,12 +69,12 @@ describe('engine', () => {
 
     it('should filter user points by x-axis window', () => {
       const records: GrowthRecord[] = [
-        createGrowthRecord({ x: 1, value: '3.0', recordedAt: '2024-02-15' }),
-        createGrowthRecord({ x: 3, value: '4.0', recordedAt: '2024-04-15' }),
-        createGrowthRecord({ x: 10, value: '8.0', recordedAt: '2024-11-15' }),
+        createGrowthRecord({ value: 3, recordedAt: '2024-02-15' }),
+        createGrowthRecord({ value: 4, recordedAt: '2024-04-15' }),
+        createGrowthRecord({ value: 8, recordedAt: '2024-11-15' }),
       ];
       const input = createInput({
-        records: records as any,
+        records,
         rangeMode: 'smart',
       });
 
@@ -113,10 +113,10 @@ describe('engine', () => {
       const records: GrowthRecord[] = [
         createGrowthRecord({
           recordedAt: '2024-02-12', // Valid PMA range
-          value: '3.0',
+          value: 3,
         }),
       ];
-      const input = createInput({ baby, records: records as any });
+      const input = createInput({ baby, records });
 
       const result = buildGrowthCurveModel(input);
 

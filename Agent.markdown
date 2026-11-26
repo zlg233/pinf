@@ -27,6 +27,6 @@ git push -u origin feat/baby-growth-chart
 ## CI 与发布
 
 - [PR CI](.github/workflows/pr-ci.yml) 对每个目标为 `main` 的 PR 检查分支名，并按改动路径运行 App、微信小程序、Vue 站点、后端和 Compose 检查。仅文档改动也会生成 `PR Gate` 结果。新提交会取消同一 PR 的旧检查。
-- [main 保护规则](https://github.com/zlg233/pinf/rules/28166594) 要求通过 PR 合并，禁止强推和删除分支。首次接入 CI 时，先让本工作流在 PR 上生成 `PR Gate` 检查记录，再由维护者在保护规则中把它设为 GitHub Actions 的必需状态检查。接入期间，合并人负责在 PR 中确认检查结果。
+- [main 保护规则](https://github.com/zlg233/pinf/rules/28166594) 要求通过 PR 合并，禁止强推和删除分支。`PR Gate` 是必需状态检查，结果必须来自 GitHub Actions。
 - [Backend Deploy](.github/workflows/backend-deploy.yml) 在涉及后端、Compose 或部署工作流的变更合并到 `main` 后自动运行。手动重跑时也使用 `main`。部署串行执行。若服务器已包含更新的提交，较早提交对应的部署任务会跳过执行。实际部署完成以 Compose 确认后端通过 `/api/health` 检查为准。部署失败时从 GitHub Actions 查看日志和重跑，服务器操作遵守项目的部署纪律。
 - App 标签继续触发现有 EAS 构建。Web 站点继续从 GitHub Actions 手动发布。
