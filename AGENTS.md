@@ -3,7 +3,7 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 ## Top Rules
 
-开始任务前，阅读并遵守 [GitHub 协作规范](Agent.markdown) 中的分支、PR 验收和合并规则。
+开始任务前，阅读并遵守 [协作与开发规范](Agent.md) 中的代码复用、改动范围、分支、PR 验收和合并规则。
 
 always reply in chinese 
 use superpower skill
